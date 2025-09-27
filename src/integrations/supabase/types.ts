@@ -14,7 +14,258 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assets: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          name: string
+          parent_id: string | null
+          position: Json | null
+          type: Database["public"]["Enums"]["asset_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          name: string
+          parent_id?: string | null
+          position?: Json | null
+          type: Database["public"]["Enums"]["asset_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          name?: string
+          parent_id?: string | null
+          position?: Json | null
+          type?: Database["public"]["Enums"]["asset_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          acknowledged: boolean | null
+          acknowledged_at: string | null
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          severity: Database["public"]["Enums"]["event_severity"]
+          source: string | null
+          source_id: string | null
+          title: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          severity?: Database["public"]["Enums"]["event_severity"]
+          source?: string | null
+          source_id?: string | null
+          title: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          severity?: Database["public"]["Enums"]["event_severity"]
+          source?: string | null
+          source_id?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      rules: {
+        Row: {
+          actions: Json
+          conditions: Json
+          created_at: string
+          description: string | null
+          id: string
+          last_triggered_at: string | null
+          name: string
+          priority: number | null
+          status: Database["public"]["Enums"]["rule_status"]
+          updated_at: string
+          window_config: Json | null
+        }
+        Insert: {
+          actions?: Json
+          conditions?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          last_triggered_at?: string | null
+          name: string
+          priority?: number | null
+          status?: Database["public"]["Enums"]["rule_status"]
+          updated_at?: string
+          window_config?: Json | null
+        }
+        Update: {
+          actions?: Json
+          conditions?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          last_triggered_at?: string | null
+          name?: string
+          priority?: number | null
+          status?: Database["public"]["Enums"]["rule_status"]
+          updated_at?: string
+          window_config?: Json | null
+        }
+        Relationships: []
+      }
+      scenarios: {
+        Row: {
+          completed_at: string | null
+          configuration: Json
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          results: Json | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["scenario_status"]
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          configuration?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          results?: Json | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["scenario_status"]
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          configuration?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          results?: Json | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["scenario_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sensor_readings: {
+        Row: {
+          id: string
+          metadata: Json | null
+          quality_score: number | null
+          recorded_at: string
+          sensor_id: string
+          value: number
+        }
+        Insert: {
+          id?: string
+          metadata?: Json | null
+          quality_score?: number | null
+          recorded_at?: string
+          sensor_id: string
+          value: number
+        }
+        Update: {
+          id?: string
+          metadata?: Json | null
+          quality_score?: number | null
+          recorded_at?: string
+          sensor_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sensor_readings_sensor_id_fkey"
+            columns: ["sensor_id"]
+            isOneToOne: false
+            referencedRelation: "sensors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sensors: {
+        Row: {
+          asset_id: string | null
+          calibration: Json | null
+          created_at: string
+          id: string
+          last_reading: number | null
+          last_reading_at: string | null
+          location: Json | null
+          name: string
+          status: Database["public"]["Enums"]["sensor_status"]
+          thresholds: Json | null
+          type: Database["public"]["Enums"]["sensor_type"]
+          updated_at: string
+        }
+        Insert: {
+          asset_id?: string | null
+          calibration?: Json | null
+          created_at?: string
+          id?: string
+          last_reading?: number | null
+          last_reading_at?: string | null
+          location?: Json | null
+          name: string
+          status?: Database["public"]["Enums"]["sensor_status"]
+          thresholds?: Json | null
+          type: Database["public"]["Enums"]["sensor_type"]
+          updated_at?: string
+        }
+        Update: {
+          asset_id?: string | null
+          calibration?: Json | null
+          created_at?: string
+          id?: string
+          last_reading?: number | null
+          last_reading_at?: string | null
+          location?: Json | null
+          name?: string
+          status?: Database["public"]["Enums"]["sensor_status"]
+          thresholds?: Json | null
+          type?: Database["public"]["Enums"]["sensor_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sensors_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +274,18 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      asset_type: "building" | "room" | "equipment" | "sensor" | "system"
+      event_severity: "info" | "warning" | "error" | "critical"
+      rule_status: "active" | "inactive" | "triggered"
+      scenario_status: "draft" | "running" | "completed" | "failed"
+      sensor_status: "online" | "offline" | "warning" | "critical"
+      sensor_type:
+        | "temperature"
+        | "pressure"
+        | "flow"
+        | "vibration"
+        | "humidity"
+        | "air_quality"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +412,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      asset_type: ["building", "room", "equipment", "sensor", "system"],
+      event_severity: ["info", "warning", "error", "critical"],
+      rule_status: ["active", "inactive", "triggered"],
+      scenario_status: ["draft", "running", "completed", "failed"],
+      sensor_status: ["online", "offline", "warning", "critical"],
+      sensor_type: [
+        "temperature",
+        "pressure",
+        "flow",
+        "vibration",
+        "humidity",
+        "air_quality",
+      ],
+    },
   },
 } as const

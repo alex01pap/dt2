@@ -1,15 +1,33 @@
-import { useState } from "react";
-import { Plus, Search, Filter, Boxes } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CardGrid, EmptyStateCard, CardSkeleton } from "@/components/ui/card-grid";
 import { RBACGuard } from "@/components/auth/RBACGuard";
+import { AssetTree } from "@/components/data/AssetTree";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Assets() {
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [assets, setAssets] = useState([]);
 
-  const mockAssets = []; // Empty for demonstration
+  useEffect(() => {
+    loadAssets();
+  }, []);
+
+  const loadAssets = async () => {
+    try {
+      const { data, error } = await supabase.from('assets').select('*');
+      if (!error) {
+        setAssets(data || []);
+      }
+    } catch (error) {
+      console.error('Error loading assets:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -62,23 +80,12 @@ export default function Assets() {
         </Button>
       </div>
 
-      {mockAssets.length === 0 ? (
-        <div className="flex justify-center items-center min-h-[400px]">
-          <EmptyStateCard
-            icon={Boxes}
-            title="No assets found"
-            description="Get started by creating your first digital asset"
-            action={{
-              label: "Create Asset",
-              onClick: () => console.log("Create asset clicked")
-            }}
-          />
-        </div>
-      ) : (
-        <CardGrid>
-          {/* Asset cards would go here */}
-        </CardGrid>
-      )}
+      <AssetTree
+        assets={assets}
+        onNodeSelect={(node) => console.log('Selected:', node)}
+        onNodeAction={(action, node) => console.log('Action:', action, node)}
+        lazyLoad={true}
+      />
     </div>
   );
 }
