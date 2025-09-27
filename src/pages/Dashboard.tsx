@@ -4,7 +4,7 @@ import { AlertTriangle, Thermometer, Zap, Shield, TrendingUp } from "lucide-reac
 import { KPIWidget } from "@/components/analytics/KPIWidget";
 import { MiniAreaChart } from "@/components/dashboard/MiniAreaChart";
 import { RecentEventsTable } from "@/components/dashboard/RecentEventsTable";
-import { useAuthStore } from "@/stores/authStore";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function Dashboard() {
@@ -18,7 +18,7 @@ export default function Dashboard() {
     energyChart: [],
     events: []
   });
-  const { user } = useAuthStore();
+  const { user } = useAuth();
 
   // Load dashboard data from database
   useEffect(() => {

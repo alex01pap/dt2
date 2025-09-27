@@ -1,28 +1,63 @@
-import { ReactNode } from "react";
-import { useAuthStore } from "@/stores/authStore";
-import { hasPermission, RBACPermissions } from "@/types/rbac";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ShieldX } from "lucide-react";
+import { ReactNode } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface RBACGuardProps {
-  permission: keyof RBACPermissions;
   children: ReactNode;
+  permission: string;
   fallback?: ReactNode;
 }
 
-export function RBACGuard({ permission, children, fallback }: RBACGuardProps) {
-  const { user } = useAuthStore();
+export const RBACGuard = ({ children, permission, fallback = null }: RBACGuardProps) => {
+  const { user, hasRole } = useAuth();
   
-  if (!user || !hasPermission(user.role, permission)) {
-    return fallback || (
-      <Alert variant="destructive" className="mx-auto max-w-md">
-        <ShieldX className="h-4 w-4" />
-        <AlertDescription>
-          You don't have permission to access this feature. Contact your administrator for access.
-        </AlertDescription>
-      </Alert>
-    );
+  const hasPermission = (permission: string): boolean => {
+    if (!user) return false;
+    
+    // Define permissions based on roles
+    const permissions: Record<string, string[]> = {
+      user: [
+        'canViewDashboard',
+        'canViewAssets', 
+        'canViewSensors',
+        'canViewDigitalTwin',
+        'canViewTutorials'
+      ],
+      moderator: [
+        'canViewDashboard',
+        'canViewAssets',
+        'canViewSensors', 
+        'canViewDigitalTwin',
+        'canViewTutorials',
+        'canEditRules',
+        'canAccessScenarios',
+        'canManageAssets'
+      ],
+      admin: [
+        'canViewDashboard',
+        'canViewAssets',
+        'canViewSensors',
+        'canViewDigitalTwin', 
+        'canViewTutorials',
+        'canEditRules',
+        'canAccessScenarios',
+        'canManageAssets',
+        'canViewAdmin',
+        'canManageUsers',
+        'canManageRoles'
+      ]
+    };
+    
+    // Check if user has required permission based on their roles
+    if (hasRole('admin') && permissions.admin.includes(permission)) return true;
+    if (hasRole('moderator') && permissions.moderator.includes(permission)) return true;
+    if (hasRole('user') && permissions.user.includes(permission)) return true;
+    
+    return false;
+  };
+  
+  if (!hasPermission(permission)) {
+    return <>{fallback}</>;
   }
-
+  
   return <>{children}</>;
-}
+};

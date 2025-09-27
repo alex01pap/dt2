@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Mock Socket.IO functionality for demonstration
 // In a real app, this would connect to actual Socket.IO server
@@ -20,11 +20,11 @@ export function useLiveSocket(): UseLiveSocketReturn {
   const [isConnected, setIsConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState<LiveSocketData | null>(null);
   const [connectionCount, setConnectionCount] = useState(0);
-  const { isAuthenticated, user } = useAuthStore();
+  const { user } = useAuth();
 
   // Mock connection establishment
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!user) {
       setIsConnected(false);
       return;
     }
@@ -36,7 +36,7 @@ export function useLiveSocket(): UseLiveSocketReturn {
     }, 1000);
 
     return () => clearTimeout(connectTimeout);
-  }, [isAuthenticated]);
+  }, [user]);
 
   // Mock incoming messages
   useEffect(() => {

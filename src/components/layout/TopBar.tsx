@@ -15,10 +15,10 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { CommandPalette } from "./CommandPalette";
 import { Breadcrumbs } from "./Breadcrumbs";
-import { useAuthStore } from "@/stores/authStore";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function TopBar() {
-  const { user, logout } = useAuthStore();
+  const { user, profile, signOut, userRoles } = useAuth();
   const [commandOpen, setCommandOpen] = useState(false);
 
   return (
@@ -67,10 +67,9 @@ export function TopBar() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={user?.avatar} alt={user?.firstName} />
+                    <AvatarImage src={profile?.avatar_url || ''} alt={profile?.display_name || user?.email} />
                     <AvatarFallback className="bg-primary text-primary-foreground">
-                      {user?.firstName?.charAt(0)}
-                      {user?.lastName?.charAt(0)}
+                      {profile?.display_name?.charAt(0) || user?.email?.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -79,14 +78,18 @@ export function TopBar() {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      {user?.firstName} {user?.lastName}
+                      {profile?.display_name || user?.email}
                     </p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {user?.email}
                     </p>
-                    <p className="text-xs leading-none text-muted-foreground capitalize">
-                      {user?.role}
-                    </p>
+                    <div className="flex gap-1 mt-1">
+                      {userRoles.map((role, index) => (
+                        <span key={index} className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full capitalize">
+                          {role.role}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -99,7 +102,7 @@ export function TopBar() {
                   <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="text-destructive">
+                <DropdownMenuItem onClick={signOut} className="text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
