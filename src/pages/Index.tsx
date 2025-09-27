@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Building2, ArrowRight, Shield, BarChart3, Users, LogIn, UserPlus, Cpu, Layers } from "lucide-react";
+import { Building2, ArrowRight, Shield, BarChart3, Users, LogIn, UserPlus, Cpu, Layers, GitBranch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -86,6 +86,19 @@ const Index = () => {
             >
               <LogIn className="mr-2 h-5 w-5" />
               Sign In
+            </Button>
+          </div>
+
+          {/* Platform Status Link for Developers */}
+          <div className="pt-6">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/status')}
+              className="text-muted-foreground hover:text-primary"
+            >
+              <GitBranch className="mr-2 h-4 w-4" />
+              View Platform Status
             </Button>
           </div>
         </motion.div>

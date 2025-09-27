@@ -18,6 +18,7 @@ import Playbook from "./pages/Playback";
 import Tutorials from "./pages/Tutorials";
 import Admin from "./pages/Admin";
 import DigitalTwin from "./pages/DigitalTwin";
+import PlatformStatus from "./pages/PlatformStatus";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -113,16 +114,26 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/admin" 
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <Admin />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              } 
-            />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Admin />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/status" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <PlatformStatus />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

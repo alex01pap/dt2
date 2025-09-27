@@ -8,6 +8,7 @@ import {
   GraduationCap,
   ShieldCheck,
   Building2,
+  GitBranch,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -66,6 +67,12 @@ const simulationItems = [
 ];
 
 const systemItems = [
+  { 
+    title: "Platform Status", 
+    url: "/status", 
+    icon: GitBranch,
+    description: "Development status"
+  },
   { 
     title: "Tutorials", 
     url: "/tutorials", 
