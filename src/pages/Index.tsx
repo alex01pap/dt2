@@ -90,7 +90,16 @@ const Index = () => {
           </div>
 
           {/* Platform Status Link for Developers */}
-          <div className="pt-6">
+          <div className="pt-6 flex flex-col sm:flex-row gap-2 justify-center">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/architecture')}
+              className="text-muted-foreground hover:text-primary"
+            >
+              <Layers className="mr-2 h-4 w-4" />
+              Platform Architecture
+            </Button>
             <Button 
               variant="ghost" 
               size="sm"
@@ -98,7 +107,7 @@ const Index = () => {
               className="text-muted-foreground hover:text-primary"
             >
               <GitBranch className="mr-2 h-4 w-4" />
-              View Platform Status
+              Development Status
             </Button>
           </div>
         </motion.div>

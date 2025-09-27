@@ -19,6 +19,7 @@ import Tutorials from "./pages/Tutorials";
 import Admin from "./pages/Admin";
 import DigitalTwin from "./pages/DigitalTwin";
 import PlatformStatus from "./pages/PlatformStatus";
+import Architecture from "./pages/Architecture";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -134,7 +135,13 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
-            <Route path="*" element={<NotFound />} />
+              <Route 
+                path="/architecture" 
+                element={
+                  <Architecture />
+                } 
+              />
+              <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
         </AuthProvider>

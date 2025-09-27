@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Building2,
   GitBranch,
+  Layers,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -67,6 +68,12 @@ const simulationItems = [
 ];
 
 const systemItems = [
+  { 
+    title: "Architecture", 
+    url: "/architecture", 
+    icon: Layers,
+    description: "Platform overview"
+  },
   { 
     title: "Platform Status", 
     url: "/status", 
