@@ -1,161 +1,264 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { ArrowLeft, Settings, Play, Pause, RotateCcw, Maximize } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { CardSkeleton } from "@/components/ui/card-grid";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import { TwinViewer } from '@/components/twin/TwinViewer';
+import { TwinSidePanel } from '@/components/twin/TwinSidePanel';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { 
+  Settings, 
+  RefreshCw, 
+  Maximize2,
+  AlertTriangle,
+  CheckCircle
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Vector3 } from 'three';
+
+// Mock data - in real app this would come from API
+const mockSensorData = [
+  {
+    id: 'temp_room_a',
+    name: 'Room A Temp',
+    type: 'temperature',
+    position: [-5, 0, -3] as [number, number, number],
+    value: 22.5,
+    unit: '°C',
+    status: 'normal' as const,
+    lastUpdated: new Date(),
+  },
+  {
+    id: 'temp_room_b', 
+    name: 'Room B Temp',
+    type: 'temperature',
+    position: [5, 0, -3] as [number, number, number],
+    value: 24.8,
+    unit: '°C',
+    status: 'warning' as const,
+    lastUpdated: new Date(),
+  },
+  {
+    id: 'humidity_room_a',
+    name: 'Room A Humidity',
+    type: 'humidity',
+    position: [-3, 0, -1] as [number, number, number],
+    value: 45.2,
+    unit: '%',
+    status: 'normal' as const,
+    lastUpdated: new Date(),
+  },
+  {
+    id: 'hvac_power',
+    name: 'HVAC Power',
+    type: 'power',
+    position: [0, 1.5, 5] as [number, number, number],
+    value: 3.4,
+    unit: 'kW',
+    status: 'normal' as const,
+    lastUpdated: new Date(),
+  },
+  {
+    id: 'pressure_loop',
+    name: 'Loop Pressure',
+    type: 'pressure',
+    position: [2, 0, 3] as [number, number, number],
+    value: 157.2,
+    unit: 'kPa',
+    status: 'critical' as const,
+    lastUpdated: new Date(),
+  },
+];
+
+const mockHeatData = [
+  { x: -5, y: -3, temperature: 22.5 },
+  { x: 5, y: -3, temperature: 24.8 },
+  { x: 0, y: 0, temperature: 23.1 },
+  { x: -3, y: 2, temperature: 21.9 },
+  { x: 3, y: 2, temperature: 25.2 },
+];
+
+const mockFlowPipes = [
+  {
+    id: 'chilled_water',
+    path: [
+      new Vector3(0, 1.5, 5),
+      new Vector3(-5, 1, 0),
+      new Vector3(5, 1, 0),
+    ],
+    flowRate: 12.5,
+    pressure: 220,
+    status: 'normal' as const,
+  },
+  {
+    id: 'air_distribution',
+    path: [
+      new Vector3(0, 2.5, 5),
+      new Vector3(-5, 2.5, -3),
+      new Vector3(5, 2.5, -3),
+    ],
+    flowRate: 8.3,
+    pressure: 180,
+    status: 'warning' as const,
+  },
+];
+
+// Generate 24h sparkline data
+const generateSparklineData = (baseValue: number, variance: number = 2) => {
+  return Array.from({ length: 24 * 4 }, (_, i) => ({
+    timestamp: new Date(Date.now() - (24 * 60 * 60 * 1000) + (i * 15 * 60 * 1000)),
+    value: baseValue + (Math.random() - 0.5) * variance,
+  }));
+};
+
+const mockSensorMetrics = mockSensorData.map(sensor => ({
+  id: sensor.id,
+  name: sensor.name,
+  type: sensor.type,
+  currentValue: sensor.value,
+  unit: sensor.unit,
+  status: sensor.status,
+  trend: (Math.random() > 0.5 ? 'up' : Math.random() > 0.5 ? 'down' : 'stable') as 'up' | 'down' | 'stable',
+  trendPercent: Math.random() * 10,
+  sparklineData: generateSparklineData(sensor.value),
+  thresholds: sensor.type === 'temperature' ? { warning: 25, critical: 28 } :
+              sensor.type === 'pressure' ? { warning: 150, critical: 180 } :
+              undefined,
+}));
+
+const mockSystemStatus = {
+  overall: 'degraded' as 'healthy' | 'degraded' | 'critical',
+  uptime: 156 * 3600, // 156 hours
+  lastUpdated: new Date(),
+  activeAlerts: 2,
+  totalSensors: mockSensorData.length,
+  onlineSensors: mockSensorData.filter(s => s.status !== 'critical').length,
+};
 
 export default function DigitalTwin() {
-  const { id } = useParams();
-  const [isLoading] = useState(false);
-  const [isRunning, setIsRunning] = useState(false);
+  const { id } = useParams<{ id: string }>();
+  const [loading, setLoading] = useState(true);
+  const [sidePanelOpen, setSidePanelOpen] = useState(true);
+  const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  if (isLoading) {
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, [id]);
+
+  const twinName = useMemo(() => {
+    const twinNames = {
+      '1': 'Demo Building',
+      '2': 'Manufacturing Plant A',
+      '3': 'Office Complex B',
+    };
+    return twinNames[id as keyof typeof twinNames] || `Twin ${id}`;
+  }, [id]);
+
+  if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/assets">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Digital Twin</h1>
-            <p className="text-muted-foreground">Loading twin configuration...</p>
+      <div className="flex h-full">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-48 mx-auto" />
+              <Skeleton className="h-3 w-32 mx-auto" />
+            </div>
           </div>
         </div>
         
-        <div className="grid gap-6">
-          <CardSkeleton className="h-64" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
+        {sidePanelOpen && (
+          <div className="w-80 border-l p-4 space-y-4">
+            <Skeleton className="h-8 w-full" />
+            <div className="space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-24 w-full" />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/assets">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Digital Twin #{id}</h1>
-            <p className="text-muted-foreground">Interactive digital replica and simulation environment</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Badge variant={isRunning ? "default" : "secondary"}>
-            {isRunning ? "Running" : "Stopped"}
-          </Badge>
-          <Button variant="outline" size="sm">
-            <Settings className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Twin Viewer */}
-      <Card className="card-enterprise">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>3D Twin Environment</CardTitle>
-              <CardDescription>Real-time digital twin visualization and interaction</CardDescription>
-            </div>
+    <div className="flex h-full">
+      {/* Main Viewer */}
+      <div className={cn(
+        "flex-1 relative",
+        isFullscreen && "fixed inset-0 z-50 bg-background"
+      )}>
+        {/* Top Controls */}
+        <div className="absolute top-4 right-4 z-10 flex gap-2">
+          <Card className="p-2">
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsRunning(!isRunning)}
-              >
-                {isRunning ? (
-                  <Pause className="h-4 w-4" />
-                ) : (
-                  <Play className="h-4 w-4" />
-                )}
-              </Button>
-              <Button variant="outline" size="sm">
-                <RotateCcw className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="sm">
-                <Maximize className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="aspect-video bg-muted/20 rounded-lg flex items-center justify-center border-2 border-dashed border-muted">
-            <div className="text-center text-muted-foreground">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Settings className="h-8 w-8 text-primary" />
-              </div>
-              <p className="font-medium">Digital Twin Viewer</p>
-              <p className="text-sm">3D environment will be displayed here</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Twin Properties */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card className="card-enterprise">
-          <CardHeader>
-            <CardTitle className="text-base">Twin Properties</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">ID:</span>
-              <span className="text-sm font-medium">{id}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Status:</span>
-              <Badge variant={isRunning ? "default" : "secondary"} className="text-xs">
-                {isRunning ? "Active" : "Inactive"}
+              <Badge variant="outline" className="text-xs">
+                {twinName}
               </Badge>
+              {mockSystemStatus.overall === 'healthy' ? (
+                <CheckCircle className="h-4 w-4 text-success" />
+              ) : (
+                <AlertTriangle className="h-4 w-4 text-warning" />
+              )}
             </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Created:</span>
-              <span className="text-sm">Just now</span>
+          </Card>
+          
+          <Card className="p-2">
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={() => window.location.reload()}
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={() => setSidePanelOpen(!sidePanelOpen)}
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm" 
+                className="h-8 w-8 p-0"
+                onClick={() => setIsFullscreen(!isFullscreen)}
+              >
+                <Maximize2 className="h-4 w-4" />
+              </Button>
             </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Type:</span>
-              <span className="text-sm">Generic</span>
-            </div>
-          </CardContent>
-        </Card>
+          </Card>
+        </div>
 
-        <Card className="card-enterprise">
-          <CardHeader>
-            <CardTitle className="text-base">Connected Sensors</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-4 text-muted-foreground">
-              <p className="text-sm">No sensors connected</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="card-enterprise">
-          <CardHeader>
-            <CardTitle className="text-base">Recent Events</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-4 text-muted-foreground">
-              <p className="text-sm">No recent events</p>
-            </div>
-          </CardContent>
-        </Card>
+        {/* 3D Viewer */}
+        <TwinViewer
+          twinId={id!}
+          sensors={mockSensorData}
+          heatData={mockHeatData}
+          flowPipes={mockFlowPipes}
+          className="w-full h-full"
+        />
       </div>
+
+      {/* Side Panel */}
+      {sidePanelOpen && !isFullscreen && (
+        <div className="w-80 border-l bg-background">
+          <TwinSidePanel
+            twinId={id!}
+            sensors={mockSensorMetrics}
+            systemStatus={mockSystemStatus}
+            onSensorSelect={(sensorId) => setSelectedSensor(sensorId)}
+          />
+        </div>
+      )}
     </div>
   );
 }
