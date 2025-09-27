@@ -130,10 +130,9 @@ export default function Auth() {
                       <FormItem>
                         <FormLabel>Display Name</FormLabel>
                         <FormControl>
-                          <Input 
+                           <Input 
                             placeholder="John Doe" 
-                            {...field} 
-                            disabled={loading}
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -148,11 +147,10 @@ export default function Auth() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input 
+                           <Input 
                             type="email" 
                             placeholder="john@company.com" 
-                            {...field} 
-                            disabled={loading}
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -168,11 +166,10 @@ export default function Auth() {
                         <FormLabel>Password</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <Input 
+                             <Input 
                               type={showPassword ? "text" : "password"}
                               placeholder="Create a secure password"
-                              {...field} 
-                              disabled={loading}
+                              {...field}
                             />
                             <Button
                               type="button"
@@ -214,11 +211,10 @@ export default function Auth() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input 
+                           <Input 
                             type="email" 
                             placeholder="john@company.com" 
-                            {...field} 
-                            disabled={loading}
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -234,11 +230,10 @@ export default function Auth() {
                         <FormLabel>Password</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <Input 
+                             <Input 
                               type={showPassword ? "text" : "password"}
                               placeholder="Enter your password"
-                              {...field} 
-                              disabled={loading}
+                              {...field}
                             />
                             <Button
                               type="button"
