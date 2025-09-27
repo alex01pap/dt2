@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { TwinViewer } from '@/components/twin/TwinViewer';
 import { KPIWidget } from '@/components/analytics/KPIWidget';
 import { MiniAreaChart } from '@/components/dashboard/MiniAreaChart';
+import { DonutChart } from '@/components/charts/DonutChart';
+import { InteractiveProgressBar } from '@/components/charts/InteractiveProgressBar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -189,6 +191,37 @@ const alarmStatusData = [
   { name: 'Normal', value: 11, color: '#16a34a' },
 ];
 
+const systemHealthData = [
+  { 
+    label: 'CPU Usage', 
+    value: 34, 
+    color: 'hsl(var(--primary))', 
+    status: 'normal' as const,
+    unit: '%' 
+  },
+  { 
+    label: 'Memory', 
+    value: 67, 
+    color: 'hsl(var(--chart-2))', 
+    status: 'warning' as const,
+    unit: '%' 
+  },
+  { 
+    label: 'Storage', 
+    value: 23, 
+    color: 'hsl(var(--chart-3))', 
+    status: 'normal' as const,
+    unit: '%' 
+  },
+  { 
+    label: 'Network', 
+    value: 89, 
+    color: 'hsl(var(--chart-4))', 
+    status: 'critical' as const,
+    unit: '%' 
+  },
+];
+
 export default function DigitalTwin() {
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
@@ -324,32 +357,15 @@ export default function DigitalTwin() {
 
       {/* Main Dashboard Grid */}
       <div className="grid grid-cols-12 gap-6 flex-1 mb-6">
-        {/* Left Column - Alarm Status */}
+        {/* Left Column - Charts */}
         <div className="col-span-12 lg:col-span-2 space-y-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <PieChart className="h-4 w-4" />
-                Alarm Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {alarmStatusData.map((item) => (
-                  <div key={item.name} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: item.color }}
-                      />
-                      <span className="text-sm">{item.name}</span>
-                    </div>
-                    <span className="text-sm font-medium">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <DonutChart
+            title="Alarm Status"
+            data={alarmStatusData}
+            centerText="Total"
+            centerValue="14"
+            size="md"
+          />
 
           <Card>
             <CardHeader className="pb-2">
@@ -388,75 +404,31 @@ export default function DigitalTwin() {
           </Card>
         </div>
 
-        {/* Right Column - Charts */}
+        {/* Right Column - Enhanced Charts */}
         <div className="col-span-12 lg:col-span-2 space-y-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                Events/Day
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <MiniAreaChart
-                title="Events"
-                data={mockEventsData}
-                color="hsl(var(--primary))"
-              />
-            </CardContent>
-          </Card>
+          <MiniAreaChart
+            title="Events/Day"
+            data={mockEventsData}
+            color="hsl(var(--primary))"
+            unit="events"
+            showTrend={true}
+            animated={true}
+          />
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                Response Time
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <MiniAreaChart
-                title="Response"
-                data={mockResponseTimeData}
-                color="hsl(var(--chart-2))"
-              />
-              <div className="mt-2 text-xs text-muted-foreground">
-                Avg: 456ms
-              </div>
-            </CardContent>
-          </Card>
+          <MiniAreaChart
+            title="Response Time" 
+            data={mockResponseTimeData}
+            color="hsl(var(--chart-2))"
+            unit="ms"
+            showTrend={true}
+            animated={true}
+          />
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">System Health</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs">CPU</span>
-                  <span className="text-xs font-medium">34%</span>
-                </div>
-                <div className="w-full bg-muted h-2 rounded-full">
-                  <div className="bg-primary h-2 rounded-full" style={{ width: '34%' }} />
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-xs">Memory</span>
-                  <span className="text-xs font-medium">67%</span>
-                </div>
-                <div className="w-full bg-muted h-2 rounded-full">
-                  <div className="bg-chart-2 h-2 rounded-full" style={{ width: '67%' }} />
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-xs">Storage</span>
-                  <span className="text-xs font-medium">23%</span>
-                </div>
-                <div className="w-full bg-muted h-2 rounded-full">
-                  <div className="bg-chart-3 h-2 rounded-full" style={{ width: '23%' }} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <InteractiveProgressBar
+            title="System Health"
+            items={systemHealthData}
+            animated={true}
+          />
         </div>
       </div>
 
