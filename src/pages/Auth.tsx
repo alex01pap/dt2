@@ -1,30 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Eye, EyeOff, Building2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-
-const signInSchema = z.object({
-  email: z.string().trim().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-});
-
-const signUpSchema = z.object({
-  email: z.string().trim().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  displayName: z.string().trim().min(2, { message: "Display name must be at least 2 characters" }).max(50, { message: "Display name must be less than 50 characters" }),
-});
-
-type SignInForm = z.infer<typeof signInSchema>;
-type SignUpForm = z.infer<typeof signUpSchema>;
+import { useToast } from '@/hooks/use-toast';
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -33,23 +17,22 @@ export default function Auth() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { signIn, signUp, user } = useAuth();
+  const { toast } = useToast();
 
-  const signInForm = useForm<SignInForm>({
-    resolver: zodResolver(signInSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+  // Simple form states for Sign Up
+  const [signUpData, setSignUpData] = useState({
+    displayName: '',
+    email: '',
+    password: ''
   });
 
-  const signUpForm = useForm<SignUpForm>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      displayName: '',
-    },
+  // Simple form states for Sign In  
+  const [signInData, setSignInData] = useState({
+    email: '',
+    password: ''
   });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Check URL params for mode
   useEffect(() => {
@@ -66,11 +49,93 @@ export default function Auth() {
     }
   }, [user, navigate]);
 
-  const handleSignIn = async (data: SignInForm) => {
+  const validateSignUp = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!signUpData.displayName.trim() || signUpData.displayName.trim().length < 2) {
+      newErrors.displayName = 'Display name must be at least 2 characters';
+    }
+    
+    if (!signUpData.email.trim() || !signUpData.email.includes('@')) {
+      newErrors.email = 'Invalid email address';
+    }
+    
+    if (!signUpData.password || signUpData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateSignIn = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!signInData.email.trim() || !signInData.email.includes('@')) {
+      newErrors.email = 'Invalid email address';
+    }
+    
+    if (!signInData.password || signInData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Sign up form submitted');
+    
+    if (!validateSignUp()) {
+      toast({
+        title: "Validation Error",
+        description: "Please check your input fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSubmitting(true);
     try {
-      console.log('Attempting sign in with:', data.email);
-      const { error } = await signIn(data.email, data.password);
+      console.log('Attempting sign up with:', signUpData.email, signUpData.displayName);
+      const { error } = await signUp(signUpData.email, signUpData.password, signUpData.displayName);
+      if (!error) {
+        console.log('Sign up successful');
+        toast({
+          title: "Success!",
+          description: "Check your email to confirm your account",
+        });
+        // Switch to sign in mode and clear form
+        setIsSignUp(false);
+        setSignUpData({ displayName: '', email: '', password: '' });
+      } else {
+        console.error('Sign up error:', error);
+      }
+    } catch (error) {
+      console.error('Sign up exception:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Sign in form submitted');
+    
+    if (!validateSignIn()) {
+      toast({
+        title: "Validation Error", 
+        description: "Please check your input fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      console.log('Attempting sign in with:', signInData.email);
+      const { error } = await signIn(signInData.email, signInData.password);
       if (!error) {
         console.log('Sign in successful');
         navigate('/dashboard');
@@ -79,26 +144,6 @@ export default function Auth() {
       }
     } catch (error) {
       console.error('Sign in exception:', error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleSignUp = async (data: SignUpForm) => {
-    setSubmitting(true);
-    try {
-      console.log('Attempting sign up with:', data.email, data.displayName);
-      const { error } = await signUp(data.email, data.password, data.displayName);
-      if (!error) {
-        console.log('Sign up successful');
-        // Don't navigate immediately, user needs to confirm email
-        setIsSignUp(false);
-        signUpForm.reset();
-      } else {
-        console.error('Sign up error:', error);
-      }
-    } catch (error) {
-      console.error('Sign up exception:', error);
     } finally {
       setSubmitting(false);
     }
@@ -133,148 +178,152 @@ export default function Auth() {
           
           <CardContent className="space-y-4">
             {isSignUp ? (
-              <Form {...signUpForm}>
-                <form onSubmit={signUpForm.handleSubmit(handleSignUp)} className="space-y-4">
-                  <FormField
-                    control={signUpForm.control}
-                    name="displayName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Display Name</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="John Doe" 
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="displayName">Display Name</Label>
+                  <Input
+                    id="displayName"
+                    type="text"
+                    placeholder="John Doe"
+                    value={signUpData.displayName}
+                    onChange={(e) => {
+                      console.log('Display name changed:', e.target.value);
+                      setSignUpData(prev => ({...prev, displayName: e.target.value}));
+                      // Clear error when user starts typing
+                      if (errors.displayName) {
+                        setErrors(prev => ({...prev, displayName: ''}));
+                      }
+                    }}
                   />
-                  
-                  <FormField
-                    control={signUpForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="email" 
-                            placeholder="john@company.com" 
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                  {errors.displayName && (
+                    <p className="text-sm text-destructive">{errors.displayName}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signUpEmail">Email</Label>
+                  <Input
+                    id="signUpEmail"
+                    type="email"
+                    placeholder="john@company.com"
+                    value={signUpData.email}
+                    onChange={(e) => {
+                      console.log('Email changed:', e.target.value);
+                      setSignUpData(prev => ({...prev, email: e.target.value}));
+                      // Clear error when user starts typing
+                      if (errors.email) {
+                        setErrors(prev => ({...prev, email: ''}));
+                      }
+                    }}
                   />
-                  
-                  <FormField
-                    control={signUpForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input 
-                              type={showPassword ? "text" : "password"}
-                              placeholder="Create a secure password"
-                              {...field}
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
-                              {showPassword ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full btn-enterprise" 
-                    disabled={submitting}
-                  >
-                    {submitting ? 'Creating Account...' : 'Create Account'}
-                  </Button>
-                </form>
-              </Form>
+                  {errors.email && (
+                    <p className="text-sm text-destructive">{errors.email}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signUpPassword">Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="signUpPassword"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Create a secure password"
+                      value={signUpData.password}
+                      onChange={(e) => {
+                        console.log('Password changed, length:', e.target.value.length);
+                        setSignUpData(prev => ({...prev, password: e.target.value}));
+                        // Clear error when user starts typing
+                        if (errors.password) {
+                          setErrors(prev => ({...prev, password: ''}));
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-sm text-destructive">{errors.password}</p>
+                  )}
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full btn-enterprise" 
+                  disabled={submitting}
+                >
+                  {submitting ? 'Creating Account...' : 'Create Account'}
+                </Button>
+              </form>
             ) : (
-              <Form {...signInForm}>
-                <form onSubmit={signInForm.handleSubmit(handleSignIn)} className="space-y-4">
-                  <FormField
-                    control={signInForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="email" 
-                            placeholder="john@company.com" 
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signInEmail">Email</Label>
+                  <Input
+                    id="signInEmail"
+                    type="email"
+                    placeholder="john@company.com"
+                    value={signInData.email}
+                    onChange={(e) => {
+                      console.log('Sign in email changed:', e.target.value);
+                      setSignInData(prev => ({...prev, email: e.target.value}));
+                      // Clear error when user starts typing
+                      if (errors.email) {
+                        setErrors(prev => ({...prev, email: ''}));
+                      }
+                    }}
                   />
-                  
-                  <FormField
-                    control={signInForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input 
-                              type={showPassword ? "text" : "password"}
-                              placeholder="Enter your password"
-                              {...field}
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
-                              {showPassword ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full btn-enterprise" 
-                    disabled={submitting}
-                  >
-                    {submitting ? 'Signing In...' : 'Sign In'}
-                  </Button>
-                </form>
-              </Form>
+                  {errors.email && (
+                    <p className="text-sm text-destructive">{errors.email}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signInPassword">Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="signInPassword"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      value={signInData.password}
+                      onChange={(e) => {
+                        console.log('Sign in password changed, length:', e.target.value.length);
+                        setSignInData(prev => ({...prev, password: e.target.value}));
+                        // Clear error when user starts typing
+                        if (errors.password) {
+                          setErrors(prev => ({...prev, password: ''}));
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-sm text-destructive">{errors.password}</p>
+                  )}
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full btn-enterprise" 
+                  disabled={submitting}
+                >
+                  {submitting ? 'Signing In...' : 'Sign In'}
+                </Button>
+              </form>
             )}
 
             <Separator />
@@ -284,9 +333,11 @@ export default function Auth() {
                 type="button"
                 variant="ghost"
                 onClick={() => {
+                  console.log('Switching mode to:', !isSignUp ? 'Sign Up' : 'Sign In');
                   setIsSignUp(!isSignUp);
-                  signInForm.reset();
-                  signUpForm.reset();
+                  setSignInData({ email: '', password: '' });
+                  setSignUpData({ displayName: '', email: '', password: '' });
+                  setErrors({});
                 }}
                 disabled={submitting}
               >
@@ -312,11 +363,22 @@ export default function Auth() {
         </Card>
         
         {/* Debug info */}
-        <Card className="bg-muted/50">
-          <CardContent className="p-2 text-center">
+        <Card className="bg-muted/50 border-2 border-primary">
+          <CardContent className="p-2 text-center space-y-1">
+            <p className="text-xs font-bold text-primary">DEBUG INFO:</p>
             <p className="text-xs text-muted-foreground">
-              Debug: Form Mode = {isSignUp ? 'Sign Up' : 'Sign In'} | Submitting = {submitting ? 'Yes' : 'No'}
+              Mode: {isSignUp ? 'Sign Up' : 'Sign In'} | Submitting: {submitting ? 'Yes' : 'No'}
             </p>
+            {isSignUp && (
+              <p className="text-xs text-muted-foreground">
+                Name: "{signUpData.displayName}" | Email: "{signUpData.email}" | Pass: {signUpData.password.length} chars
+              </p>
+            )}
+            {!isSignUp && (
+              <p className="text-xs text-muted-foreground">
+                Email: "{signInData.email}" | Pass: {signInData.password.length} chars  
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
