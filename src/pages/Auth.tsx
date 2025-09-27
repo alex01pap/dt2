@@ -29,7 +29,7 @@ type SignUpForm = z.infer<typeof signUpSchema>;
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { signIn, signUp, user } = useAuth();
@@ -67,28 +67,40 @@ export default function Auth() {
   }, [user, navigate]);
 
   const handleSignIn = async (data: SignInForm) => {
-    setLoading(true);
+    setSubmitting(true);
     try {
+      console.log('Attempting sign in with:', data.email);
       const { error } = await signIn(data.email, data.password);
       if (!error) {
+        console.log('Sign in successful');
         navigate('/dashboard');
+      } else {
+        console.error('Sign in error:', error);
       }
+    } catch (error) {
+      console.error('Sign in exception:', error);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
   const handleSignUp = async (data: SignUpForm) => {
-    setLoading(true);
+    setSubmitting(true);
     try {
+      console.log('Attempting sign up with:', data.email, data.displayName);
       const { error } = await signUp(data.email, data.password, data.displayName);
       if (!error) {
+        console.log('Sign up successful');
         // Don't navigate immediately, user needs to confirm email
         setIsSignUp(false);
         signUpForm.reset();
+      } else {
+        console.error('Sign up error:', error);
       }
+    } catch (error) {
+      console.error('Sign up exception:', error);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -130,7 +142,7 @@ export default function Auth() {
                       <FormItem>
                         <FormLabel>Display Name</FormLabel>
                         <FormControl>
-                           <Input 
+                          <Input 
                             placeholder="John Doe" 
                             {...field}
                           />
@@ -147,7 +159,7 @@ export default function Auth() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                           <Input 
+                          <Input 
                             type="email" 
                             placeholder="john@company.com" 
                             {...field}
@@ -166,7 +178,7 @@ export default function Auth() {
                         <FormLabel>Password</FormLabel>
                         <FormControl>
                           <div className="relative">
-                             <Input 
+                            <Input 
                               type={showPassword ? "text" : "password"}
                               placeholder="Create a secure password"
                               {...field}
@@ -177,7 +189,6 @@ export default function Auth() {
                               size="sm"
                               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                               onClick={() => setShowPassword(!showPassword)}
-                              disabled={loading}
                             >
                               {showPassword ? (
                                 <EyeOff className="h-4 w-4" />
@@ -195,9 +206,9 @@ export default function Auth() {
                   <Button 
                     type="submit" 
                     className="w-full btn-enterprise" 
-                    disabled={loading}
+                    disabled={submitting}
                   >
-                    {loading ? 'Creating Account...' : 'Create Account'}
+                    {submitting ? 'Creating Account...' : 'Create Account'}
                   </Button>
                 </form>
               </Form>
@@ -211,7 +222,7 @@ export default function Auth() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                           <Input 
+                          <Input 
                             type="email" 
                             placeholder="john@company.com" 
                             {...field}
@@ -230,7 +241,7 @@ export default function Auth() {
                         <FormLabel>Password</FormLabel>
                         <FormControl>
                           <div className="relative">
-                             <Input 
+                            <Input 
                               type={showPassword ? "text" : "password"}
                               placeholder="Enter your password"
                               {...field}
@@ -241,7 +252,6 @@ export default function Auth() {
                               size="sm"
                               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                               onClick={() => setShowPassword(!showPassword)}
-                              disabled={loading}
                             >
                               {showPassword ? (
                                 <EyeOff className="h-4 w-4" />
@@ -259,9 +269,9 @@ export default function Auth() {
                   <Button 
                     type="submit" 
                     className="w-full btn-enterprise" 
-                    disabled={loading}
+                    disabled={submitting}
                   >
-                    {loading ? 'Signing In...' : 'Sign In'}
+                    {submitting ? 'Signing In...' : 'Sign In'}
                   </Button>
                 </form>
               </Form>
@@ -278,7 +288,7 @@ export default function Auth() {
                   signInForm.reset();
                   signUpForm.reset();
                 }}
-                disabled={loading}
+                disabled={submitting}
               >
                 {isSignUp 
                   ? 'Already have an account? Sign In' 
@@ -297,6 +307,15 @@ export default function Auth() {
             </Badge>
             <p className="text-sm text-muted-foreground">
               Create an account to access the industrial IoT platform features
+            </p>
+          </CardContent>
+        </Card>
+        
+        {/* Debug info */}
+        <Card className="bg-muted/50">
+          <CardContent className="p-2 text-center">
+            <p className="text-xs text-muted-foreground">
+              Debug: Form Mode = {isSignUp ? 'Sign Up' : 'Sign In'} | Submitting = {submitting ? 'Yes' : 'No'}
             </p>
           </CardContent>
         </Card>
