@@ -163,7 +163,7 @@
 @layer components {
   /* Enterprise Component Variants */
   .btn-hero {
-    @apply bg-gradient-to-r from-primary to-purple-600 text-primary-foreground shadow-elegant hover:shadow-lg transition-all duration-300 hover:scale-[1.02];
+    @apply bg-gradient-to-r from-primary to-purple-600 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02];
   }
   
   .btn-enterprise {
