@@ -1,11 +1,130 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Building2, ArrowRight, Shield, BarChart3, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useAuthStore } from "@/stores/authStore";
 
 const Index = () => {
+  const { isAuthenticated } = useAuthStore();
+  
+  // Redirect to dashboard if already authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const features = [
+    {
+      icon: Shield,
+      title: "Enterprise Security",
+      description: "Advanced security features with role-based access control"
+    },
+    {
+      icon: BarChart3,
+      title: "Real-time Analytics", 
+      description: "Comprehensive dashboards and reporting tools"
+    },
+    {
+      icon: Users,
+      title: "Team Management",
+      description: "Efficiently manage users, roles, and permissions"
+    }
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      {/* Hero Section */}
+      <div className="container mx-auto px-4 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center space-y-6 max-w-4xl mx-auto"
+        >
+          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
+            <Building2 className="h-10 w-10 text-white" />
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-foreground via-primary to-purple-600 bg-clip-text text-transparent">
+            Enterprise Dashboard
+          </h1>
+          
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            A modern, scalable dashboard built with React, TypeScript, and enterprise-grade components. 
+            Secure authentication, real-time data, and beautiful design.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
+            <Button 
+              size="lg" 
+              className="btn-hero text-lg px-8 py-6 h-auto"
+              onClick={() => window.location.href = '/dashboard'}
+            >
+              Get Started
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="text-lg px-8 py-6 h-auto border-primary/20 hover:bg-primary/5"
+            >
+              View Demo
+            </Button>
+          </div>
+        </motion.div>
+
+        {/* Features Grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-24 grid md:grid-cols-3 gap-8"
+        >
+          {features.map((feature, index) => (
+            <motion.div
+              key={feature.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
+            >
+              <Card className="card-enterprise h-full">
+                <CardContent className="p-6 text-center space-y-4">
+                  <div className="w-12 h-12 mx-auto rounded-lg bg-primary/10 flex items-center justify-center">
+                    <feature.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Stats Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="mt-24 grid md:grid-cols-4 gap-8 text-center"
+        >
+          <div>
+            <div className="text-3xl font-bold text-primary">99.9%</div>
+            <div className="text-sm text-muted-foreground">Uptime</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-primary">50k+</div>
+            <div className="text-sm text-muted-foreground">Active Users</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-primary">24/7</div>
+            <div className="text-sm text-muted-foreground">Support</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-primary">SOC 2</div>
+            <div className="text-sm text-muted-foreground">Compliant</div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
