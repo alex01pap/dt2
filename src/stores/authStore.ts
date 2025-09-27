@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { User, AuthState, LoginFormData, RegisterFormData } from '@/types/auth';
+import type { User, AuthState, LoginFormData, RegisterFormData, UserRole } from '@/types/auth';
 
 interface AuthActions {
   login: (credentials: LoginFormData) => Promise<void>;
@@ -19,7 +19,7 @@ const mockUser: User = {
   email: 'admin@company.com',
   firstName: 'John',
   lastName: 'Doe',
-  role: 'admin',
+  role: 'owner',
   avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
   createdAt: new Date(),
   lastLoginAt: new Date(),
@@ -73,7 +73,7 @@ export const useAuthStore = create<AuthStore>()(
             email: data.email,
             firstName: data.firstName,
             lastName: data.lastName,
-            role: 'user',
+            role: 'member',
             createdAt: new Date(),
           };
           

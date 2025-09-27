@@ -8,6 +8,14 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
+import Assets from "./pages/Assets";
+import Sensors from "./pages/Sensors";
+import Rules from "./pages/Rules";
+import Scenarios from "./pages/Scenarios";
+import Playbook from "./pages/Playback";
+import Tutorials from "./pages/Tutorials";
+import Admin from "./pages/Admin";
+import DigitalTwin from "./pages/DigitalTwin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,58 +40,85 @@ const App = () => (
               } 
             />
             <Route 
-              path="/analytics" 
+              path="/assets" 
               element={
                 <ProtectedRoute>
                   <DashboardLayout>
-                    <div className="text-center py-12">
-                      <h1 className="text-2xl font-bold mb-4">Analytics</h1>
-                      <p className="text-muted-foreground">Analytics page coming soon...</p>
-                    </div>
+                    <Assets />
                   </DashboardLayout>
                 </ProtectedRoute>
               } 
             />
             <Route 
-              path="/users" 
+              path="/twin/:id" 
               element={
                 <ProtectedRoute>
                   <DashboardLayout>
-                    <div className="text-center py-12">
-                      <h1 className="text-2xl font-bold mb-4">Users</h1>
-                      <p className="text-muted-foreground">User management coming soon...</p>
-                    </div>
+                    <DigitalTwin />
                   </DashboardLayout>
                 </ProtectedRoute>
               } 
             />
             <Route 
-              path="/reports" 
+              path="/sensors" 
               element={
                 <ProtectedRoute>
                   <DashboardLayout>
-                    <div className="text-center py-12">
-                      <h1 className="text-2xl font-bold mb-4">Reports</h1>
-                      <p className="text-muted-foreground">Reports coming soon...</p>
-                    </div>
+                    <Sensors />
                   </DashboardLayout>
                 </ProtectedRoute>
               } 
             />
             <Route 
-              path="/settings" 
+              path="/rules" 
               element={
                 <ProtectedRoute>
                   <DashboardLayout>
-                    <div className="text-center py-12">
-                      <h1 className="text-2xl font-bold mb-4">Settings</h1>
-                      <p className="text-muted-foreground">Settings coming soon...</p>
-                    </div>
+                    <Rules />
                   </DashboardLayout>
                 </ProtectedRoute>
               } 
             />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route 
+              path="/scenarios" 
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <Scenarios />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/playback" 
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <Playbook />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/tutorials" 
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <Tutorials />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout>
+                    <Admin />
+                  </DashboardLayout>
+                </ProtectedRoute>
+              } 
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

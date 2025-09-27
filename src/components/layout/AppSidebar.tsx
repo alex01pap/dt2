@@ -1,12 +1,13 @@
 import { 
   LayoutDashboard, 
-  Users, 
-  Settings, 
-  BarChart3, 
-  FileText, 
-  Shield,
+  Boxes,
+  Cpu,
+  Settings,
+  Workflow,
+  Play,
+  GraduationCap,
+  ShieldCheck,
   Building2,
-  CreditCard 
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -27,55 +28,55 @@ const mainNavItems = [
     title: "Dashboard", 
     url: "/dashboard", 
     icon: LayoutDashboard,
-    description: "Overview and metrics"
+    description: "System overview"
   },
   { 
-    title: "Analytics", 
-    url: "/analytics", 
-    icon: BarChart3,
-    description: "Data insights"
+    title: "Assets", 
+    url: "/assets", 
+    icon: Boxes,
+    description: "Digital assets"
   },
   { 
-    title: "Users", 
-    url: "/users", 
-    icon: Users,
-    description: "User management"
+    title: "Sensors", 
+    url: "/sensors", 
+    icon: Cpu,
+    description: "IoT sensors"
   },
   { 
-    title: "Reports", 
-    url: "/reports", 
-    icon: FileText,
-    description: "Generate reports"
+    title: "Rules", 
+    url: "/rules", 
+    icon: Settings,
+    description: "Automation rules"
   },
 ];
 
-const organizationItems = [
+const simulationItems = [
   { 
-    title: "Company", 
-    url: "/company", 
-    icon: Building2,
-    description: "Organization settings"
+    title: "Scenarios", 
+    url: "/scenarios", 
+    icon: Workflow,
+    description: "Test scenarios"
   },
   { 
-    title: "Billing", 
-    url: "/billing", 
-    icon: CreditCard,
-    description: "Manage subscription"
+    title: "Playback", 
+    url: "/playback", 
+    icon: Play,
+    description: "Historical data"
   },
 ];
 
 const systemItems = [
   { 
-    title: "Security", 
-    url: "/security", 
-    icon: Shield,
-    description: "Security settings"
+    title: "Tutorials", 
+    url: "/tutorials", 
+    icon: GraduationCap,
+    description: "Learning guides"
   },
   { 
-    title: "Settings", 
-    url: "/settings", 
-    icon: Settings,
-    description: "Application settings"
+    title: "Admin", 
+    url: "/admin", 
+    icon: ShieldCheck,
+    description: "System admin"
   },
 ];
 
@@ -142,15 +143,15 @@ export function AppSidebar() {
             </div>
             {!isCollapsed && (
               <div>
-                <h1 className="font-semibold text-sidebar-foreground">Enterprise</h1>
-                <p className="text-xs text-sidebar-foreground/70">Dashboard</p>
+                <h1 className="font-semibold text-sidebar-foreground">Digital Twin</h1>
+                <p className="text-xs text-sidebar-foreground/70">Platform</p>
               </div>
             )}
           </div>
         </div>
         
         <SidebarNavGroup items={mainNavItems} label="Main" />
-        <SidebarNavGroup items={organizationItems} label="Organization" />
+        <SidebarNavGroup items={simulationItems} label="Simulation" />
         <SidebarNavGroup items={systemItems} label="System" />
       </SidebarContent>
     </Sidebar>

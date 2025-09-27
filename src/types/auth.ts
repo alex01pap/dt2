@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+export type UserRole = 'owner' | 'admin' | 'member';
+
 // Authentication Schemas
 export const LoginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -26,7 +28,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'user' | 'manager';
+  role: UserRole;
   avatar?: string;
   createdAt: Date;
   lastLoginAt?: Date;
