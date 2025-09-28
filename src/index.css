@@ -196,4 +196,13 @@
   .border-gradient {
     @apply border border-transparent bg-gradient-to-r from-primary/20 to-purple-600/20;
   }
+
+  .glow-text {
+    text-shadow: 0 0 10px rgba(34, 211, 238, 0.5), 0 0 20px rgba(34, 211, 238, 0.3), 0 0 30px rgba(34, 211, 238, 0.2);
+  }
+
+  .bg-grid-white\/\[0\.02\] {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  }
 }

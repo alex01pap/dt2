@@ -24,6 +24,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { ParticlesBackground } from "@/components/ui/particles-background";
 
 export default function Architecture() {
   const containerVariants = {
@@ -42,25 +43,31 @@ export default function Architecture() {
   };
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="min-h-screen p-6 space-y-8 bg-gradient-to-br from-background via-background to-muted/20"
-    >
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+      <ParticlesBackground particleCount={60} color="rgba(34, 211, 238, 0.4)" />
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
+      
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="min-h-screen p-6 space-y-8 relative z-10"
+      >
       {/* Header */}
       <motion.div variants={itemVariants} className="text-center space-y-4">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <Building2 className="h-12 w-12 text-primary" />
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <Building2 className="h-12 w-12 text-cyan-400" />
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent glow-text">
             Digital Twin SaaS Platform
           </h1>
         </div>
-        <h2 className="text-2xl md:text-3xl text-muted-foreground">
+        <h2 className="text-2xl md:text-3xl text-slate-300">
           Conceptual Architecture
         </h2>
         <div className="flex items-center justify-center gap-2">
-          <Badge className="text-lg px-4 py-2 bg-gradient-to-r from-primary to-purple-600">
+          <Badge className="text-lg px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 border-cyan-400/30">
+            <Zap className="h-5 w-5 mr-2 text-cyan-200" />
             From Data to Decisions in Real Time
           </Badge>
         </div>
@@ -68,10 +75,10 @@ export default function Architecture() {
 
       {/* Vision & Philosophy */}
       <motion.div variants={itemVariants}>
-        <Card className="card-enterprise">
+        <Card className="border-slate-700/50 bg-slate-800/30 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <Eye className="h-6 w-6 text-primary" />
+            <CardTitle className="flex items-center gap-2 text-2xl text-white">
+              <Eye className="h-6 w-6 text-cyan-400" />
               Vision & Philosophy
             </CardTitle>
           </CardHeader>
@@ -460,6 +467,7 @@ export default function Architecture() {
           <span className="text-sm">Digital Twin SaaS Platform - Enterprise Architecture Overview</span>
         </div>
       </motion.div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }

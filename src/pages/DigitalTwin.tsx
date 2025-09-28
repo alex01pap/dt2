@@ -293,21 +293,27 @@ export default function DigitalTwin() {
 
   return (
     <div className={cn(
-      "h-full flex flex-col",
-      isFullscreen && "fixed inset-0 z-50 bg-background p-6"
+      "h-full flex flex-col relative overflow-hidden",
+      "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900",
+      isFullscreen && "fixed inset-0 z-50 p-6"
     )}>
+      {/* Animated background grid */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
+      
       {/* Page Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 relative z-10">
         <div className="flex items-center gap-4">
-          <h1 className="text-3xl font-bold">{twinName}</h1>
-          <Badge variant="outline" className="flex items-center gap-2">
-            <CheckCircle className="h-4 w-4 text-success" />
+          <h1 className="text-3xl font-bold text-white glow-text">{twinName}</h1>
+          <Badge variant="outline" className="flex items-center gap-2 border-cyan-400/50 bg-cyan-400/10 text-cyan-300">
+            <CheckCircle className="h-4 w-4 text-cyan-400" />
             System Online
           </Badge>
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+          <Button variant="outline" size="sm" onClick={() => window.location.reload()} 
+            className="border-slate-600 bg-slate-800/50 text-slate-300 hover:bg-slate-700 hover:text-white">
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
@@ -316,6 +322,7 @@ export default function DigitalTwin() {
             variant="outline" 
             size="sm"
             onClick={() => setIsFullscreen(!isFullscreen)}
+            className="border-slate-600 bg-slate-800/50 text-slate-300 hover:bg-slate-700 hover:text-white"
           >
             <Maximize2 className="h-4 w-4 mr-2" />
             {isFullscreen ? 'Exit' : 'Fullscreen'}
@@ -324,7 +331,7 @@ export default function DigitalTwin() {
       </div>
 
       {/* Top KPIs Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 relative z-10">
         <KPIWidget
           title="Active Alerts"
           data={mockKPIData.activeAlerts}
@@ -356,7 +363,7 @@ export default function DigitalTwin() {
       </div>
 
       {/* Main Dashboard Grid */}
-      <div className="grid grid-cols-12 gap-6 flex-1 mb-6">
+      <div className="grid grid-cols-12 gap-6 flex-1 mb-6 relative z-10">
         {/* Left Column - Charts */}
         <div className="col-span-12 lg:col-span-2 space-y-4">
           <DonutChart
@@ -391,15 +398,20 @@ export default function DigitalTwin() {
 
         {/* Center - 3D Viewer */}
         <div className="col-span-12 lg:col-span-8">
-          <Card className="h-full">
+          <Card className="h-full border-slate-700/50 bg-slate-800/30 backdrop-blur-sm shadow-2xl">
             <CardContent className="p-0 h-full">
-              <TwinViewer
-                twinId={id!}
-                sensors={mockSensorData}
-                heatData={mockHeatData}
-                flowPipes={mockFlowPipes}
-                className="w-full h-full rounded-lg"
-              />
+              <div className="relative h-full rounded-lg overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20" />
+                <TwinViewer
+                  twinId={id!}
+                  sensors={mockSensorData}
+                  heatData={mockHeatData}
+                  flowPipes={mockFlowPipes}
+                  className="w-full h-full rounded-lg relative z-10"
+                />
+                {/* Neon border effect */}
+                <div className="absolute inset-0 rounded-lg border border-cyan-400/30 shadow-[inset_0_0_30px_rgba(34,211,238,0.1)]" />
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -433,7 +445,7 @@ export default function DigitalTwin() {
       </div>
 
       {/* Bottom - Incidents Table */}
-      <Card>
+      <Card className="border-slate-700/50 bg-slate-800/30 backdrop-blur-sm relative z-10">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
