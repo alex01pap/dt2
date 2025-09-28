@@ -21,6 +21,7 @@ import Admin from "./pages/Admin";
 import DigitalTwin from "./pages/DigitalTwin";
 import PlatformStatus from "./pages/PlatformStatus";
 import Architecture from "./pages/Architecture";
+import ClientDemo from "./pages/ClientDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -140,6 +141,10 @@ const App = () => (
               <Route 
                 path="/architecture" 
                 element={<Architecture />} 
+              />
+              <Route 
+                path="/client-demo" 
+                element={<ClientDemo />} 
               />
               <Route path="*" element={<NotFound />} />
           </Routes>

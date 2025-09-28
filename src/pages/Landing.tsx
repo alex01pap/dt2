@@ -69,6 +69,7 @@ export default function Landing() {
         
         <div className="hidden md:flex items-center gap-8 text-slate-300">
           <Link to="/architecture" className="hover:text-cyan-400 transition-colors">Architecture</Link>
+          <Link to="/client-demo" className="hover:text-cyan-400 transition-colors">Client Demo</Link>
           <Link to="/dashboard" className="hover:text-cyan-400 transition-colors">Platform</Link>
           <Link to="/twin/1" className="hover:text-cyan-400 transition-colors">Demo</Link>
         </div>
