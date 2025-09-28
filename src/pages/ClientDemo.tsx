@@ -1,31 +1,24 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
 import { 
   TrendingUp,
   Zap,
   Shield,
-  Clock,
   DollarSign,
   Building2,
   BarChart3,
-  AlertTriangle,
   CheckCircle2,
-  Users,
-  Target,
-  Gauge,
   Brain,
   ArrowRight,
   PlayCircle,
   Lightbulb,
-  Award,
   Timer,
-  Activity
+  Sparkles,
+  Infinity,
+  Globe,
+  Star
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -40,417 +33,408 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 }
 };
 
-const benefits = [
+const metrics = [
   {
     icon: TrendingUp,
-    title: "Αύξηση Αποδοτικότητας",
+    title: "Efficiency Increase",
     value: "35%",
-    description: "Μείωση χρόνου συντήρησης και βελτίωση απόδοσης εξοπλισμού",
-    color: "text-green-600"
+    description: "Average improvement in operational efficiency",
+    gradient: "from-green-400 to-emerald-600"
   },
   {
     icon: DollarSign,
-    title: "Μείωση Κόστους",
-    value: "€180K",
-    description: "Ετήσια εξοικονόμηση από προληπτική συντήρηση",
-    color: "text-blue-600"
+    title: "Cost Reduction",
+    value: "$240K",
+    description: "Annual savings through predictive maintenance",
+    gradient: "from-blue-400 to-cyan-600"
   },
   {
     icon: Zap,
-    title: "Εξοικονόμηση Ενέργειας",
+    title: "Energy Savings",
     value: "28%",
-    description: "Βελτιστοποίηση κατανάλωσης μέσω real-time monitoring",
-    color: "text-orange-600"
+    description: "Reduction in energy consumption",
+    gradient: "from-orange-400 to-amber-600"
   },
   {
     icon: Timer,
-    title: "Μείωση Downtime",
+    title: "Downtime Reduction",
     value: "65%",
-    description: "Πρόβλεψη προβλημάτων πριν συμβούν",
-    color: "text-purple-600"
+    description: "Less unplanned maintenance events",
+    gradient: "from-purple-400 to-violet-600"
   }
 ];
 
-const processSteps = [
+const features = [
   {
-    step: 1,
-    title: "Σύνδεση Συστημάτων",
-    description: "Συνδέουμε τα υπάρχοντα συστήματά σας (HVAC, αισθητήρες, BMS)",
-    icon: Building2,
-    duration: "1-2 εβδομάδες"
-  },
-  {
-    step: 2,
-    title: "Δημιουργία Digital Twin",
-    description: "Δημιουργούμε ψηφιακή αναπαράσταση των εγκαταστάσεών σας",
     icon: Brain,
-    duration: "2-3 εβδομάδες"
+    title: "AI-Powered Insights",
+    description: "Machine learning algorithms that understand your facility patterns and predict future states with 95% accuracy.",
+    gradient: "from-indigo-500 to-purple-600"
   },
   {
-    step: 3,
-    title: "Εκπαίδευση Συστήματος",
-    description: "Το AI μαθαίνει τα patterns και τη συμπεριφορά της επιχείρησής σας",
-    icon: Target,
-    duration: "1 μήνας"
+    icon: Building2,
+    title: "3D Digital Twin",
+    description: "Photorealistic 3D visualization of your facilities with real-time data overlay and interactive controls.",
+    gradient: "from-cyan-500 to-blue-600"
   },
   {
-    step: 4,
-    title: "Go Live & Optimisation",
-    description: "Ξεκινάμε real-time monitoring και continuous optimization",
-    icon: Gauge,
-    duration: "Ongoing"
+    icon: Shield,
+    title: "Enterprise Security",
+    description: "Bank-grade security with SOC 2 certification, end-to-end encryption, and comprehensive audit trails.",
+    gradient: "from-green-500 to-teal-600"
+  },
+  {
+    icon: Infinity,
+    title: "Unlimited Scalability",
+    description: "From single buildings to global portfolios, our platform scales seamlessly with your business growth.",
+    gradient: "from-pink-500 to-rose-600"
   }
 ];
 
-const caseStudies = [
+const testimonials = [
   {
-    company: "Μεγάλη Βιομηχανία Τροφίμων",
-    industry: "Food & Beverage",
-    challenge: "Υψηλά κόστη ενέργειας και συχνές βλάβες εξοπλισμού",
-    solution: "Digital Twin για ψυκτικά συστήματα και παραγωγικές γραμμές",
-    results: [
-      "32% μείωση κόστους ενέργειας",
-      "45% λιγότερες βλάβες",
-      "€280K ετήσια εξοικονόμηση"
-    ],
-    timeframe: "ROI σε 8 μήνες"
+    quote: "The Digital Twin platform transformed our operations completely. We're seeing results we never thought possible.",
+    author: "Sarah Chen",
+    title: "VP Operations, TechCorp Industries",
+    metrics: "32% energy reduction, $280K annual savings",
+    avatar: "SC"
   },
   {
-    company: "Εταιρεία Logistics",
-    industry: "Supply Chain",
-    challenge: "Διαχείριση θερμοκρασίας σε αποθήκες φαρμάκων",
-    solution: "Real-time monitoring & predictive analytics",
-    results: [
-      "99.9% compliance με FDA standards",
-      "50% μείωση product loss",
-      "Automated reporting"
-    ],
-    timeframe: "ROI σε 6 μήνες"
+    quote: "Implementation was seamless and ROI was achieved in just 6 months. The team's expertise is unmatched.",
+    author: "Michael Rodriguez", 
+    title: "Facility Director, Global Logistics Inc",
+    metrics: "45% less equipment failures, 99.9% uptime",
+    avatar: "MR"
   }
 ];
 
 export default function ClientDemo() {
-  const [activeTab, setActiveTab] = useState("benefits");
-
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="min-h-screen p-6 space-y-12 bg-gradient-to-br from-slate-50 via-white to-blue-50"
-    >
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
       {/* Hero Section */}
-      <motion.div variants={itemVariants} className="text-center space-y-6 py-12">
-        <Badge className="bg-primary text-white px-6 py-2 text-lg">
-          Digital Twin για την Επιχείρησή σας
-        </Badge>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(68,68,68,.05)_50%,transparent_75%,transparent),linear-gradient(-45deg,transparent_25%,rgba(68,68,68,.05)_50%,transparent_75%,transparent)] bg-[length:20px_20px]" />
         
-        <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-purple-600 to-blue-600 bg-clip-text text-transparent">
-          Μετατρέψτε τα Δεδομένα σας
-          <br />
-          σε <span className="underline decoration-primary">Ανταγωνιστικό Πλεονέκτημα</span>
-        </h1>
-        
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          Η πλατφόρμα Digital Twin μας σας επιτρέπει να βλέπετε, να κατανοείτε και να βελτιστοποιείτε 
-          τις εγκαταστάσεις σας σε πραγματικό χρόνο. Πρόβλεψη προβλημάτων, εξοικονόμηση ενέργειας, 
-          και αύξηση αποδοτικότητας.
-        </p>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32"
+        >
+          <motion.div variants={itemVariants} className="text-center space-y-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full border border-slate-200">
+              <Sparkles className="h-4 w-4 text-indigo-600" />
+              <span className="text-sm font-medium text-slate-700">Next-Generation Digital Twin Platform</span>
+            </div>
+            
+            <h1 className="text-5xl lg:text-7xl font-bold tracking-tight">
+              <span className="text-slate-900">Transform Your</span>
+              <br />
+              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                Operations
+              </span>
+            </h1>
+            
+            <p className="max-w-2xl mx-auto text-xl text-slate-600 leading-relaxed">
+              Harness the power of digital twins to optimize performance, predict failures, 
+              and unlock unprecedented insights from your physical assets.
+            </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-          <Button size="lg" className="px-8 py-4">
-            <PlayCircle className="h-5 w-5 mr-2" />
-            Δείτε Demo
-          </Button>
-          <Button variant="outline" size="lg" className="px-8 py-4">
-            <ArrowRight className="h-5 w-5 mr-2" />
-            Ζητήστε Προσφορά
-          </Button>
-        </div>
-      </motion.div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 text-lg shadow-xl"
+              >
+                <PlayCircle className="h-5 w-5 mr-2" />
+                Watch Demo
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="px-8 py-4 text-lg border-slate-300 hover:bg-slate-50"
+              >
+                Get Started
+                <ArrowRight className="h-5 w-5 ml-2" />
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
 
-      {/* Key Benefits Overview */}
-      <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {benefits.map((benefit, index) => (
-            <Card key={index} className="shadow-lg border-0 bg-white hover:shadow-xl transition-shadow">
-              <CardContent className="p-6 text-center">
-                <benefit.icon className={`h-12 w-12 ${benefit.color} mx-auto mb-4`} />
-                <div className="text-3xl font-bold mb-2">{benefit.value}</div>
-                <h3 className="font-semibold mb-2">{benefit.title}</h3>
-                <p className="text-sm text-muted-foreground">{benefit.description}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </motion.div>
+      {/* Metrics Section */}
+      <section className="py-20 bg-white">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="max-w-7xl mx-auto px-6"
+        >
+          <motion.div variants={itemVariants} className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Measurable Impact From Day One
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Join industry leaders who've transformed their operations with our platform
+            </p>
+          </motion.div>
 
-      {/* Main Content Tabs */}
-      <motion.div variants={itemVariants}>
-        <Card className="shadow-lg border-0 bg-white">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4 mb-6">
-              <TabsTrigger value="benefits">Οφέλη</TabsTrigger>
-              <TabsTrigger value="process">Διαδικασία</TabsTrigger>
-              <TabsTrigger value="technology">Τεχνολογία</TabsTrigger>
-              <TabsTrigger value="cases">Case Studies</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="benefits" className="p-6">
-              <div className="space-y-8">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-4">Τι Κερδίζει η Επιχείρησή σας</h2>
-                  <p className="text-muted-foreground text-lg">Μετρήσιμα αποτελέσματα από την πρώτη μέρα</p>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-8">
-                  {/* Financial Benefits */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold flex items-center gap-2">
-                      <DollarSign className="h-6 w-6 text-green-600" />
-                      Οικονομικά Οφέλη
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {metrics.map((metric, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="group"
+              >
+                <Card className="p-8 border-0 shadow-xl hover:shadow-2xl transition-all duration-500 bg-white hover:-translate-y-2">
+                  <CardContent className="p-0 text-center">
+                    <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-r ${metric.gradient} flex items-center justify-center shadow-lg`}>
+                      <metric.icon className="h-8 w-8 text-white" />
+                    </div>
+                    
+                    <div className={`text-4xl font-bold mb-2 bg-gradient-to-r ${metric.gradient} bg-clip-text text-transparent`}>
+                      {metric.value}
+                    </div>
+                    
+                    <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                      {metric.title}
                     </h3>
                     
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-                        <span>Μείωση κόστους ενέργειας</span>
-                        <div className="text-right">
-                          <div className="font-bold text-green-600">25-40%</div>
-                          <div className="text-sm text-muted-foreground">€50K-€200K ετησίως</div>
-                        </div>
+                    <p className="text-slate-600 text-sm leading-relaxed">
+                      {metric.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="max-w-7xl mx-auto px-6"
+        >
+          <motion.div variants={itemVariants} className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Engineered for Excellence
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Advanced capabilities that set new standards for digital transformation
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="group"
+              >
+                <Card className="p-8 border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-white/80 backdrop-blur-sm">
+                  <CardContent className="p-0">
+                    <div className="flex items-start gap-6">
+                      <div className={`w-14 h-14 rounded-xl bg-gradient-to-r ${feature.gradient} flex items-center justify-center shadow-lg flex-shrink-0`}>
+                        <feature.icon className="h-7 w-7 text-white" />
                       </div>
                       
-                      <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                        <span>Μείωση κόστους συντήρησης</span>
-                        <div className="text-right">
-                          <div className="font-bold text-blue-600">30-50%</div>
-                          <div className="text-sm text-muted-foreground">Προληπτική συντήρηση</div>
-                        </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-3">
+                          {feature.title}
+                        </h3>
+                        <p className="text-slate-600 leading-relaxed">
+                          {feature.description}
+                        </p>
                       </div>
-                      
-                      <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
-                        <span>Αύξηση παραγωγικότητας</span>
-                        <div className="text-right">
-                          <div className="font-bold text-purple-600">15-25%</div>
-                          <div className="text-sm text-muted-foreground">Λιγότερα downtimes</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/50 to-purple-900/50" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-white/5 to-transparent" />
+        
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="relative max-w-7xl mx-auto px-6"
+        >
+          <motion.div variants={itemVariants} className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Trusted by Industry Leaders
+            </h2>
+            <p className="text-xl text-indigo-200 max-w-2xl mx-auto">
+              See how organizations like yours are achieving breakthrough results
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="group"
+              >
+                <Card className="p-8 border-0 bg-white/10 backdrop-blur-md shadow-2xl hover:bg-white/15 transition-all duration-500">
+                  <CardContent className="p-0">
+                    <div className="flex items-start gap-1 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                      ))}
+                    </div>
+                    
+                    <blockquote className="text-lg text-white mb-6 leading-relaxed italic">
+                      "{testimonial.quote}"
+                    </blockquote>
+                    
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center font-bold text-white">
+                          {testimonial.avatar}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-white">{testimonial.author}</div>
+                          <div className="text-indigo-200 text-sm">{testimonial.title}</div>
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Operational Benefits */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-semibold flex items-center gap-2">
-                      <Gauge className="h-6 w-6 text-blue-600" />
-                      Λειτουργικά Οφέλη
-                    </h3>
                     
-                    <div className="space-y-4">
-                      <div className="p-4 border rounded-lg">
-                        <div className="flex items-center gap-2 mb-2">
-                          <CheckCircle2 className="h-5 w-5 text-green-600" />
-                          <span className="font-medium">Real-time Visibility</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">Πλήρης εποπτεία όλων των συστημάτων από ένα dashboard</p>
-                      </div>
-                      
-                      <div className="p-4 border rounded-lg">
-                        <div className="flex items-center gap-2 mb-2">
-                          <CheckCircle2 className="h-5 w-5 text-green-600" />
-                          <span className="font-medium">Predictive Maintenance</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">Πρόβλεψη βλαβών πριν συμβούν με 95% ακρίβεια</p>
-                      </div>
-                      
-                      <div className="p-4 border rounded-lg">
-                        <div className="flex items-center gap-2 mb-2">
-                          <CheckCircle2 className="h-5 w-5 text-green-600" />
-                          <span className="font-medium">Automated Alerts</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">Άμεση ειδοποίηση για ανωμαλίες και προβλήματα</p>
+                    <div className="mt-4 pt-4 border-t border-white/20">
+                      <div className="text-sm text-cyan-300 font-medium">
+                        {testimonial.metrics}
                       </div>
                     </div>
-                  </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Benefits Grid */}
+      <section className="py-20 bg-white">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="max-w-7xl mx-auto px-6"
+        >
+          <motion.div variants={itemVariants} className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Why Leading Companies Choose Us
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Comprehensive benefits that drive real business transformation
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Globe,
+                title: "Global Scale",
+                description: "Deploy across multiple sites and regions with unified management and reporting capabilities."
+              },
+              {
+                icon: CheckCircle2,
+                title: "Proven ROI",
+                description: "Average 6-month payback period with measurable improvements in efficiency and cost reduction."
+              },
+              {
+                icon: Shield,
+                title: "Enterprise Ready",
+                description: "SOC 2 certified with enterprise-grade security, compliance, and 99.99% uptime guarantee."
+              }
+            ].map((benefit, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="text-center"
+              >
+                <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <benefit.icon className="h-8 w-8 text-white" />
                 </div>
-              </div>
-            </TabsContent>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">
+                  {benefit.title}
+                </h3>
+                <p className="text-slate-600 leading-relaxed">
+                  {benefit.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
 
-            <TabsContent value="process" className="p-6">
-              <div className="space-y-8">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-4">Πώς Υλοποιείται</h2>
-                  <p className="text-muted-foreground text-lg">Απλή και γρήγορη διαδικασία εφαρμογής</p>
-                </div>
-
-                <div className="relative">
-                  {processSteps.map((step, index) => (
-                    <motion.div
-                      key={step.step}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.2 }}
-                      className="flex items-start gap-6 mb-8 last:mb-0"
-                    >
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                          {step.step}
-                        </div>
-                      </div>
-                      
-                      <div className="flex-grow">
-                        <Card className="p-6 shadow-md">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <step.icon className="h-6 w-6 text-primary" />
-                              <h3 className="text-xl font-semibold">{step.title}</h3>
-                            </div>
-                            <Badge variant="outline">{step.duration}</Badge>
-                          </div>
-                          <p className="text-muted-foreground">{step.description}</p>
-                        </Card>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="text-center p-6 bg-gradient-to-r from-primary/10 to-blue-600/10 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-2">Συνολικός χρόνος υλοποίησης: 6-8 εβδομάδες</h3>
-                  <p className="text-muted-foreground">Από την υπογραφή του συμβολαίου μέχρι το full deployment</p>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="technology" className="p-6">
-              <div className="space-y-8">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-4">Τεχνολογία & Χαρακτηριστικά</h2>
-                  <p className="text-muted-foreground text-lg">Enterprise-grade λύση με cutting-edge τεχνολογίες</p>
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-6">
-                  <Card className="p-6 shadow-md">
-                    <Brain className="h-12 w-12 text-primary mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">AI & Machine Learning</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Αλγόριθμοι που μαθαίνουν τα patterns της επιχείρησής σας και προβλέπουν μελλontικές καταστάσεις.
-                    </p>
-                    <ul className="text-sm space-y-1">
-                      <li>• Predictive Analytics</li>
-                      <li>• Anomaly Detection</li>
-                      <li>• Optimization Algorithms</li>
-                    </ul>
-                  </Card>
-
-                  <Card className="p-6 shadow-md">
-                    <Building2 className="h-12 w-12 text-blue-600 mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">3D Digital Twin</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Πλήρως διαδραστική 3D αναπαράσταση των εγκαταστάσεων με real-time data overlay.
-                    </p>
-                    <ul className="text-sm space-y-1">
-                      <li>• Heat Maps</li>
-                      <li>• Flow Visualization</li>
-                      <li>• Interactive Controls</li>
-                    </ul>
-                  </Card>
-
-                  <Card className="p-6 shadow-md">
-                    <Shield className="h-12 w-12 text-green-600 mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Enterprise Security</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Bank-grade ασφάλεια με πλήρη compliance και role-based access control.
-                    </p>
-                    <ul className="text-sm space-y-1">
-                      <li>• SOC 2 Certified</li>
-                      <li>• End-to-end Encryption</li>
-                      <li>• GDPR Compliant</li>
-                    </ul>
-                  </Card>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="cases" className="p-6">
-              <div className="space-y-8">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-4">Επιτυχημένες Υλοποιήσεις</h2>
-                  <p className="text-muted-foreground text-lg">Πραγματικά αποτελέσματα από τους πελάτες μας</p>
-                </div>
-
-                <div className="space-y-6">
-                  {caseStudies.map((study, index) => (
-                    <Card key={index} className="p-6 shadow-md">
-                      <div className="grid md:grid-cols-3 gap-6">
-                        <div>
-                          <div className="flex items-center gap-2 mb-2">
-                            <Award className="h-5 w-5 text-primary" />
-                            <h3 className="font-semibold">{study.company}</h3>
-                          </div>
-                          <Badge variant="outline" className="mb-4">{study.industry}</Badge>
-                          
-                          <div className="space-y-3">
-                            <div>
-                              <h4 className="font-medium text-red-600 mb-1">Πρόκληση:</h4>
-                              <p className="text-sm text-muted-foreground">{study.challenge}</p>
-                            </div>
-                            
-                            <div>
-                              <h4 className="font-medium text-blue-600 mb-1">Λύση:</h4>
-                              <p className="text-sm text-muted-foreground">{study.solution}</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h4 className="font-medium text-green-600 mb-3">Αποτελέσματα:</h4>
-                          <div className="space-y-2">
-                            {study.results.map((result, i) => (
-                              <div key={i} className="flex items-center gap-2">
-                                <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
-                                <span className="text-sm">{result}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-center">
-                          <div className="text-center p-4 bg-primary/10 rounded-lg">
-                            <Clock className="h-8 w-8 text-primary mx-auto mb-2" />
-                            <div className="font-bold text-primary">{study.timeframe}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </Card>
-      </motion.div>
-
-      {/* Call to Action */}
-      <motion.div variants={itemVariants}>
-        <Card className="bg-gradient-to-r from-primary to-blue-600 text-white shadow-xl">
-          <CardContent className="p-12 text-center">
-            <h2 className="text-3xl font-bold mb-4">Είστε έτοιμοι να ξεκινήσετε;</h2>
-            <p className="text-xl mb-8 opacity-90">
-              Κλείστε μια συνάντηση για να δείτε πώς μπορούμε να βελτιώσουμε την απόδοση της επιχείρησής σας
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="max-w-4xl mx-auto px-6 text-center"
+        >
+          <motion.div variants={itemVariants}>
+            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
+              Ready to Transform Your Operations?
+            </h2>
+            <p className="text-xl text-slate-600 mb-8 leading-relaxed">
+              Join the digital transformation revolution. Schedule a personalized demo 
+              and see how our platform can optimize your specific use case.
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" variant="secondary" className="px-8 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 text-lg shadow-xl"
+              >
                 <Lightbulb className="h-5 w-5 mr-2" />
-                Δωρεάν Consultation
+                Schedule Demo
               </Button>
-              <Button size="lg" variant="outline" className="px-8 py-4 text-white border-white hover:bg-white hover:text-primary">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="px-8 py-4 text-lg border-slate-300 hover:bg-slate-50"
+              >
                 <BarChart3 className="h-5 w-5 mr-2" />
                 ROI Calculator
               </Button>
             </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-    </motion.div>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-slate-500">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <span>No commitment required</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <span>Free consultation</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <span>Custom ROI analysis</span>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
+    </div>
   );
 }
