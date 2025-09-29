@@ -1,13 +1,14 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Text, Html } from '@react-three/drei';
 import { Suspense, useMemo, useState, useEffect } from 'react';
+import * as THREE from 'three';
 import { Vector3, Color } from 'three';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLiveSocket } from '@/hooks/useLiveSocket';
 
-interface SensorData {
+export interface SensorData {
   id: string;
   name: string;
   type: string;
@@ -15,21 +16,23 @@ interface SensorData {
   value: number;
   unit: string;
   status: 'normal' | 'warning' | 'critical';
-  lastUpdated: Date;
+  lastUpdated?: Date;
 }
 
-interface HeatData {
-  x: number;
-  y: number;
-  temperature: number;
+export interface HeatData {
+  position: [number, number, number];
+  intensity: number;
+  color: string;
 }
 
-interface FlowPipeData {
+export interface FlowPipeData {
   id: string;
-  path: Vector3[];
-  flowRate: number;
-  pressure: number;
-  status: 'normal' | 'warning' | 'critical';
+  start: [number, number, number];
+  end: [number, number, number];
+  radius: number;
+  color: string;
+  status: 'normal' | 'warning' | 'critical' | 'active';
+  type: string;
 }
 
 interface TwinViewerProps {
@@ -41,76 +44,19 @@ interface TwinViewerProps {
   className?: string;
 }
 
-// Floor Plan Component
-function FloorPlan() {
-  return (
-    <group>
-      {/* Main Building Structure */}
-      <mesh position={[0, -0.1, 0]} receiveShadow>
-        <boxGeometry args={[20, 0.2, 15]} />
-        <meshStandardMaterial color="#f0f0f0" />
-      </mesh>
-      
-      {/* Room A */}
-      <group position={[-5, 0, -3]}>
-        <mesh position={[0, 1, 0]}>
-          <boxGeometry args={[8, 2, 0.1]} />
-          <meshStandardMaterial color="#e8e8e8" transparent opacity={0.3} />
-        </mesh>
-        <Text
-          position={[0, 0.1, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          fontSize={1}
-          color="black"
-        >
-          Room A
-        </Text>
-      </group>
-      
-      {/* Room B */}
-      <group position={[5, 0, -3]}>
-        <mesh position={[0, 1, 0]}>
-          <boxGeometry args={[8, 2, 0.1]} />
-          <meshStandardMaterial color="#e8e8e8" transparent opacity={0.3} />
-        </mesh>
-        <Text
-          position={[0, 0.1, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          fontSize={1}
-          color="black"
-        >
-          Room B
-        </Text>
-      </group>
-      
-      {/* HVAC Unit */}
-      <mesh position={[0, 1.5, 5]} castShadow>
-        <boxGeometry args={[3, 3, 1.5]} />
-        <meshStandardMaterial color="#4a5568" />
-      </mesh>
-      <Text
-        position={[0, 3.2, 5]}
-        fontSize={0.5}
-        color="white"
-      >
-        HVAC Unit
-      </Text>
-    </group>
-  );
-}
+import RestaurantFloorPlan from './RestaurantFloorPlan';
+
+// Floor Plan Component - Keep for backward compatibility
+const FloorPlan = RestaurantFloorPlan;
 
 // Heat Overlay Component
 function HeatOverlay({ heatData }: { heatData: HeatData[] }) {
   const heatPoints = useMemo(() => {
     return heatData.map((point, index) => {
-      // Normalize temperature to 0-1 range (assuming 15-30°C range)
-      const normalizedTemp = Math.max(0, Math.min(1, (point.temperature - 15) / 15));
-      const color = new Color().setHSL((1 - normalizedTemp) * 0.7, 1, 0.5); // Blue to red
-      
       return (
-        <mesh key={index} position={[point.x, 0.05, point.y]}>
+        <mesh key={index} position={point.position}>
           <cylinderGeometry args={[1, 1, 0.1, 8]} />
-          <meshBasicMaterial color={color} transparent opacity={0.6} />
+          <meshBasicMaterial color={point.color} transparent opacity={point.intensity} />
         </mesh>
       );
     });
@@ -123,29 +69,30 @@ function HeatOverlay({ heatData }: { heatData: HeatData[] }) {
 function FlowPipes({ pipes }: { pipes: FlowPipeData[] }) {
   return (
     <group>
-      {pipes.map((pipe) => (
-        <group key={pipe.id}>
-          {pipe.path.map((point, index) => {
-            if (index === pipe.path.length - 1) return null;
-            
-            const start = pipe.path[index];
-            const end = pipe.path[index + 1];
-            const distance = start.distanceTo(end);
-            const midpoint = start.clone().lerp(end, 0.5);
-            
-            // Pipe color based on status
-            const pipeColor = pipe.status === 'critical' ? '#ef4444' : 
-                            pipe.status === 'warning' ? '#f59e0b' : '#3b82f6';
-            
-            return (
-              <mesh key={`${pipe.id}-${index}`} position={midpoint.toArray()}>
-                <cylinderGeometry args={[0.1, 0.1, distance, 8]} />
-                <meshStandardMaterial color={pipeColor} />
-              </mesh>
-            );
-          })}
-        </group>
-      ))}
+      {pipes.map((pipe) => {
+        const start = new Vector3(...pipe.start);
+        const end = new Vector3(...pipe.end);
+        const distance = start.distanceTo(end);
+        const midpoint = start.clone().lerp(end, 0.5);
+        
+        // Calculate rotation to align cylinder with pipe direction
+        const direction = end.clone().sub(start).normalize();
+        const quaternion = new THREE.Quaternion().setFromUnitVectors(
+          new Vector3(0, 1, 0), 
+          direction
+        );
+        
+        return (
+          <mesh 
+            key={pipe.id} 
+            position={midpoint.toArray()}
+            quaternion={quaternion.toArray()}
+          >
+            <cylinderGeometry args={[pipe.radius, pipe.radius, distance, 8]} />
+            <meshStandardMaterial color={pipe.color} />
+          </mesh>
+        );
+      })}
     </group>
   );
 }

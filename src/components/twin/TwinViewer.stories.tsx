@@ -48,24 +48,22 @@ const mockSensors = [
 ];
 
 const mockHeatData = [
-  { x: -5, y: -3, temperature: 22.5 },
-  { x: 5, y: -3, temperature: 26.8 },
-  { x: 0, y: 0, temperature: 23.1 },
-  { x: -3, y: 2, temperature: 21.9 },
-  { x: 3, y: 2, temperature: 25.2 },
+  { position: [-5, 0.1, -3] as [number, number, number], intensity: 0.5, color: '#44ff44' },
+  { position: [5, 0.1, -3] as [number, number, number], intensity: 0.8, color: '#ff6644' },
+  { position: [0, 0.1, 0] as [number, number, number], intensity: 0.6, color: '#ffaa44' },
+  { position: [-3, 0.1, 2] as [number, number, number], intensity: 0.4, color: '#44ff44' },
+  { position: [3, 0.1, 2] as [number, number, number], intensity: 0.7, color: '#ff7744' },
 ];
 
 const mockFlowPipes = [
   {
     id: 'chilled-water',
-    path: [
-      new Vector3(0, 1.5, 5),
-      new Vector3(-5, 1, 0),
-      new Vector3(5, 1, 0),
-    ],
-    flowRate: 12.5,
-    pressure: 220,
-    status: 'normal' as const,
+    start: [0, 1.5, 5] as [number, number, number],
+    end: [5, 1, 0] as [number, number, number],
+    radius: 0.1,
+    color: '#3b82f6',
+    status: 'active' as const,
+    type: 'supply',
   },
 ];
 
