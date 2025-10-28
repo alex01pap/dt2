@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,7 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Link as LinkIcon } from "lucide-react";
+import { useOpenHABConfig, OpenHABItem } from "@/hooks/useOpenHABConfig";
 
 interface SensorFormProps {
   open: boolean;
@@ -16,6 +17,8 @@ interface SensorFormProps {
 
 export function SensorForm({ open, onOpenChange, onSuccess }: SensorFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openhabItems, setOpenhabItems] = useState<OpenHABItem[]>([]);
+  const { config, fetchItems } = useOpenHABConfig();
   const [formData, setFormData] = useState({
     name: "",
     type: "temperature" as const,
@@ -25,7 +28,23 @@ export function SensorForm({ open, onOpenChange, onSuccess }: SensorFormProps) {
     location_z: "",
     threshold_min: "",
     threshold_max: "",
+    openhab_item: "",
   });
+
+  useEffect(() => {
+    if (open && config?.enabled) {
+      loadOpenHABItems();
+    }
+  }, [open, config]);
+
+  const loadOpenHABItems = async () => {
+    try {
+      const items = await fetchItems();
+      setOpenhabItems(items);
+    } catch (error) {
+      console.error("Error loading OpenHAB items:", error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,17 +75,39 @@ export function SensorForm({ open, onOpenChange, onSuccess }: SensorFormProps) {
         : {};
 
       // Insert sensor
-      const { error } = await supabase.from("sensors").insert({
+      const { data: sensorData, error } = await supabase.from("sensors").insert({
         name: formData.name.trim(),
         type: formData.type,
         status: formData.status,
         location,
         thresholds,
-      });
+      }).select().single();
 
       if (error) throw error;
 
-      toast.success("Sensor created successfully");
+      // Create OpenHAB mapping if an item was selected
+      if (formData.openhab_item && config?.id && sensorData) {
+        const selectedItem = openhabItems.find(item => item.name === formData.openhab_item);
+        
+        const { error: mappingError } = await supabase.from("openhab_items").insert({
+          config_id: config.id,
+          sensor_id: sensorData.id,
+          openhab_item_name: selectedItem!.name,
+          openhab_item_type: selectedItem!.type,
+          openhab_item_label: selectedItem!.label,
+          mapping_type: 'manual',
+          sync_enabled: true
+        });
+
+        if (mappingError) {
+          console.error("Error creating OpenHAB mapping:", mappingError);
+          toast.error("Sensor created but OpenHAB mapping failed");
+        } else {
+          toast.success("Sensor created and linked to OpenHAB");
+        }
+      } else {
+        toast.success("Sensor created successfully");
+      }
       
       // Reset form
       setFormData({
@@ -78,6 +119,7 @@ export function SensorForm({ open, onOpenChange, onSuccess }: SensorFormProps) {
         location_z: "",
         threshold_min: "",
         threshold_max: "",
+        openhab_item: "",
       });
 
       onOpenChange(false);
@@ -194,6 +236,38 @@ export function SensorForm({ open, onOpenChange, onSuccess }: SensorFormProps) {
               </div>
             </div>
           </div>
+
+          {/* OpenHAB Integration */}
+          {config?.enabled && openhabItems.length > 0 && (
+            <div className="space-y-4 p-4 border border-border rounded-lg bg-muted/30">
+              <div className="flex items-center gap-2">
+                <LinkIcon className="h-4 w-4 text-primary" />
+                <Label className="text-base font-medium">OpenHAB Integration (Optional)</Label>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="openhab_item" className="text-sm">Link to OpenHAB Item</Label>
+                <Select 
+                  value={formData.openhab_item} 
+                  onValueChange={(value) => setFormData({ ...formData, openhab_item: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an OpenHAB item..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">None</SelectItem>
+                    {openhabItems.map((item) => (
+                      <SelectItem key={item.name} value={item.name}>
+                        {item.label || item.name} ({item.type})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Link this sensor to an OpenHAB item for automatic data sync
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Thresholds */}
           <div className="space-y-4">
