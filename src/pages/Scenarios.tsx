@@ -85,10 +85,12 @@ export default function Scenarios() {
             icon={Workflow}
             title="No scenarios created"
             description="Build your first simulation scenario to test system behavior"
-            action={{
-              label: "Create Scenario",
-              onClick: () => console.log("Create scenario clicked")
-            }}
+          action={{
+            label: "Create Scenario",
+            onClick: () => {
+              alert("Create Scenario - Feature coming soon!");
+            }
+          }}
           />
         </div>
       </div>

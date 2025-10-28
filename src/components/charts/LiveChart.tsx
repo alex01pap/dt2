@@ -32,6 +32,7 @@ interface LiveChartProps {
   autoUpdate?: boolean;
   updateInterval?: number;
   onDataPointClick?: (point: DataPoint, seriesKey: string) => void;
+  onDataUpdate?: () => void;
   className?: string;
 }
 
@@ -116,6 +117,7 @@ export const LiveChart: React.FC<LiveChartProps> = ({
   autoUpdate = false,
   updateInterval = 5000,
   onDataPointClick,
+  onDataUpdate,
   className = ''
 }) => {
   const [zoomDomain, setZoomDomain] = useState<[number, number] | null>(null);
@@ -199,8 +201,8 @@ export const LiveChart: React.FC<LiveChartProps> = ({
   useEffect(() => {
     if (isPlaying) {
       intervalRef.current = setInterval(() => {
-        // Trigger data refresh - this would typically call a prop function
-        console.log('Auto-updating chart data...');
+        // Parent component should handle data refresh via onDataUpdate callback
+        onDataUpdate?.();
       }, updateInterval);
     } else {
       if (intervalRef.current) {

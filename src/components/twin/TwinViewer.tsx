@@ -192,11 +192,6 @@ export function TwinViewer({
     status: s.status === 'online' ? 'normal' : s.status === 'warning' ? 'warning' : 'critical' as 'normal' | 'warning' | 'critical'
   }));
 
-  useEffect(() => {
-    console.log('TwinViewer connected:', isConnected);
-    console.log('Active sensors:', sensors.length);
-  }, [isConnected, sensors.length]);
-
   return (
     <div className={className}>
       {/* Overlay Controls */}

@@ -70,12 +70,12 @@ export function EventStream({
     if (!autoRefresh) return;
 
     const interval = setInterval(() => {
-      // Trigger refresh - typically would call a parent refresh function
-      console.log('Auto-refreshing events...');
+      // Parent component should handle refresh
+      onLoadMore?.();
     }, refreshInterval);
 
     return () => clearInterval(interval);
-  }, [autoRefresh, refreshInterval]);
+  }, [autoRefresh, refreshInterval, onLoadMore]);
 
   // Filter and search logic
   const filteredEvents = useMemo(() => {

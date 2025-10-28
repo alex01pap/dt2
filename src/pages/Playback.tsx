@@ -120,7 +120,9 @@ export default function Playback() {
           description="Upload historical data files to start replaying past events and scenarios"
           action={{
             label: "Upload Data",
-            onClick: () => console.log("Upload data clicked")
+            onClick: () => {
+              alert("Upload Data - Feature coming soon!");
+            }
           }}
         />
       </div>

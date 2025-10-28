@@ -113,7 +113,10 @@ export default function Admin() {
                           key={action}
                           variant="ghost"
                           className="w-full justify-start h-auto p-2 font-normal"
-                          onClick={() => console.log(`${action} clicked`)}
+                          onClick={() => {
+                            // Placeholder for future implementation
+                            alert(`${action} - Feature coming soon!`);
+                          }}
                         >
                           {action}
                         </Button>

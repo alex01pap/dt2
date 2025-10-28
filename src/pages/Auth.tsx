@@ -85,7 +85,6 @@ export default function Auth() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Sign up form submitted');
     
     if (!validateSignUp()) {
       toast({
@@ -98,22 +97,17 @@ export default function Auth() {
 
     setSubmitting(true);
     try {
-      console.log('Attempting sign up with:', signUpData.email, signUpData.displayName);
       const { error } = await signUp(signUpData.email, signUpData.password, signUpData.displayName);
       if (!error) {
-        console.log('Sign up successful');
         toast({
           title: "Success!",
           description: "Check your email to confirm your account",
         });
-        // Switch to sign in mode and clear form
         setIsSignUp(false);
         setSignUpData({ displayName: '', email: '', password: '' });
-      } else {
-        console.error('Sign up error:', error);
       }
     } catch (error) {
-      console.error('Sign up exception:', error);
+      // Error is handled by AuthContext
     } finally {
       setSubmitting(false);
     }
@@ -121,7 +115,6 @@ export default function Auth() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Sign in form submitted');
     
     if (!validateSignIn()) {
       toast({
@@ -134,16 +127,12 @@ export default function Auth() {
 
     setSubmitting(true);
     try {
-      console.log('Attempting sign in with:', signInData.email);
       const { error } = await signIn(signInData.email, signInData.password);
       if (!error) {
-        console.log('Sign in successful');
         navigate('/dashboard');
-      } else {
-        console.error('Sign in error:', error);
       }
     } catch (error) {
-      console.error('Sign in exception:', error);
+      // Error is handled by AuthContext
     } finally {
       setSubmitting(false);
     }
@@ -187,9 +176,7 @@ export default function Auth() {
                     placeholder="John Doe"
                     value={signUpData.displayName}
                     onChange={(e) => {
-                      console.log('Display name changed:', e.target.value);
                       setSignUpData(prev => ({...prev, displayName: e.target.value}));
-                      // Clear error when user starts typing
                       if (errors.displayName) {
                         setErrors(prev => ({...prev, displayName: ''}));
                       }
@@ -208,9 +195,7 @@ export default function Auth() {
                     placeholder="john@company.com"
                     value={signUpData.email}
                     onChange={(e) => {
-                      console.log('Email changed:', e.target.value);
                       setSignUpData(prev => ({...prev, email: e.target.value}));
-                      // Clear error when user starts typing
                       if (errors.email) {
                         setErrors(prev => ({...prev, email: ''}));
                       }
@@ -230,9 +215,7 @@ export default function Auth() {
                       placeholder="Create a secure password"
                       value={signUpData.password}
                       onChange={(e) => {
-                        console.log('Password changed, length:', e.target.value.length);
                         setSignUpData(prev => ({...prev, password: e.target.value}));
-                        // Clear error when user starts typing
                         if (errors.password) {
                           setErrors(prev => ({...prev, password: ''}));
                         }
@@ -271,9 +254,7 @@ export default function Auth() {
                     placeholder="john@company.com"
                     value={signInData.email}
                     onChange={(e) => {
-                      console.log('Sign in email changed:', e.target.value);
                       setSignInData(prev => ({...prev, email: e.target.value}));
-                      // Clear error when user starts typing
                       if (errors.email) {
                         setErrors(prev => ({...prev, email: ''}));
                       }
@@ -293,9 +274,7 @@ export default function Auth() {
                       placeholder="Enter your password"
                       value={signInData.password}
                       onChange={(e) => {
-                        console.log('Sign in password changed, length:', e.target.value.length);
                         setSignInData(prev => ({...prev, password: e.target.value}));
-                        // Clear error when user starts typing
                         if (errors.password) {
                           setErrors(prev => ({...prev, password: ''}));
                         }
@@ -333,7 +312,6 @@ export default function Auth() {
                 type="button"
                 variant="ghost"
                 onClick={() => {
-                  console.log('Switching mode to:', !isSignUp ? 'Sign Up' : 'Sign In');
                   setIsSignUp(!isSignUp);
                   setSignInData({ email: '', password: '' });
                   setSignUpData({ displayName: '', email: '', password: '' });
@@ -359,26 +337,6 @@ export default function Auth() {
             <p className="text-sm text-muted-foreground">
               Create an account to access the industrial IoT platform features
             </p>
-          </CardContent>
-        </Card>
-        
-        {/* Debug info */}
-        <Card className="bg-muted/50 border-2 border-primary">
-          <CardContent className="p-2 text-center space-y-1">
-            <p className="text-xs font-bold text-primary">DEBUG INFO:</p>
-            <p className="text-xs text-muted-foreground">
-              Mode: {isSignUp ? 'Sign Up' : 'Sign In'} | Submitting: {submitting ? 'Yes' : 'No'}
-            </p>
-            {isSignUp && (
-              <p className="text-xs text-muted-foreground">
-                Name: "{signUpData.displayName}" | Email: "{signUpData.email}" | Pass: {signUpData.password.length} chars
-              </p>
-            )}
-            {!isSignUp && (
-              <p className="text-xs text-muted-foreground">
-                Email: "{signInData.email}" | Pass: {signInData.password.length} chars  
-              </p>
-            )}
           </CardContent>
         </Card>
       </div>
