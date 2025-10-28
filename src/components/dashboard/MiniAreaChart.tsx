@@ -43,7 +43,7 @@ const CustomTooltip = ({ active, payload, label, unit = '' }: any) => {
 export const MiniAreaChart: React.FC<MiniAreaChartProps> = ({
   title,
   data,
-  color = 'hsl(var(--primary))',
+  color = '#000000',
   isLoading = false,
   className = '',
   unit = '',

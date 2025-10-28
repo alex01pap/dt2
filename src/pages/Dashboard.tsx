@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { AlertTriangle, Thermometer, Zap, Shield, TrendingUp } from "lucide-react";
+import { AlertTriangle, Thermometer, Zap, TrendingUp, Plus, Eye, Activity, Wifi } from "lucide-react";
 import { KPIWidget } from "@/components/analytics/KPIWidget";
 import { MiniAreaChart } from "@/components/dashboard/MiniAreaChart";
 import { RecentEventsTable } from "@/components/dashboard/RecentEventsTable";
@@ -8,6 +8,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useRealtimeSensors } from "@/hooks/useRealtimeSensors";
 import { useRealtimeEvents } from "@/hooks/useRealtimeEvents";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const [energyChart, setEnergyChart] = useState([]);
@@ -94,6 +98,9 @@ export default function Dashboard() {
     acknowledged: event.acknowledged
   }));
 
+  // Empty state check
+  const hasData = sensors.length > 0 || events.length > 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -102,32 +109,119 @@ export default function Dashboard() {
       className="space-y-6"
     >
       {/* Header */}
-      <div className="space-y-2">
-        <motion.h1 
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
-        >
-          Digital Twin Dashboard
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-muted-foreground"
-        >
-          Real-time monitoring and system insights
-        </motion.p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold tracking-tight">
+              Digital Twin Dashboard
+            </h1>
+            {sensors.length > 0 && (
+              <Badge variant="secondary" className="rounded-full">
+                <Wifi className="h-3 w-3 mr-1 animate-pulse" />
+                Live
+              </Badge>
+            )}
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Real-time monitoring and system insights
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="rounded-full" asChild>
+            <Link to="/sensors">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Sensor
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" className="rounded-full" asChild>
+            <Link to="/twin/1">
+              <Eye className="h-4 w-4 mr-2" />
+              3D View
+            </Link>
+          </Button>
+        </div>
       </div>
 
+      {/* Empty State */}
+      {!hasData && !isLoading && (
+        <Card className="card-enterprise">
+          <CardContent className="pt-12 pb-12">
+            <div className="text-center space-y-6 max-w-2xl mx-auto">
+              <div className="inline-block p-4 rounded-2xl bg-accent/50">
+                <Activity className="h-12 w-12 text-foreground" />
+              </div>
+              
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold">Welcome to Your Digital Twin</h2>
+                <p className="text-muted-foreground">
+                  Get started by adding your first sensors to begin monitoring your infrastructure in real-time
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+                <Button className="rounded-full" asChild>
+                  <Link to="/sensors">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add First Sensor
+                  </Link>
+                </Button>
+                <Button variant="outline" className="rounded-full" asChild>
+                  <Link to="/twin/1">
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Demo Twin
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Quick Start Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8">
+                <Card className="border-2 hover:border-primary/50 transition-colors">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">1. Connect Sensors</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-xs">
+                      Add temperature, power, or IoT sensors to start collecting data
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 hover:border-primary/50 transition-colors">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">2. Create Rules</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-xs">
+                      Set up automation rules to respond to sensor events
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 hover:border-primary/50 transition-colors">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">3. Monitor Live</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-xs">
+                      View real-time data in 3D and receive instant alerts
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* KPI Widgets Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
-      >
+      {hasData && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
+        >
         <KPIWidget
           title="Active Alerts"
           icon={AlertTriangle}
@@ -186,9 +280,11 @@ export default function Dashboard() {
           variant="default"
           loading={isLoading}
         />
-      </motion.div>
+        </motion.div>
+      )}
 
       {/* Charts and Events Grid */}
+      {hasData && (
       <div className="grid gap-6 lg:grid-cols-3">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -198,7 +294,8 @@ export default function Dashboard() {
           <MiniAreaChart
             title="Energy Last 24h"
             data={energyChart}
-            color="#3b82f6"
+            color="#000000"
+            unit="kWh"
             isLoading={isLoading}
           />
         </motion.div>
@@ -214,7 +311,8 @@ export default function Dashboard() {
             isLoading={isLoading}
           />
         </motion.div>
-      </div>
+        </div>
+      )}
     </motion.div>
   );
 }
