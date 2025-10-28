@@ -6,43 +6,43 @@
 
 @layer base {
   :root {
-    /* Core Brand Colors */
+    /* Core Brand Colors - Once UI Style */
     --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
+    --foreground: 0 0% 10%;
     
-    /* Enterprise Blue Palette */
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --primary-hover: 221.2 83.2% 47%;
-    --primary-light: 221.2 83.2% 90%;
+    /* Primary Blue Palette */
+    --primary: 0 0% 10%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 0 0% 0%;
+    --primary-light: 210 100% 97%;
     
     /* Surface Colors */
     --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
+    --popover-foreground: 0 0% 10%;
     
     /* Neutral Palette */
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 194 100% 93%;
+    --accent-foreground: 0 0% 10%;
     
     /* Status Colors */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --success: 142.1 76.2% 36.3%;
-    --success-foreground: 210 40% 98%;
-    --warning: 47.9 95.8% 53.1%;
-    --warning-foreground: 26 83.3% 14.1%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+    --warning: 48 96% 53%;
+    --warning-foreground: 26 83% 14%;
     
     /* Interactive Elements */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 10%;
+    --radius: 0.75rem;
     
     /* Sidebar Enterprise Theme */
     --sidebar-background: 224 71.4% 4.1%;
@@ -54,16 +54,17 @@
     --sidebar-border: 215 27.9% 16.9%;
     --sidebar-ring: 221.2 83.2% 53.3%;
     
-    /* Enterprise Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(221.2 83.2% 53.3%), hsl(262.1 83.3% 57.8%));
-    --gradient-hero: linear-gradient(135deg, hsl(221.2 83.2% 53.3%) 0%, hsl(262.1 83.3% 57.8%) 50%, hsl(300 100% 25%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+    /* Modern Gradients - Once UI Style */
+    --gradient-primary: linear-gradient(135deg, hsl(194 100% 85%), hsl(194 100% 70%));
+    --gradient-hero: radial-gradient(ellipse at bottom, hsl(194 100% 93%) 0%, hsl(0 0% 100%) 60%);
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(194 100% 93%) 0%, hsl(194 100% 88%) 100%);
     
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1);
-    --shadow-elegant: 0 20px 25px -5px hsl(221.2 83.2% 53.3% / 0.1);
+    /* Shadows - Soft & Subtle */
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.03);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.05);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.08);
+    --shadow-elegant: 0 20px 25px -5px hsl(0 0% 0% / 0.1);
     
     /* Transitions */
     --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -161,17 +162,21 @@
 }
 
 @layer components {
-  /* Enterprise Component Variants */
+  /* Once UI Component Variants */
   .btn-hero {
-    @apply bg-gradient-to-r from-primary to-purple-600 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02];
+    @apply bg-primary text-primary-foreground shadow-sm hover:shadow-md transition-all duration-200 rounded-full px-6 py-3;
   }
   
   .btn-enterprise {
-    @apply bg-primary text-primary-foreground shadow-md hover:bg-primary-hover transition-all duration-200 hover:shadow-lg;
+    @apply bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover transition-all duration-200 rounded-full;
   }
   
   .card-enterprise {
-    @apply bg-card/50 backdrop-blur-sm border border-border/50 shadow-md hover:shadow-lg transition-all duration-300;
+    @apply bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 rounded-2xl;
+  }
+  
+  .card-gradient {
+    @apply bg-gradient-to-b from-accent to-accent/50 border-0 shadow-sm;
   }
   
   .sidebar-item {
@@ -185,6 +190,12 @@
   /* Loading Skeleton */
   .skeleton {
     @apply animate-pulse bg-muted rounded;
+  }
+  
+  /* Dot Pattern Background */
+  .dot-pattern {
+    background-image: radial-gradient(circle, hsl(0 0% 0% / 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 }
 
