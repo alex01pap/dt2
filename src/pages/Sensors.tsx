@@ -6,11 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { CardGrid, StatsCard, EmptyStateCard, CardSkeleton } from "@/components/ui/card-grid";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRealtimeSensors } from "@/hooks/useRealtimeSensors";
+import { SensorForm } from "@/components/sensors/SensorForm";
 import { format } from "date-fns";
 
 export default function Sensors() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { sensors, isLoading } = useRealtimeSensors();
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const { sensors, isLoading, refresh } = useRealtimeSensors();
 
   const filteredSensors = useMemo(() => {
     if (!searchQuery) return sensors;
@@ -71,7 +73,7 @@ export default function Sensors() {
           <p className="text-muted-foreground">Monitor and manage IoT sensors</p>
         </div>
         
-        <Button className="btn-enterprise">
+        <Button className="btn-enterprise" onClick={() => setIsAddOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Sensor
         </Button>
@@ -108,7 +110,7 @@ export default function Sensors() {
             description={searchQuery ? "Try adjusting your search query" : "Connect your first IoT sensor to start monitoring data streams"}
             action={!searchQuery ? {
               label: "Add Sensor",
-              onClick: () => console.log("Add sensor clicked")
+              onClick: () => setIsAddOpen(true)
             } : undefined}
           />
         </div>
@@ -158,6 +160,12 @@ export default function Sensors() {
           ))}
         </CardGrid>
       )}
+
+      <SensorForm 
+        open={isAddOpen} 
+        onOpenChange={setIsAddOpen}
+        onSuccess={refresh}
+      />
     </div>
   );
 }
