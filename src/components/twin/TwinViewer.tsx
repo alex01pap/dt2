@@ -6,7 +6,7 @@ import { Vector3, Color } from 'three';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useLiveSocket } from '@/hooks/useLiveSocket';
+import { useRealtimeSensors } from '@/hooks/useRealtimeSensors';
 
 export interface SensorData {
   id: string;
@@ -173,38 +173,29 @@ function LoadingScene() {
 
 export function TwinViewer({ 
   twinId, 
-  sensors = [],
+  sensors: propSensors = [],
   heatData = [],
   flowPipes = [],
   className 
 }: TwinViewerProps) {
   const [overlayMode, setOverlayMode] = useState<'none' | 'heat' | 'flow'>('none');
-  const { isConnected, lastMessage, sendMessage } = useLiveSocket();
+  const { sensors: realtimeSensors, isConnected } = useRealtimeSensors();
 
-  // Mock live data updates
+  // Use realtime sensors if no sensors provided via props
+  const sensors = propSensors.length > 0 ? propSensors : realtimeSensors.map(s => ({
+    id: s.id,
+    name: s.name,
+    type: s.type,
+    position: s.location ? [s.location.x, s.location.y, s.location.z] as [number, number, number] : [0, 0, 0] as [number, number, number],
+    value: s.last_reading || 0,
+    unit: s.type === 'temperature' ? '°C' : s.type === 'power' ? 'W' : '',
+    status: s.status === 'online' ? 'normal' : s.status === 'warning' ? 'warning' : 'critical' as 'normal' | 'warning' | 'critical'
+  }));
+
   useEffect(() => {
-    if (!isConnected) return;
-
-    const handleSensorUpdate = (data: any) => {
-      console.log('Received sensor update:', data);
-      // Update sensor data in real-time
-    };
-
-    // In a real implementation, you would listen to socket events
-    // socket.on('sensor-update', handleSensorUpdate);
-    // socket.on('twin-data', handleSensorUpdate);
-
-    // For now, we'll simulate updates based on lastMessage
-    if (lastMessage?.type === 'data_update') {
-      handleSensorUpdate(lastMessage.payload);
-    }
-
-    // Cleanup would be:
-    // return () => {
-    //   socket.off('sensor-update', handleSensorUpdate);
-    //   socket.off('twin-data', handleSensorUpdate);
-    // };
-  }, [isConnected, lastMessage]);
+    console.log('TwinViewer connected:', isConnected);
+    console.log('Active sensors:', sensors.length);
+  }, [isConnected, sensors.length]);
 
   return (
     <div className={className}>

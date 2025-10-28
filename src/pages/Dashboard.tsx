@@ -6,46 +6,27 @@ import { MiniAreaChart } from "@/components/dashboard/MiniAreaChart";
 import { RecentEventsTable } from "@/components/dashboard/RecentEventsTable";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useRealtimeSensors } from "@/hooks/useRealtimeSensors";
+import { useRealtimeEvents } from "@/hooks/useRealtimeEvents";
 
 export default function Dashboard() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [dashboardData, setDashboardData] = useState({
-    activeAlerts: 0,
-    sensorsOnline: 0,
-    totalSensors: 0,
-    energyToday: 0,
-    comfortScore: 0,
-    energyChart: [],
-    events: []
-  });
+  const [energyChart, setEnergyChart] = useState([]);
+  const [comfortScore, setComfortScore] = useState(0);
   const { user } = useAuth();
+  const { sensors, isLoading: sensorsLoading } = useRealtimeSensors();
+  const { events, isLoading: eventsLoading } = useRealtimeEvents(20);
 
-  // Load dashboard data from database
+  const isLoading = sensorsLoading || eventsLoading;
+
+  // Calculate dashboard metrics from realtime data
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    if (!sensors.length) return;
+    loadEnergyAndComfortData();
+  }, [sensors]);
 
-  const loadDashboardData = async () => {
+  const loadEnergyAndComfortData = async () => {
     try {
-      setIsLoading(true);
-
-      // Load alerts (critical and error events from last 24h)
-      const { data: alertsData } = await supabase
-        .from('events')
-        .select('*')
-        .in('severity', ['critical', 'error'])
-        .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-        .eq('acknowledged', false);
-
-      // Load sensor status
-      const { data: sensorsData } = await supabase
-        .from('sensors')
-        .select('status');
-
-      const onlineSensors = sensorsData?.filter(s => s.status === 'online').length || 0;
-      const totalSensors = sensorsData?.length || 0;
-
-      // Load energy data (from sensor readings - simulated)
+      // Load energy data (from sensor readings)
       const { data: energyData } = await supabase
         .from('sensor_readings')
         .select('value, recorded_at')
@@ -53,7 +34,7 @@ export default function Dashboard() {
         .order('recorded_at', { ascending: true });
 
       // Process energy chart data (group by hour)
-      const energyChart = [];
+      const chartData = [];
       if (energyData) {
         const hourlyData = energyData.reduce((acc, reading) => {
           const hour = new Date(reading.recorded_at).getHours();
@@ -67,57 +48,51 @@ export default function Dashboard() {
         }, {});
 
         Object.values(hourlyData).forEach((entry: any) => {
-          energyChart.push({
+          chartData.push({
             time: entry.time,
             value: entry.value / entry.count
           });
         });
       }
+      setEnergyChart(chartData.slice(-24));
 
-      // Load recent events
-      const { data: eventsData } = await supabase
-        .from('events')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(20);
+      // Calculate comfort score
+      const tempSensor = sensors.find(s => s.type === 'temperature');
+      if (tempSensor) {
+        const { data: comfortData } = await supabase
+          .from('sensor_readings')
+          .select('value')
+          .eq('sensor_id', tempSensor.id)
+          .gte('recorded_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
-      const events = eventsData?.map(event => ({
-        id: event.id,
-        title: event.title,
-        description: event.description,
-        severity: event.severity,
-        source: event.source,
-        timestamp: new Date(event.created_at),
-        acknowledged: event.acknowledged
-      })) || [];
-
-      // Calculate comfort score (based on temperature readings in comfort range)
-      const { data: comfortData } = await supabase
-        .from('sensor_readings')
-        .select('value')
-        .eq('sensor_id', (await supabase.from('sensors').select('id').eq('type', 'temperature').limit(1)).data?.[0]?.id)
-        .gte('recorded_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
-
-      const comfortReadings = comfortData?.filter(r => r.value >= 20 && r.value <= 24).length || 0;
-      const totalReadings = comfortData?.length || 1;
-      const comfortScore = Math.round((comfortReadings / totalReadings) * 100);
-
-      setDashboardData({
-        activeAlerts: alertsData?.length || 0,
-        sensorsOnline: onlineSensors,
-        totalSensors,
-        energyToday: energyChart.reduce((sum, entry) => sum + entry.value, 0),
-        comfortScore,
-        energyChart: energyChart.slice(-24), // Last 24 hours
-        events
-      });
-
+        const comfortReadings = comfortData?.filter(r => r.value >= 20 && r.value <= 24).length || 0;
+        const totalReadings = comfortData?.length || 1;
+        setComfortScore(Math.round((comfortReadings / totalReadings) * 100));
+      }
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
-    } finally {
-      setIsLoading(false);
+      console.error('Error loading energy/comfort data:', error);
     }
   };
+
+  // Derived values from realtime data
+  const activeAlerts = events.filter(
+    e => ['critical', 'error'].includes(e.severity) && !e.acknowledged
+  ).length;
+
+  const sensorsOnline = sensors.filter(s => s.status === 'online').length;
+  const totalSensors = sensors.length;
+
+  const energyToday = energyChart.reduce((sum: number, entry: any) => sum + entry.value, 0);
+
+  const formattedEvents = events.map(event => ({
+    id: event.id,
+    title: event.title,
+    description: event.description,
+    severity: event.severity,
+    source: event.source,
+    timestamp: new Date(event.created_at),
+    acknowledged: event.acknowledged
+  }));
 
   return (
     <motion.div
@@ -157,8 +132,8 @@ export default function Dashboard() {
           title="Active Alerts"
           icon={AlertTriangle}
           data={{
-            current: dashboardData.activeAlerts,
-            previous: dashboardData.activeAlerts + 2,
+            current: activeAlerts,
+            previous: activeAlerts + 2,
             format: "number"
           }}
           description="Unacknowledged"
@@ -171,12 +146,12 @@ export default function Dashboard() {
           title="Sensors Online"
           icon={Zap}
           data={{
-            current: dashboardData.totalSensors > 0 ? Math.round((dashboardData.sensorsOnline / dashboardData.totalSensors) * 100) : 0,
+            current: totalSensors > 0 ? Math.round((sensorsOnline / totalSensors) * 100) : 0,
             previous: 100,
             format: "percentage",
             precision: 0
           }}
-          description={`${dashboardData.sensorsOnline}/${dashboardData.totalSensors} online`}
+          description={`${sensorsOnline}/${totalSensors} online`}
           period="Current"
           variant="default"
           loading={isLoading}
@@ -186,8 +161,8 @@ export default function Dashboard() {
           title="Energy Today"
           icon={TrendingUp}
           data={{
-            current: dashboardData.energyToday,
-            previous: dashboardData.energyToday * 1.15,
+            current: energyToday,
+            previous: energyToday * 1.15,
             format: "number",
             precision: 1
           }}
@@ -201,8 +176,8 @@ export default function Dashboard() {
           title="Comfort Score"
           icon={Thermometer}
           data={{
-            current: dashboardData.comfortScore,
-            previous: dashboardData.comfortScore - 5,
+            current: comfortScore,
+            previous: comfortScore - 5,
             format: "percentage",
             precision: 0
           }}
@@ -222,7 +197,7 @@ export default function Dashboard() {
         >
           <MiniAreaChart
             title="Energy Last 24h"
-            data={dashboardData.energyChart}
+            data={energyChart}
             color="#3b82f6"
             isLoading={isLoading}
           />
@@ -235,7 +210,7 @@ export default function Dashboard() {
           className="lg:col-span-2"
         >
           <RecentEventsTable
-            events={dashboardData.events}
+            events={formattedEvents}
             isLoading={isLoading}
           />
         </motion.div>
