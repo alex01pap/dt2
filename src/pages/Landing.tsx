@@ -26,52 +26,57 @@ const features = [
 
 const pricingPlans = [
   {
-    name: "Free",
+    name: "Starter",
     price: "$0",
-    period: "/ year",
-    description: "Includes $450 product value",
+    period: "/ month",
+    description: "Perfect for testing and small deployments",
     features: [
-      "Unlimited seats",
-      "Basic monitoring",
-      "Standard support",
-      "Community access"
+      "Up to 10 sensors",
+      "Real-time monitoring",
+      "3D visualization",
+      "Basic analytics",
+      "Community support"
     ],
-    cta: "Sign up",
+    cta: "Start Free",
     highlighted: false
   },
   {
-    name: "Pro",
-    price: "$128",
-    originalPrice: "$320",
-    period: "/ year",
-    description: "Includes $1400 product value",
-    badge: "🔥 60% OFF 🔥",
+    name: "Professional",
+    price: "$299",
+    originalPrice: "$599",
+    period: "/ month",
+    description: "For growing operations",
+    badge: "🔥 50% OFF 🔥",
     features: [
-      "Single seat",
-      "Advanced analytics",
-      "Priority support",
+      "Unlimited sensors",
+      "Advanced AI analytics",
+      "Custom dashboards",
       "API access",
-      "Custom integrations",
-      "Premium features"
+      "openHAB integration",
+      "Priority support",
+      "Custom rules engine",
+      "Historical data"
     ],
-    cta: "Sign up",
+    cta: "Get Started",
     highlighted: true
   },
   {
-    name: "Team",
-    price: "$800",
-    originalPrice: "$2000",
-    period: "/ year",
-    description: "Includes $1400 product value",
+    name: "Enterprise",
+    price: "$999",
+    originalPrice: "$1999",
+    period: "/ month",
+    description: "For large-scale deployments",
     features: [
-      "Unlimited seats",
-      "All Pro features",
+      "Everything in Pro",
+      "Multi-site support",
       "Dedicated support",
       "Custom training",
-      "SLA guarantee",
-      "White-label options"
+      "SLA 99.9% uptime",
+      "White-label options",
+      "On-premise deployment",
+      "Custom integrations"
     ],
-    cta: "Sign up",
+    cta: "Contact Sales",
     highlighted: false
   }
 ];
@@ -110,22 +115,22 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto space-y-6">
           <Badge variant="secondary" className="rounded-full px-4 py-1.5 text-sm">
             <Star className="h-3.5 w-3.5 mr-1.5 inline" />
-            Get Pro: Lock in now
+            Next-Gen IoT Platform
           </Badge>
           
           <h1 className="text-5xl lg:text-7xl font-bold text-foreground leading-tight tracking-tight">
-            Code faster than AI
+            Monitor smarter than ever
           </h1>
           
           <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Launch your complete stack in days—with the design system
-            built for indie creators. Limited offer for the next 50 subscribers.
+            Transform your infrastructure with intelligent digital twins. 
+            Real-time monitoring, 3D visualization, and AI-powered insights for modern buildings.
           </p>
           
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-2">
             <span className="flex items-center gap-1">
               <Zap className="h-4 w-4 text-orange-500" />
-              Trusted by 1k+ indie creators
+              Trusted by 150+ facilities worldwide
             </span>
           </div>
 
@@ -258,7 +263,7 @@ export default function Landing() {
           <Card className="card-enterprise p-8">
             <div className="flex items-start justify-between gap-4">
               <p className="text-lg text-foreground max-w-2xl">
-                Once UI looks interesting! Design system and component library with in-sync Figma components and tokens.
+                "TwinVision transformed how we monitor our facilities. The 3D visualization makes it incredibly easy to spot issues before they become problems. Real game-changer!"
               </p>
               <Button variant="ghost" size="icon" className="rounded-full">
                 <span className="text-xl">𝕏</span>
@@ -266,10 +271,12 @@ export default function Landing() {
             </div>
             
             <div className="flex items-center gap-3 mt-6">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400" />
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+                <Building2 className="h-5 w-5 text-white" />
+              </div>
               <div>
-                <div className="font-medium text-sm">Torkel Ödegaard</div>
-                <div className="text-xs text-muted-foreground">Co-founder @Grafana Labs</div>
+                <div className="font-medium text-sm">Andreas Schmidt</div>
+                <div className="text-xs text-muted-foreground">Facility Manager @TechCorp</div>
               </div>
             </div>
           </Card>
@@ -284,25 +291,28 @@ export default function Landing() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                 <div className="space-y-4">
                   <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
-                    From side-projects
-                    to enterprise
+                    From single room
+                    to smart campus
                   </h2>
                   <p className="text-muted-foreground">
-                    A journey of crafting enterprise-grade applications with the power of Once UI
+                    See how TwinVision scaled from monitoring a single restaurant to managing entire smart building complexes
                   </p>
                   
                   <div className="flex items-center gap-3 pt-4">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500" />
-                    <span className="font-medium text-sm">Justin</span>
+                    <Building2 className="w-10 h-10 text-primary" />
+                    <span className="font-medium text-sm">Restaurant Case Study</span>
                   </div>
                   
-                  <Button className="mt-6 bg-primary text-primary-foreground hover:bg-primary-hover rounded-full">
-                    Read story
+                  <Button className="mt-6 bg-primary text-primary-foreground hover:bg-primary-hover rounded-full" asChild>
+                    <Link to="/client-demo">
+                      View Demo
+                    </Link>
                   </Button>
                 </div>
                 
-                <div className="bg-slate-800 rounded-2xl p-8 shadow-2xl aspect-video flex items-center justify-center">
-                  <div className="text-white text-xl font-bold">JExcellence</div>
+                <div className="bg-slate-800 rounded-2xl p-8 shadow-2xl aspect-video flex items-center justify-center relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20" />
+                  <Eye className="h-24 w-24 text-cyan-400" />
                 </div>
               </div>
             </Card>
@@ -319,17 +329,17 @@ export default function Landing() {
               asked questions
             </h2>
             <p className="text-muted-foreground">
-              Learn more about Once UI
+              Learn more about TwinVision
             </p>
           </div>
           
           <div className="space-y-4">
             {[
-              "What does the Pro plan include?",
-              "How do I get access after purchase?",
-              "Do I get future updates?",
-              "Do you provide support?",
-              "Do you offer a refund?"
+              "What sensors are supported?",
+              "Can I integrate with openHAB?",
+              "How does 3D visualization work?",
+              "What's included in the free plan?",
+              "Do you offer on-premise deployment?"
             ].map((question, idx) => (
               <Card key={idx} className="card-enterprise p-4 hover:shadow-md transition-shadow cursor-pointer">
                 <div className="flex items-center justify-between">
@@ -358,7 +368,7 @@ export default function Landing() {
             
             <div className="relative z-10 text-center space-y-6">
               <h2 className="text-4xl lg:text-5xl font-bold text-foreground">
-                Ship your proj
+                Start monitoring smarter
               </h2>
               
               <Button 
@@ -367,7 +377,7 @@ export default function Landing() {
                 asChild
               >
                 <Link to="/dashboard">
-                  Start now
+                  Launch Platform
                 </Link>
               </Button>
             </div>
