@@ -22,6 +22,8 @@ import DigitalTwin from "./pages/DigitalTwin";
 import PlatformStatus from "./pages/PlatformStatus";
 import Architecture from "./pages/Architecture";
 import ClientDemo from "./pages/ClientDemo";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -145,6 +147,26 @@ const App = () => (
               <Route 
                 path="/client-demo" 
                 element={<ClientDemo />} 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Profile />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/settings" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Settings />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
               />
               <Route path="*" element={<NotFound />} />
           </Routes>

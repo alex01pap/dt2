@@ -24,6 +24,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   hasRole: (role: 'admin' | 'moderator' | 'user') => boolean;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -198,6 +199,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return userRoles.some(userRole => userRole.role === role);
   };
 
+  const refreshProfile = async () => {
+    if (user) {
+      await fetchUserProfile(user.id);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     session,
@@ -208,6 +215,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signOut,
     hasRole,
+    refreshProfile,
   };
 
   return (
