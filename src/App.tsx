@@ -22,7 +22,6 @@ import DigitalTwin from "./pages/DigitalTwin";
 import PlatformStatus from "./pages/PlatformStatus";
 import Architecture from "./pages/Architecture";
 import ClientDemo from "./pages/ClientDemo";
-import OpenHABIntegration from "./pages/OpenHABIntegration";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -115,16 +114,6 @@ const App = () => (
                 <ProtectedRoute>
                   <DashboardLayout>
                     <Tutorials />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/openhab" 
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <OpenHABIntegration />
                   </DashboardLayout>
                 </ProtectedRoute>
               } 

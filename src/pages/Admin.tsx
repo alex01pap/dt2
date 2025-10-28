@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Shield, Users, Settings, Database, Activity, AlertTriangle } from "lucide-react";
+import { Shield, Users, Settings, Database, Activity, AlertTriangle, Link as LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardGrid, StatsCard, CardSkeleton } from "@/components/ui/card-grid";
 import { RBACGuard } from "@/components/auth/RBACGuard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { OpenHABIntegration } from "@/components/admin/OpenHABIntegration";
 
 export default function Admin() {
   const [isLoading] = useState(false);
@@ -76,54 +78,70 @@ export default function Admin() {
           </Badge>
         </div>
 
-        <CardGrid className="lg:grid-cols-4">
-          {systemStats.map((stat) => (
-            <StatsCard key={stat.title} {...stat} />
-          ))}
-        </CardGrid>
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="openhab">
+              <LinkIcon className="h-4 w-4 mr-2" />
+              OpenHAB Integration
+            </TabsTrigger>
+          </TabsList>
 
-        <CardGrid className="lg:grid-cols-3">
-          {adminSections.map((section) => (
-            <Card key={section.title} className="card-enterprise">
+          <TabsContent value="overview" className="space-y-6">
+            <CardGrid className="lg:grid-cols-4">
+              {systemStats.map((stat) => (
+                <StatsCard key={stat.title} {...stat} />
+              ))}
+            </CardGrid>
+
+            <CardGrid className="lg:grid-cols-3">
+              {adminSections.map((section) => (
+                <Card key={section.title} className="card-enterprise">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <section.icon className="h-5 w-5 text-primary" />
+                      <div>
+                        <CardTitle>{section.title}</CardTitle>
+                        <CardDescription>{section.description}</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {section.actions.map((action) => (
+                        <Button
+                          key={action}
+                          variant="ghost"
+                          className="w-full justify-start h-auto p-2 font-normal"
+                          onClick={() => console.log(`${action} clicked`)}
+                        >
+                          {action}
+                        </Button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </CardGrid>
+
+            {/* Recent Activity */}
+            <Card className="card-enterprise">
               <CardHeader>
-                <div className="flex items-center gap-3">
-                  <section.icon className="h-5 w-5 text-primary" />
-                  <div>
-                    <CardTitle>{section.title}</CardTitle>
-                    <CardDescription>{section.description}</CardDescription>
-                  </div>
-                </div>
+                <CardTitle>Recent Activity</CardTitle>
+                <CardDescription>Latest system events and administrative actions</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {section.actions.map((action) => (
-                    <Button
-                      key={action}
-                      variant="ghost"
-                      className="w-full justify-start h-auto p-2 font-normal"
-                      onClick={() => console.log(`${action} clicked`)}
-                    >
-                      {action}
-                    </Button>
-                  ))}
+                <div className="text-center py-8 text-muted-foreground">
+                  No recent activity to display
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </CardGrid>
+          </TabsContent>
 
-        {/* Recent Activity */}
-        <Card className="card-enterprise">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest system events and administrative actions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              No recent activity to display
-            </div>
-          </CardContent>
-        </Card>
+          <TabsContent value="openhab">
+            <OpenHABIntegration />
+          </TabsContent>
+        </Tabs>
       </div>
     </RBACGuard>
   );
