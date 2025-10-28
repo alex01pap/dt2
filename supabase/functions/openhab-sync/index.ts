@@ -44,6 +44,8 @@ serve(async (req) => {
       return await fetchItems(req, supabaseClient, user.id);
     } else if (action === 'sync-data') {
       return await syncData(req, supabaseClient, user.id);
+    } else if (action === 'send-command') {
+      return await sendCommand(req, supabaseClient, user.id);
     } else {
       return new Response(JSON.stringify({ error: 'Invalid action' }), {
         status: 400,
@@ -345,6 +347,74 @@ async function performSync(supabaseClient: any, config: any, syncType: string) {
         error_message: errorMessage,
       });
 
+    return new Response(
+      JSON.stringify({ error: errorMessage }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+}
+
+async function sendCommand(req: Request, supabaseClient: any, userId: string) {
+  const { itemName, command } = await req.json();
+
+  if (!itemName || command === undefined) {
+    return new Response(
+      JSON.stringify({ error: 'itemName and command are required' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // Get user's OpenHAB config
+  const { data: config, error: configError } = await supabaseClient
+    .from('openhab_config')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
+
+  if (configError || !config) {
+    return new Response(
+      JSON.stringify({ error: 'No OpenHAB configuration found' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'text/plain',
+    };
+    
+    if (config.api_token) {
+      headers['Authorization'] = `Bearer ${config.api_token}`;
+    }
+
+    console.log(`Sending command to ${itemName}: ${command}`);
+
+    const response = await fetch(
+      `${config.openhab_url}/rest/items/${itemName}`,
+      {
+        method: 'POST',
+        headers,
+        body: String(command),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`OpenHAB API returned status ${response.status}: ${errorText}`);
+    }
+
+    console.log(`Command sent successfully to ${itemName}`);
+
+    return new Response(
+      JSON.stringify({ 
+        success: true,
+        message: `Command '${command}' sent to ${itemName}`,
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error('Error sending command:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

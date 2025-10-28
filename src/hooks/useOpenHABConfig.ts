@@ -167,6 +167,31 @@ export const useOpenHABConfig = () => {
     }
   };
 
+  const sendCommand = async (itemName: string, command: string | number) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("openhab-sync", {
+        body: { action: "send-command", itemName, command },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Command sent",
+        description: data.message,
+      });
+
+      return data;
+    } catch (error: any) {
+      console.error("Send command error:", error);
+      toast({
+        title: "Command failed",
+        description: error.message || "Failed to send command",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
   return {
     config,
     isLoading,
@@ -174,6 +199,7 @@ export const useOpenHABConfig = () => {
     testConnection,
     fetchItems,
     syncData,
+    sendCommand,
     reload: loadConfig,
   };
 };

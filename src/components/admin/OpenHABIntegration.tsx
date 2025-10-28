@@ -24,7 +24,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export function OpenHABIntegration() {
-  const { config, isLoading, saveConfig, testConnection, fetchItems, syncData } = useOpenHABConfig();
+  const { config, isLoading, saveConfig, testConnection, fetchItems, syncData, sendCommand } = useOpenHABConfig();
   const [formData, setFormData] = useState({
     openhab_url: "",
     api_token: "",
@@ -39,6 +39,8 @@ export function OpenHABIntegration() {
   const [isLoadingItems, setIsLoadingItems] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [syncLogs, setSyncLogs] = useState<any[]>([]);
+  const [commandValues, setCommandValues] = useState<Record<string, string>>({});
+  const [sendingCommand, setSendingCommand] = useState<string | null>(null);
 
   useEffect(() => {
     if (config) {
@@ -173,6 +175,23 @@ export function OpenHABIntegration() {
     } catch (error: any) {
       console.error("Error mapping item:", error);
       toast.error(error.message || "Failed to map item");
+    }
+  };
+
+  const handleSendCommand = async (itemName: string) => {
+    const command = commandValues[itemName];
+    if (!command) {
+      toast.error("Please enter a command value");
+      return;
+    }
+
+    setSendingCommand(itemName);
+    try {
+      await sendCommand(itemName, command);
+      // Clear the input after successful send
+      setCommandValues({ ...commandValues, [itemName]: "" });
+    } finally {
+      setSendingCommand(null);
     }
   };
 
@@ -539,35 +558,74 @@ export function OpenHABIntegration() {
                   {mappedItems.map((item) => (
                     <div 
                       key={item.id} 
-                      className="flex items-center justify-between p-4 border rounded-lg"
+                      className="flex flex-col p-4 border rounded-lg gap-3"
                     >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium">{item.openhab_item_label || item.openhab_item_name}</p>
-                          {item.sync_enabled ? (
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <XCircle className="h-4 w-4 text-muted-foreground" />
-                          )}
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium">{item.openhab_item_label || item.openhab_item_name}</p>
+                            {item.sync_enabled ? (
+                              <CheckCircle className="h-4 w-4 text-success" />
+                            ) : (
+                              <XCircle className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">{item.openhab_item_type}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            {item.sensors && (
+                              <Badge variant="secondary" className="text-xs">
+                                → {item.sensors.name}
+                              </Badge>
+                            )}
+                            {item.last_value && (
+                              <Badge variant="outline" className="text-xs">
+                                {item.last_value}
+                              </Badge>
+                            )}
+                            {item.last_synced_at && (
+                              <span className="text-xs text-muted-foreground">
+                                Last synced: {new Date(item.last_synced_at).toLocaleTimeString()}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">{item.openhab_item_type}</p>
-                        <div className="flex items-center gap-2 mt-2">
-                          {item.sensors && (
-                            <Badge variant="secondary" className="text-xs">
-                              → {item.sensors.name}
-                            </Badge>
-                          )}
-                          {item.last_value && (
-                            <Badge variant="outline" className="text-xs">
-                              {item.last_value}
-                            </Badge>
-                          )}
-                          {item.last_synced_at && (
-                            <span className="text-xs text-muted-foreground">
-                              Last synced: {new Date(item.last_synced_at).toLocaleTimeString()}
-                            </span>
-                          )}
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Send Command</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Enter command value (e.g., 23, ON, OFF)"
+                            value={commandValues[item.openhab_item_name] || ""}
+                            onChange={(e) => setCommandValues({
+                              ...commandValues,
+                              [item.openhab_item_name]: e.target.value
+                            })}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleSendCommand(item.openhab_item_name);
+                              }
+                            }}
+                            className="flex-1"
+                          />
+                          <Button
+                            onClick={() => handleSendCommand(item.openhab_item_name)}
+                            disabled={sendingCommand === item.openhab_item_name || !commandValues[item.openhab_item_name]}
+                            size="sm"
+                            variant="default"
+                          >
+                            {sendingCommand === item.openhab_item_name ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              "Send"
+                            )}
+                          </Button>
                         </div>
+                        <p className="text-xs text-muted-foreground">
+                          Common commands: ON, OFF, numeric values, or item-specific commands
+                        </p>
                       </div>
                     </div>
                   ))}
