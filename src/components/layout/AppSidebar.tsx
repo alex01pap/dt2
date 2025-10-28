@@ -10,6 +10,7 @@ import {
   Building2,
   GitBranch,
   Layers,
+  Link as LinkIcon,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -68,6 +69,12 @@ const simulationItems = [
 ];
 
 const systemItems = [
+  { 
+    title: "OpenHAB", 
+    url: "/openhab", 
+    icon: LinkIcon,
+    description: "Integration setup"
+  },
   { 
     title: "Architecture", 
     url: "/architecture", 

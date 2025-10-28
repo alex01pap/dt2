@@ -97,6 +97,140 @@ export type Database = {
         }
         Relationships: []
       }
+      openhab_config: {
+        Row: {
+          api_token: string | null
+          created_at: string | null
+          enabled: boolean | null
+          id: string
+          last_sync_at: string | null
+          openhab_url: string
+          sync_interval: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          api_token?: string | null
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          last_sync_at?: string | null
+          openhab_url: string
+          sync_interval?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          api_token?: string | null
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          last_sync_at?: string | null
+          openhab_url?: string
+          sync_interval?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      openhab_items: {
+        Row: {
+          config_id: string
+          created_at: string | null
+          id: string
+          last_synced_at: string | null
+          last_value: string | null
+          mapping_type: string | null
+          openhab_item_label: string | null
+          openhab_item_name: string
+          openhab_item_type: string
+          sensor_id: string | null
+          sync_enabled: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          config_id: string
+          created_at?: string | null
+          id?: string
+          last_synced_at?: string | null
+          last_value?: string | null
+          mapping_type?: string | null
+          openhab_item_label?: string | null
+          openhab_item_name: string
+          openhab_item_type: string
+          sensor_id?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          config_id?: string
+          created_at?: string | null
+          id?: string
+          last_synced_at?: string | null
+          last_value?: string | null
+          mapping_type?: string | null
+          openhab_item_label?: string | null
+          openhab_item_name?: string
+          openhab_item_type?: string
+          sensor_id?: string | null
+          sync_enabled?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "openhab_items_config_id_fkey"
+            columns: ["config_id"]
+            isOneToOne: false
+            referencedRelation: "openhab_config"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "openhab_items_sensor_id_fkey"
+            columns: ["sensor_id"]
+            isOneToOne: false
+            referencedRelation: "sensors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      openhab_sync_log: {
+        Row: {
+          config_id: string
+          created_at: string | null
+          error_message: string | null
+          id: string
+          items_synced: number | null
+          status: string
+          sync_type: string
+        }
+        Insert: {
+          config_id: string
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          items_synced?: number | null
+          status: string
+          sync_type: string
+        }
+        Update: {
+          config_id?: string
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          items_synced?: number | null
+          status?: string
+          sync_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "openhab_sync_log_config_id_fkey"
+            columns: ["config_id"]
+            isOneToOne: false
+            referencedRelation: "openhab_config"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
