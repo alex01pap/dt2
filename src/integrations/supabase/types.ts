@@ -453,6 +453,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_sync_openhab: { Args: never; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

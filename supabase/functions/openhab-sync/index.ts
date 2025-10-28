@@ -22,6 +22,14 @@ serve(async (req) => {
       }
     );
 
+    const { action, config_id } = await req.json();
+
+    // Auto-sync doesn't require authentication (called by cron)
+    if (action === 'auto-sync') {
+      return await autoSyncData(supabaseClient, config_id);
+    }
+
+    // All other actions require authentication
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
     if (userError || !user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -29,8 +37,6 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    const { action } = await req.json();
 
     if (action === 'test-connection') {
       return await testConnection(req, supabaseClient, user.id);
@@ -164,6 +170,27 @@ async function fetchItems(req: Request, supabaseClient: any, userId: string) {
   }
 }
 
+async function autoSyncData(supabaseClient: any, configId: string) {
+  console.log(`Auto-syncing OpenHAB config ${configId}`);
+  
+  // Get config by ID (no user auth needed for cron)
+  const { data: config, error: configError } = await supabaseClient
+    .from('openhab_config')
+    .select('*')
+    .eq('id', configId)
+    .single();
+
+  if (configError || !config || !config.enabled) {
+    console.log('Config not found or not enabled');
+    return new Response(
+      JSON.stringify({ error: 'Config not found or not enabled' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  return await performSync(supabaseClient, config, 'automatic');
+}
+
 async function syncData(req: Request, supabaseClient: any, userId: string) {
   // Get user's OpenHAB config
   const { data: config, error: configError } = await supabaseClient
@@ -179,6 +206,10 @@ async function syncData(req: Request, supabaseClient: any, userId: string) {
     );
   }
 
+  return await performSync(supabaseClient, config, 'manual');
+}
+
+async function performSync(supabaseClient: any, config: any, syncType: string) {
   try {
     // Get mapped items
     const { data: mappedItems, error: itemsError } = await supabaseClient
@@ -284,7 +315,7 @@ async function syncData(req: Request, supabaseClient: any, userId: string) {
       .from('openhab_sync_log')
       .insert({
         config_id: config.id,
-        sync_type: 'manual',
+        sync_type: syncType,
         status: errors.length > 0 ? 'partial' : 'success',
         items_synced: syncedCount,
         error_message: errors.length > 0 ? errors.join('; ') : null,
@@ -308,7 +339,7 @@ async function syncData(req: Request, supabaseClient: any, userId: string) {
       .from('openhab_sync_log')
       .insert({
         config_id: config.id,
-        sync_type: 'manual',
+        sync_type: syncType,
         status: 'error',
         items_synced: 0,
         error_message: errorMessage,

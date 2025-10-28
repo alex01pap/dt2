@@ -38,6 +38,7 @@ export function OpenHABIntegration() {
   const [mappedItems, setMappedItems] = useState<any[]>([]);
   const [isLoadingItems, setIsLoadingItems] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
+  const [syncLogs, setSyncLogs] = useState<any[]>([]);
 
   useEffect(() => {
     if (config) {
@@ -48,6 +49,7 @@ export function OpenHABIntegration() {
         enabled: config.enabled,
       });
       loadMappedItems();
+      loadSyncLogs();
     }
   }, [config]);
 
@@ -64,6 +66,24 @@ export function OpenHABIntegration() {
       setMappedItems(data || []);
     } catch (error) {
       console.error("Error loading mapped items:", error);
+    }
+  };
+
+  const loadSyncLogs = async () => {
+    if (!config) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from("openhab_sync_log")
+        .select("*")
+        .eq("config_id", config.id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+      setSyncLogs(data || []);
+    } catch (error) {
+      console.error("Error loading sync logs:", error);
     }
   };
 
@@ -103,6 +123,7 @@ export function OpenHABIntegration() {
     try {
       await syncData();
       await loadMappedItems();
+      await loadSyncLogs(); // Refresh sync logs after manual sync
     } finally {
       setIsSyncing(false);
     }
@@ -211,10 +232,11 @@ export function OpenHABIntegration() {
       </Alert>
 
       <Tabs defaultValue="setup" className="space-y-4">
-        <TabsList>
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="setup">Setup</TabsTrigger>
           <TabsTrigger value="items">Available Items</TabsTrigger>
           <TabsTrigger value="mapped">Mapped Items ({mappedItems.length})</TabsTrigger>
+          <TabsTrigger value="status">Sync Status</TabsTrigger>
         </TabsList>
 
         <TabsContent value="setup" className="space-y-4">
@@ -551,6 +573,113 @@ export function OpenHABIntegration() {
                   ))}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="status" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span>Automatic Sync Status</span>
+                {config?.enabled && (
+                  <Badge variant="default" className="bg-success">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Active
+                  </Badge>
+                )}
+              </CardTitle>
+              <CardDescription>
+                Automatic synchronization runs every {formData.sync_interval} seconds when enabled
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Last Sync</p>
+                  <p className="text-2xl font-bold">
+                    {config?.last_sync_at 
+                      ? new Date(config.last_sync_at).toLocaleString()
+                      : "Never"
+                    }
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Sync Interval</p>
+                  <p className="text-2xl font-bold">{formData.sync_interval}s</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Mapped Items</p>
+                  <p className="text-2xl font-bold">{mappedItems.length}</p>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Recent Sync History</h3>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadSyncLogs}
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Refresh
+                  </Button>
+                </div>
+
+                {syncLogs.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>No sync history yet</p>
+                    <p className="text-sm mt-2">Sync logs will appear here once data synchronization begins</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {syncLogs.map((log) => (
+                      <div 
+                        key={log.id}
+                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex items-start gap-3 flex-1">
+                          {log.status === 'success' ? (
+                            <CheckCircle className="h-5 w-5 text-success mt-0.5" />
+                          ) : log.status === 'partial' ? (
+                            <Info className="h-5 w-5 text-warning mt-0.5" />
+                          ) : (
+                            <XCircle className="h-5 w-5 text-destructive mt-0.5" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <Badge variant={log.sync_type === 'automatic' ? 'default' : 'secondary'}>
+                                {log.sync_type}
+                              </Badge>
+                              <Badge 
+                                variant={
+                                  log.status === 'success' ? 'default' :
+                                  log.status === 'partial' ? 'secondary' : 
+                                  'destructive'
+                                }
+                              >
+                                {log.status}
+                              </Badge>
+                            </div>
+                            <p className="text-sm mt-1">
+                              Synced {log.items_synced} items
+                            </p>
+                            {log.error_message && (
+                              <p className="text-xs text-destructive mt-1">{log.error_message}</p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-xs text-muted-foreground text-right">
+                          {new Date(log.created_at).toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
