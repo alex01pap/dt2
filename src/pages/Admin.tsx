@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Shield, Users, Settings, Database, Activity, AlertTriangle, Link as LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardGrid, StatsCard, CardSkeleton } from "@/components/ui/card-grid";
@@ -7,37 +7,88 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OpenHABIntegration } from "@/components/admin/OpenHABIntegration";
+import { UserManagement } from "@/components/admin/UserManagement";
+import { SystemConfiguration } from "@/components/admin/SystemConfiguration";
+import { SecurityCenter } from "@/components/admin/SecurityCenter";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Admin() {
   const [isLoading] = useState(false);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeSensors: 0,
+    openhabConnected: false,
+    totalAssets: 0,
+  });
+
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
+    try {
+      // Load user count
+      const { count: userCount } = await supabase
+        .from("profiles")
+        .select("*", { count: "exact", head: true });
+
+      // Load sensor count
+      const { count: sensorCount } = await supabase
+        .from("sensors")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "online");
+
+      // Load asset count
+      const { count: assetCount } = await supabase
+        .from("assets")
+        .select("*", { count: "exact", head: true });
+
+      // Check OpenHAB connection
+      const { data: openhabConfig } = await supabase
+        .from("openhab_config")
+        .select("enabled")
+        .single();
+
+      setStats({
+        totalUsers: userCount || 0,
+        activeSensors: sensorCount || 0,
+        openhabConnected: openhabConfig?.enabled || false,
+        totalAssets: assetCount || 0,
+      });
+    } catch (error) {
+      console.error("Error loading stats:", error);
+    }
+  };
 
   const systemStats = [
-    { title: "System Health", value: "100%", description: "All systems operational", icon: Activity, trend: { value: 0, isPositive: true } },
-    { title: "Active Users", value: "1", description: "Currently online", icon: Users },
-    { title: "Database", value: "Healthy", description: "Connection stable", icon: Database },
-    { title: "Alerts", value: "0", description: "Active issues", icon: AlertTriangle },
+    { 
+      title: "Total Users", 
+      value: stats.totalUsers.toString(), 
+      description: "Registered accounts", 
+      icon: Users,
+      trend: { value: 0, isPositive: true }
+    },
+    { 
+      title: "Active Sensors", 
+      value: stats.activeSensors.toString(), 
+      description: "Currently online", 
+      icon: Activity 
+    },
+    { 
+      title: "OpenHAB Status", 
+      value: stats.openhabConnected ? "Connected" : "Offline", 
+      description: stats.openhabConnected ? "Integration active" : "Not configured", 
+      icon: LinkIcon 
+    },
+    { 
+      title: "Total Assets", 
+      value: stats.totalAssets.toString(), 
+      description: "Managed assets", 
+      icon: Database 
+    },
   ];
 
-  const adminSections = [
-    {
-      title: "User Management",
-      description: "Manage user accounts, roles, and permissions",
-      icon: Users,
-      actions: ["View Users", "Add User", "Role Settings"],
-    },
-    {
-      title: "System Configuration",
-      description: "Configure system-wide settings and preferences",
-      icon: Settings,
-      actions: ["General Settings", "Security", "Integrations"],
-    },
-    {
-      title: "Security Center",
-      description: "Monitor security events and manage access controls",
-      icon: Shield,
-      actions: ["Audit Logs", "Access Control", "Security Policies"],
-    },
-  ];
+  const adminSections = [];
 
   if (isLoading) {
     return (
@@ -79,11 +130,23 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="users">
+              <Users className="h-4 w-4 mr-2" />
+              Users
+            </TabsTrigger>
+            <TabsTrigger value="system">
+              <Settings className="h-4 w-4 mr-2" />
+              System
+            </TabsTrigger>
+            <TabsTrigger value="security">
+              <Shield className="h-4 w-4 mr-2" />
+              Security
+            </TabsTrigger>
             <TabsTrigger value="openhab">
               <LinkIcon className="h-4 w-4 mr-2" />
-              OpenHAB Integration
+              OpenHAB
             </TabsTrigger>
           </TabsList>
 
@@ -94,51 +157,92 @@ export default function Admin() {
               ))}
             </CardGrid>
 
-            <CardGrid className="lg:grid-cols-3">
-              {adminSections.map((section) => (
-                <Card key={section.title} className="card-enterprise">
-                  <CardHeader>
-                    <div className="flex items-center gap-3">
-                      <section.icon className="h-5 w-5 text-primary" />
-                      <div>
-                        <CardTitle>{section.title}</CardTitle>
-                        <CardDescription>{section.description}</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {section.actions.map((action) => (
-                        <Button
-                          key={action}
-                          variant="ghost"
-                          className="w-full justify-start h-auto p-2 font-normal"
-                          onClick={() => {
-                            // Placeholder for future implementation
-                            alert(`${action} - Feature coming soon!`);
-                          }}
-                        >
-                          {action}
-                        </Button>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </CardGrid>
-
             {/* Recent Activity */}
             <Card className="card-enterprise">
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Latest system events and administrative actions</CardDescription>
+                <CardTitle>Quick Actions</CardTitle>
+                <CardDescription>Common administrative tasks</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  No recent activity to display
+                <div className="grid md:grid-cols-2 gap-4">
+                  <Button
+                    variant="outline"
+                    className="h-auto p-4 flex-col items-start"
+                    onClick={() => {
+                      document.querySelector('[value="users"]')?.dispatchEvent(new Event('click', { bubbles: true }));
+                    }}
+                  >
+                    <Users className="h-5 w-5 mb-2" />
+                    <div className="text-left">
+                      <div className="font-semibold">Manage Users</div>
+                      <div className="text-xs text-muted-foreground">
+                        View and modify user accounts
+                      </div>
+                    </div>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="h-auto p-4 flex-col items-start"
+                    onClick={() => {
+                      document.querySelector('[value="openhab"]')?.dispatchEvent(new Event('click', { bubbles: true }));
+                    }}
+                  >
+                    <LinkIcon className="h-5 w-5 mb-2" />
+                    <div className="text-left">
+                      <div className="font-semibold">OpenHAB Setup</div>
+                      <div className="text-xs text-muted-foreground">
+                        Configure sensor integration
+                      </div>
+                    </div>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="h-auto p-4 flex-col items-start"
+                    onClick={() => {
+                      document.querySelector('[value="system"]')?.dispatchEvent(new Event('click', { bubbles: true }));
+                    }}
+                  >
+                    <Settings className="h-5 w-5 mb-2" />
+                    <div className="text-left">
+                      <div className="font-semibold">System Settings</div>
+                      <div className="text-xs text-muted-foreground">
+                        Configure platform settings
+                      </div>
+                    </div>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="h-auto p-4 flex-col items-start"
+                    onClick={() => {
+                      document.querySelector('[value="security"]')?.dispatchEvent(new Event('click', { bubbles: true }));
+                    }}
+                  >
+                    <Shield className="h-5 w-5 mb-2" />
+                    <div className="text-left">
+                      <div className="font-semibold">Security Center</div>
+                      <div className="text-xs text-muted-foreground">
+                        Monitor security & audit logs
+                      </div>
+                    </div>
+                  </Button>
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="users">
+            <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="system">
+            <SystemConfiguration />
+          </TabsContent>
+
+          <TabsContent value="security">
+            <SecurityCenter />
           </TabsContent>
 
           <TabsContent value="openhab">
