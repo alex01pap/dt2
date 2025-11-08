@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Shield, Users, Settings, Database, Activity, AlertTriangle, Link as LinkIcon } from "lucide-react";
+import { Shield, Users, Settings, Database, Activity, AlertTriangle, Link as LinkIcon, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardGrid, StatsCard, CardSkeleton } from "@/components/ui/card-grid";
 import { RBACGuard } from "@/components/auth/RBACGuard";
@@ -10,6 +10,7 @@ import { OpenHABIntegration } from "@/components/admin/OpenHABIntegration";
 import { UserManagement } from "@/components/admin/UserManagement";
 import { SystemConfiguration } from "@/components/admin/SystemConfiguration";
 import { SecurityCenter } from "@/components/admin/SecurityCenter";
+import { HeroVideoUpload } from "@/components/admin/HeroVideoUpload";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function Admin() {
@@ -130,8 +131,12 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="content">
+              <Video className="h-4 w-4 mr-2" />
+              Content
+            </TabsTrigger>
             <TabsTrigger value="users">
               <Users className="h-4 w-4 mr-2" />
               Users
@@ -231,6 +236,12 @@ export default function Admin() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="content">
+            <div className="space-y-6">
+              <HeroVideoUpload />
+            </div>
           </TabsContent>
 
           <TabsContent value="users">

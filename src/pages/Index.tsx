@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
+import { useHeroVideo } from "@/hooks/useHeroVideo";
 
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { data: heroVideoUrl } = useHeroVideo();
   
   // Redirect to dashboard if already authenticated
   useEffect(() => {
@@ -79,25 +81,42 @@ const Index = () => {
 
       {/* Hero Section with Video Background */}
       <section className="relative h-[80vh] min-h-[600px] overflow-hidden">
-        {/* Video Background Placeholder */}
+        {/* Video Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-          {/* Overlay for better text readability */}
-          <div className="absolute inset-0 bg-black/40" />
-          
-          {/* Animated Grid Pattern */}
-          <div className="absolute inset-0 bg-grid-white/[0.02]" />
-          
-          {/* 3D Visualization Placeholder */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.5 }}
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            <div className="relative w-full h-full max-w-5xl mx-auto flex items-center justify-center">
-              <Layers className="h-64 w-64 text-primary/20 animate-pulse" />
-            </div>
-          </motion.div>
+          {heroVideoUrl ? (
+            <>
+              {/* Actual Video Background */}
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              >
+                <source src={heroVideoUrl} type="video/mp4" />
+              </video>
+              {/* Overlay for better text readability */}
+              <div className="absolute inset-0 bg-black/50" />
+            </>
+          ) : (
+            <>
+              {/* Fallback when no video */}
+              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-grid-white/[0.02]" />
+              
+              {/* 3D Visualization Placeholder */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.5 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <div className="relative w-full h-full max-w-5xl mx-auto flex items-center justify-center">
+                  <Layers className="h-64 w-64 text-primary/20 animate-pulse" />
+                </div>
+              </motion.div>
+            </>
+          )}
         </div>
 
         {/* Hero Content */}
