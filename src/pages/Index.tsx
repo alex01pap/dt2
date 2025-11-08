@@ -95,8 +95,8 @@ const Index = () => {
               >
                 <source src={heroVideoUrl} type="video/mp4" />
               </video>
-              {/* Overlay for better text readability */}
-              <div className="absolute inset-0 bg-black/50" />
+              {/* Light overlay for subtle text contrast */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/20" />
             </>
           ) : (
             <>
