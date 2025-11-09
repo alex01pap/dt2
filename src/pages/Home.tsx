@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
+import { Eye, ChevronLeft, ChevronRight, Volume2, VolumeX, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useHeroVideo } from "@/hooks/useHeroVideo";
 import { DigitalTwinEcosystem } from "@/components/home/DigitalTwinEcosystem";
+import { StatsSection } from "@/components/home/StatsSection";
 
 const heroSlides = [
   {
@@ -65,6 +66,11 @@ export default function Home() {
   };
 
   const currentHero = heroSlides[currentSlide];
+
+  const scrollToContent = () => {
+    const nextSection = document.getElementById('stats-section');
+    nextSection?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -247,7 +253,30 @@ export default function Home() {
             <Volume2 className="h-5 w-5 text-white" />
           )}
         </button>
+
+        {/* Scroll Down Button */}
+        <motion.button
+          onClick={scrollToContent}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.6 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 text-white hover:text-white/80 transition-colors group"
+        >
+          <span className="text-sm font-medium">Scroll to explore</span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="p-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20 group-hover:bg-white/20 transition-colors"
+          >
+            <ChevronDown className="h-5 w-5" />
+          </motion.div>
+        </motion.button>
       </section>
+
+      {/* Stats Section */}
+      <div id="stats-section">
+        <StatsSection />
+      </div>
 
       {/* Digital Twin Ecosystem Section */}
       <DigitalTwinEcosystem />
