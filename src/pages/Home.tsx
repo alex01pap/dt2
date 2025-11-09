@@ -5,6 +5,7 @@ import { Eye, ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useHeroVideo } from "@/hooks/useHeroVideo";
+import { DigitalTwinEcosystem } from "@/components/home/DigitalTwinEcosystem";
 
 const heroSlides = [
   {
@@ -247,6 +248,9 @@ export default function Home() {
           )}
         </button>
       </section>
+
+      {/* Digital Twin Ecosystem Section */}
+      <DigitalTwinEcosystem />
     </div>
   );
 }
