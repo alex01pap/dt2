@@ -17,32 +17,47 @@ export default function Home() {
             <Box className="h-5 w-5 text-primary" />
             <span className="font-semibold text-lg">TwinVision</span>
           </div>
-          <div className="flex flex-1 items-center justify-end">
-            <Button>Get started</Button>
-          </div>
+          <nav className="flex flex-1 items-center justify-end gap-6">
+            <Link to="/tutorials" className="text-sm font-medium hover:text-primary transition-colors">
+              Docs
+            </Link>
+            <Link to="/resources" className="text-sm font-medium hover:text-primary transition-colors">
+              Resources
+            </Link>
+            <Link to="/architecture" className="text-sm font-medium hover:text-primary transition-colors">
+              Architecture
+            </Link>
+            <Link to="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
+              Hub
+            </Link>
+          </nav>
         </div>
       </header>
 
       {/* Hero Section */}
       <section className="container max-w-screen-xl px-8 py-24 md:py-32">
         <div className="mx-auto max-w-4xl text-center">
+          <Badge variant="secondary" className="gap-2 py-2 px-4 mb-6">
+            <Eye className="h-4 w-4" />
+            Case Study: Digital Twin Platform
+          </Badge>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-            Everything you need to start{" "}
-            <span className="text-primary">monitoring your infrastructure</span>
+            Real-time IoT monitoring with{" "}
+            <span className="text-primary">OpenHAB integration</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            TwinVision runs real-time analytics, digital twins, and IoT monitoring for your infrastructure - 
-            so it can start learning how to optimize.
+            A comprehensive digital twin platform that bridges smart home systems with enterprise 
+            infrastructure monitoring, real-time analytics, and automated control.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Badge variant="secondary" className="gap-2 py-2 px-4">
               <Check className="h-4 w-4" />
-              Built for Enterprise IoT
+              Open Source Integration
             </Badge>
-            <Button size="lg" className="gap-2">
-              Start for free
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            <Badge variant="secondary" className="gap-2 py-2 px-4">
+              <Check className="h-4 w-4" />
+              Enterprise-Grade Security
+            </Badge>
           </div>
         </div>
       </section>
@@ -51,10 +66,11 @@ export default function Home() {
       <section className="container max-w-screen-xl px-8 py-24 border-t">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            You built something people love. Now what?
+            The Challenge
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            From first sensor to complete infrastructure, TwinVision powers your digital transformation journey.
+            Building a unified platform that connects OpenHAB smart home systems with enterprise 
+            digital twin visualization and real-time monitoring capabilities.
           </p>
         </div>
 
@@ -212,20 +228,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Final CTA Section */}
+      {/* Results Section */}
       <section className="container max-w-screen-xl px-8 py-32 border-t">
         <div className="text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Automate infrastructure monitoring<br />with TwinVision.
+            The Results
           </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-            Start connecting sensors and optimizing operations in minutes.<br />
-            Built for enterprise IoT infrastructure.
+          <p className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto">
+            A fully functional platform connecting smart home automation with enterprise-grade 
+            monitoring, analytics, and automation capabilities.
           </p>
-          <Button size="lg" className="gap-2">
-            Get started for free
-            <ArrowRight className="h-4 w-4" />
-          </Button>
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="space-y-2">
+              <div className="text-4xl font-bold text-primary">Real-time</div>
+              <div className="text-muted-foreground">Data synchronization from OpenHAB</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl font-bold text-primary">3D</div>
+              <div className="text-muted-foreground">Interactive digital twin visualization</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl font-bold text-primary">Automated</div>
+              <div className="text-muted-foreground">Rule-based control & monitoring</div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -241,14 +267,14 @@ export default function Home() {
               Digital twin infrastructure for modern enterprises
             </p>
             <div className="flex gap-6 text-sm">
-              <Link to="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
-                Privacy
+              <Link to="/tutorials" className="text-muted-foreground hover:text-foreground transition-colors">
+                Docs
               </Link>
-              <Link to="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
-                Terms
+              <Link to="/resources" className="text-muted-foreground hover:text-foreground transition-colors">
+                Resources
               </Link>
-              <Link to="/auth" className="text-muted-foreground hover:text-foreground transition-colors">
-                Contact
+              <Link to="/architecture" className="text-muted-foreground hover:text-foreground transition-colors">
+                Architecture
               </Link>
             </div>
           </div>

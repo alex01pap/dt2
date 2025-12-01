@@ -18,6 +18,7 @@ import Rules from "./pages/Rules";
 import Scenarios from "./pages/Scenarios";
 import Playbook from "./pages/Playback";
 import Tutorials from "./pages/Tutorials";
+import Resources from "./pages/Resources";
 import Admin from "./pages/Admin";
 import DigitalTwin from "./pages/DigitalTwin";
 import PlatformStatus from "./pages/PlatformStatus";
@@ -145,6 +146,10 @@ const App = () => (
               <Route 
                 path="/architecture" 
                 element={<Architecture />} 
+              />
+              <Route 
+                path="/resources" 
+                element={<Resources />} 
               />
               <Route 
                 path="/client-demo" 
