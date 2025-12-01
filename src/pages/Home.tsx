@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, ArrowRight, Check, Database, LineChart, Zap, Box } from "lucide-react";
+import { Eye, ArrowRight, Check, Database, LineChart, Zap, Box, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,8 +14,9 @@ export default function Home() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 max-w-screen-2xl items-center px-8">
           <div className="flex items-center gap-2">
-            <Box className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-lg">TwinVision</span>
+            <GraduationCap className="h-5 w-5 text-primary" />
+            <span className="font-semibold text-lg">Platon Schools</span>
+            <Badge variant="outline" className="ml-2 text-xs">Case Study</Badge>
           </div>
           <nav className="flex flex-1 items-center justify-end gap-6">
             <Link to="/tutorials" className="text-sm font-medium hover:text-primary transition-colors">
@@ -42,21 +43,21 @@ export default function Home() {
             Case Study: Digital Twin Platform
           </Badge>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-            Real-time IoT monitoring with{" "}
-            <span className="text-primary">OpenHAB integration</span>
+            Smart School Infrastructure with{" "}
+            <span className="text-primary">OpenHAB Integration</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            A comprehensive digital twin platform that bridges smart home systems with enterprise 
-            infrastructure monitoring, real-time analytics, and automated control.
+            A digital twin platform designed for educational facilities, connecting smart building 
+            systems with real-time monitoring, analytics, and automated environmental control.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Badge variant="secondary" className="gap-2 py-2 px-4">
               <Check className="h-4 w-4" />
-              Open Source Integration
+              Educational Environment
             </Badge>
             <Badge variant="secondary" className="gap-2 py-2 px-4">
               <Check className="h-4 w-4" />
-              Enterprise-Grade Security
+              Smart Building Technology
             </Badge>
           </div>
         </div>
@@ -69,8 +70,8 @@ export default function Home() {
             The Challenge
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Building a unified platform that connects OpenHAB smart home systems with enterprise 
-            digital twin visualization and real-time monitoring capabilities.
+            Creating an intelligent building management system for Platon Schools that integrates 
+            OpenHAB automation with real-time monitoring and 3D visualization of school facilities.
           </p>
         </div>
 
@@ -193,10 +194,10 @@ export default function Home() {
       <section className="container max-w-screen-xl px-8 py-24 border-t">
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            TwinVision is designed for IoT builders.
+            Built with Modern IoT Technologies
           </h2>
           <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Add TwinVision to your project with simple API integration across your favorite platforms.
+            Integrated with industry-leading platforms for reliable smart building management.
           </p>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
@@ -235,8 +236,8 @@ export default function Home() {
             The Results
           </h2>
           <p className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto">
-            A fully functional platform connecting smart home automation with enterprise-grade 
-            monitoring, analytics, and automation capabilities.
+            A comprehensive smart school platform that optimizes energy usage, monitors environmental 
+            conditions, and provides real-time insights for better facility management.
           </p>
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="space-y-2">
@@ -260,11 +261,12 @@ export default function Home() {
         <div className="container max-w-screen-xl px-8 py-12">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-2">
-              <Box className="h-5 w-5 text-primary" />
-              <span className="font-semibold">TwinVision</span>
+              <GraduationCap className="h-5 w-5 text-primary" />
+              <span className="font-semibold">Platon Schools</span>
+              <Badge variant="outline" className="text-xs">Case Study</Badge>
             </div>
             <p className="text-sm text-muted-foreground">
-              Digital twin infrastructure for modern enterprises
+              Smart building digital twin platform for educational facilities
             </p>
             <div className="flex gap-6 text-sm">
               <Link to="/tutorials" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -279,7 +281,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-            © 2025 TwinVision. All rights reserved.
+            © 2025 Platon Schools Digital Twin Platform - Case Study
           </div>
         </div>
       </footer>
