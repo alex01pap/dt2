@@ -6,6 +6,53 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// SSRF Protection: Validate URLs to prevent attacks on internal services
+function isValidExternalUrl(url: string): { valid: boolean; error?: string } {
+  try {
+    const parsed = new URL(url);
+    
+    // Only allow http and https
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return { valid: false, error: 'Only http and https protocols are allowed' };
+    }
+    
+    const hostname = parsed.hostname.toLowerCase();
+    
+    // Block localhost and loopback
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') {
+      return { valid: false, error: 'Localhost URLs are not allowed' };
+    }
+    
+    // Block private IP ranges
+    const ipv4Match = hostname.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+    if (ipv4Match) {
+      const [, a, b, c] = ipv4Match.map(Number);
+      if (a === 10) return { valid: false, error: 'Private IP addresses are not allowed' };
+      if (a === 172 && b >= 16 && b <= 31) return { valid: false, error: 'Private IP addresses are not allowed' };
+      if (a === 192 && b === 168) return { valid: false, error: 'Private IP addresses are not allowed' };
+      if (a === 169 && b === 254) return { valid: false, error: 'Link-local addresses are not allowed' };
+    }
+    
+    // Block cloud metadata endpoints
+    if (hostname === 'metadata.google.internal' || 
+        hostname.endsWith('.internal') ||
+        hostname === 'metadata') {
+      return { valid: false, error: 'Cloud metadata endpoints are not allowed' };
+    }
+    
+    return { valid: true };
+  } catch {
+    return { valid: false, error: 'Invalid URL format' };
+  }
+}
+
+// Validate item names to prevent path traversal
+function isValidItemName(name: string): boolean {
+  if (!name || typeof name !== 'string') return false;
+  // Only allow alphanumeric, underscores, hyphens, colons (OpenHAB uses colons)
+  return /^[a-zA-Z0-9_:-]+$/.test(name);
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -65,6 +112,16 @@ serve(async (req) => {
 async function testConnection(req: Request, supabaseClient: any, userId: string) {
   const { openhabUrl, apiToken } = await req.json();
 
+  // Validate URL to prevent SSRF
+  const urlValidation = isValidExternalUrl(openhabUrl);
+  if (!urlValidation.valid) {
+    console.error('URL validation failed:', urlValidation.error);
+    return new Response(
+      JSON.stringify({ success: false, error: urlValidation.error }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const headers: Record<string, string> = {
       'Accept': 'application/json',
@@ -119,6 +176,16 @@ async function fetchItems(req: Request, supabaseClient: any, userId: string) {
   if (configError || !config) {
     return new Response(
       JSON.stringify({ error: 'No OpenHAB configuration found' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // Validate URL to prevent SSRF
+  const urlValidation = isValidExternalUrl(config.openhab_url);
+  if (!urlValidation.valid) {
+    console.error('Stored URL validation failed:', urlValidation.error);
+    return new Response(
+      JSON.stringify({ error: `Invalid OpenHAB URL: ${urlValidation.error}` }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
@@ -212,6 +279,25 @@ async function syncData(req: Request, supabaseClient: any, userId: string) {
 }
 
 async function performSync(supabaseClient: any, config: any, syncType: string) {
+  // Validate URL to prevent SSRF
+  const urlValidation = isValidExternalUrl(config.openhab_url);
+  if (!urlValidation.valid) {
+    console.error('Stored URL validation failed during sync:', urlValidation.error);
+    await supabaseClient
+      .from('openhab_sync_log')
+      .insert({
+        config_id: config.id,
+        sync_type: syncType,
+        status: 'error',
+        items_synced: 0,
+        error_message: `Invalid URL: ${urlValidation.error}`,
+      });
+    return new Response(
+      JSON.stringify({ error: `Invalid OpenHAB URL: ${urlValidation.error}` }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     // Get mapped items
     const { data: mappedItems, error: itemsError } = await supabaseClient
@@ -240,9 +326,15 @@ async function performSync(supabaseClient: any, config: any, syncType: string) {
 
     // Sync each item
     for (const item of mappedItems) {
+      // Validate item name to prevent path traversal
+      if (!isValidItemName(item.openhab_item_name)) {
+        errors.push(`Invalid item name: ${item.openhab_item_name}`);
+        continue;
+      }
+
       try {
         const response = await fetch(
-          `${config.openhab_url}/rest/items/${item.openhab_item_name}`,
+          `${config.openhab_url}/rest/items/${encodeURIComponent(item.openhab_item_name)}`,
           { headers }
         );
 
@@ -364,6 +456,14 @@ async function sendCommand(req: Request, supabaseClient: any, userId: string) {
     );
   }
 
+  // Validate item name to prevent path traversal
+  if (!isValidItemName(itemName)) {
+    return new Response(
+      JSON.stringify({ error: 'Invalid item name. Only alphanumeric characters, underscores, hyphens, and colons are allowed.' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   // Get user's OpenHAB config
   const { data: config, error: configError } = await supabaseClient
     .from('openhab_config')
@@ -374,6 +474,16 @@ async function sendCommand(req: Request, supabaseClient: any, userId: string) {
   if (configError || !config) {
     return new Response(
       JSON.stringify({ error: 'No OpenHAB configuration found' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // Validate URL to prevent SSRF
+  const urlValidation = isValidExternalUrl(config.openhab_url);
+  if (!urlValidation.valid) {
+    console.error('Stored URL validation failed:', urlValidation.error);
+    return new Response(
+      JSON.stringify({ error: `Invalid OpenHAB URL: ${urlValidation.error}` }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
@@ -390,7 +500,7 @@ async function sendCommand(req: Request, supabaseClient: any, userId: string) {
     console.log(`Sending command to ${itemName}: ${command}`);
 
     const response = await fetch(
-      `${config.openhab_url}/rest/items/${itemName}`,
+      `${config.openhab_url}/rest/items/${encodeURIComponent(itemName)}`,
       {
         method: 'POST',
         headers,
