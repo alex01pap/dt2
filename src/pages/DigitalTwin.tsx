@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { TwinViewer } from '@/components/twin/TwinViewer';
 import { 
   classroomSensorData, 
@@ -229,25 +229,73 @@ const systemHealthData = [
   },
 ];
 
+// Building name mappings for floor plan navigation
+const buildingNames: Record<string, string> = {
+  'building-a': 'Κτίριο Α',
+  'building-b': 'Κτίριο Β',
+  'gymnasium': 'Γυμναστήριο',
+  'lab': 'Εργαστήρια',
+  'computer-lab': 'Πληροφορική',
+  'cafeteria': 'Κυλικείο',
+  'music-room': 'Μουσική',
+};
+
+const roomNames: Record<string, string> = {
+  'a1': 'Αίθουσα A1',
+  'a2': 'Αίθουσα A2',
+  'a3': 'Αίθουσα A3',
+  'a4': 'Αίθουσα A4',
+  'b1': 'Αίθουσα B1',
+  'b2': 'Αίθουσα B2',
+  'b3': 'Αίθουσα B3',
+  'gym-main': 'Κύρια Αίθουσα',
+  'gym-storage': 'Αποθήκη',
+  'lab-chemistry': 'Χημείο',
+  'lab-physics': 'Φυσική',
+  'lab-biology': 'Βιολογία',
+  'pc-lab-1': 'Εργαστήριο 1',
+  'pc-lab-2': 'Εργαστήριο 2',
+  'cafeteria-main': 'Κύριος Χώρος',
+  'kitchen': 'Κουζίνα',
+  'music-main': 'Αίθουσα Μουσικής',
+};
+
 export default function DigitalTwin() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Get building and room from URL query params
+  const selectedBuilding = searchParams.get('building');
+  const selectedRoom = searchParams.get('room');
 
   // Simulate loading
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1500);
     return () => clearTimeout(timer);
-  }, [id]);
+  }, [id, selectedBuilding, selectedRoom]);
 
   const twinName = useMemo(() => {
+    // If we have building/room from floor plan navigation
+    if (selectedBuilding) {
+      const buildingName = buildingNames[selectedBuilding] || selectedBuilding;
+      if (selectedRoom) {
+        const roomName = roomNames[selectedRoom] || selectedRoom;
+        return `Platon Schools - ${buildingName} - ${roomName}`;
+      }
+      return `Platon Schools - ${buildingName}`;
+    }
+    
+    // Fallback to id-based names
     const twinNames = {
       '1': 'Platon Schools - Classroom A1',
       '2': 'Platon Schools - Lab B2', 
       '3': 'Platon Schools - Library',
     };
-    return twinNames[id as keyof typeof twinNames] || `Classroom ${id}`;
-  }, [id]);
+    return twinNames[id as keyof typeof twinNames] || `Platon Schools - Digital Twin`;
+  }, [id, selectedBuilding, selectedRoom]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {

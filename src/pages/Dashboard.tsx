@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { AlertTriangle, Thermometer, Zap, TrendingUp, Plus, Eye, Activity, Wifi } from "lucide-react";
+import { AlertTriangle, Thermometer, Zap, TrendingUp, Plus, Eye, Activity, Wifi, Map } from "lucide-react";
 import { KPIWidget } from "@/components/analytics/KPIWidget";
 import { MiniAreaChart } from "@/components/dashboard/MiniAreaChart";
 import { RecentEventsTable } from "@/components/dashboard/RecentEventsTable";
+import { SchoolFloorPlan } from "@/components/floor-plan/SchoolFloorPlan";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useRealtimeSensors } from "@/hooks/useRealtimeSensors";
@@ -106,7 +107,7 @@ export default function Dashboard() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="space-y-6"
+      className="space-y-6 p-6"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
@@ -280,6 +281,40 @@ export default function Dashboard() {
           variant="default"
           loading={isLoading}
         />
+        </motion.div>
+      )}
+
+      {/* School Floor Plan */}
+      {hasData && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+        >
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Map className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Κάτοψη Σχολείου</CardTitle>
+                    <CardDescription>Επιλέξτε κτίριο ή αίθουσα για 3D προβολή</CardDescription>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" className="rounded-full" asChild>
+                  <Link to="/digital-twin">
+                    <Eye className="h-4 w-4 mr-2" />
+                    Πλήρης Προβολή
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              <SchoolFloorPlan className="min-h-[400px]" />
+            </CardContent>
+          </Card>
         </motion.div>
       )}
 
