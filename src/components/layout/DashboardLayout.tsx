@@ -14,10 +14,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           <TopBar />
-          <main className="flex-1 p-6 bg-gradient-to-br from-background to-muted/20">
-            <div className="max-w-7xl mx-auto">
-              {children}
-            </div>
+          <main className="flex-1 bg-gradient-to-br from-background to-muted/20">
+            {children}
           </main>
         </div>
       </div>
