@@ -71,9 +71,47 @@ serve(async (req) => {
 
     const { action, config_id } = await req.json();
 
-    // Auto-sync doesn't require authentication (called by cron)
+    // Auto-sync requires service role authentication (called by cron/internal)
     if (action === 'auto-sync') {
-      return await autoSyncData(supabaseClient, config_id);
+      // Verify this is a service role request by checking the JWT
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader) {
+        return new Response(JSON.stringify({ error: 'Unauthorized: Missing authorization' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      // Create a service role client to verify the request
+      const serviceClient = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      );
+      
+      // Verify the config_id exists and is enabled before processing
+      if (!config_id) {
+        return new Response(JSON.stringify({ error: 'Missing config_id' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      const { data: config, error: configError } = await serviceClient
+        .from('openhab_config')
+        .select('id, enabled')
+        .eq('id', config_id)
+        .eq('enabled', true)
+        .single();
+      
+      if (configError || !config) {
+        console.log('Auto-sync rejected: Invalid or disabled config_id:', config_id);
+        return new Response(JSON.stringify({ error: 'Invalid or disabled configuration' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      return await autoSyncData(serviceClient, config_id);
     }
 
     // All other actions require authentication
