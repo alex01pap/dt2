@@ -1,12 +1,12 @@
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Text, Html } from '@react-three/drei';
-import { Suspense, useMemo, useState, useEffect } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Text, Html, Billboard } from '@react-three/drei';
+import { Suspense, useMemo, useState, useRef } from 'react';
 import * as THREE from 'three';
-import { Vector3, Color } from 'three';
-import { Card, CardContent } from '@/components/ui/card';
+import { Vector3 } from 'three';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useRealtimeSensors } from '@/hooks/useRealtimeSensors';
+import SchoolClassroomFloorPlan from './SchoolClassroomFloorPlan';
 
 export interface SensorData {
   id: string;
@@ -44,22 +44,22 @@ interface TwinViewerProps {
   className?: string;
 }
 
-import RestaurantFloorPlan from './RestaurantFloorPlan';
+// Floor Plan Component
+const FloorPlan = SchoolClassroomFloorPlan;
 
-// Floor Plan Component - Keep for backward compatibility
-const FloorPlan = RestaurantFloorPlan;
-
-// Heat Overlay Component
+// Heat Overlay Component with animation
 function HeatOverlay({ heatData }: { heatData: HeatData[] }) {
   const heatPoints = useMemo(() => {
-    return heatData.map((point, index) => {
-      return (
-        <mesh key={index} position={point.position}>
-          <cylinderGeometry args={[1, 1, 0.1, 8]} />
-          <meshBasicMaterial color={point.color} transparent opacity={point.intensity} />
-        </mesh>
-      );
-    });
+    return heatData.map((point, index) => (
+      <mesh key={index} position={point.position}>
+        <cylinderGeometry args={[0.8, 0.8, 0.05, 16]} />
+        <meshBasicMaterial 
+          color={point.color} 
+          transparent 
+          opacity={point.intensity * 0.6} 
+        />
+      </mesh>
+    ));
   }, [heatData]);
 
   return <group>{heatPoints}</group>;
@@ -75,7 +75,6 @@ function FlowPipes({ pipes }: { pipes: FlowPipeData[] }) {
         const distance = start.distanceTo(end);
         const midpoint = start.clone().lerp(end, 0.5);
         
-        // Calculate rotation to align cylinder with pipe direction
         const direction = end.clone().sub(start).normalize();
         const quaternion = new THREE.Quaternion().setFromUnitVectors(
           new Vector3(0, 1, 0), 
@@ -86,10 +85,10 @@ function FlowPipes({ pipes }: { pipes: FlowPipeData[] }) {
           <mesh 
             key={pipe.id} 
             position={midpoint.toArray()}
-            quaternion={quaternion.toArray()}
+            quaternion={quaternion.toArray() as [number, number, number, number]}
           >
             <cylinderGeometry args={[pipe.radius, pipe.radius, distance, 8]} />
-            <meshStandardMaterial color={pipe.color} />
+            <meshStandardMaterial color={pipe.color} transparent opacity={0.8} />
           </mesh>
         );
       })}
@@ -97,61 +96,104 @@ function FlowPipes({ pipes }: { pipes: FlowPipeData[] }) {
   );
 }
 
-// Sensor Badge Component
-function SensorBadge({ sensor }: { sensor: SensorData }) {
+// Animated Sensor Marker
+function SensorMarker({ sensor }: { sensor: SensorData }) {
   const [hovered, setHovered] = useState(false);
+  const meshRef = useRef<THREE.Mesh>(null);
+  const ringRef = useRef<THREE.Mesh>(null);
   
-  const badgeColor = sensor.status === 'critical' ? '#ef4444' : 
-                    sensor.status === 'warning' ? '#f59e0b' : '#10b981';
+  const statusColor = sensor.status === 'critical' ? '#ef4444' : 
+                      sensor.status === 'warning' ? '#f59e0b' : '#10b981';
+  
+  const sensorIcon = {
+    'sound': '🔊',
+    'temperature': '🌡️',
+    'humidity': '💧',
+    'air_quality': '🌬️',
+    'occupancy': '👥',
+    'light': '💡',
+  }[sensor.type] || '📡';
+
+  // Animate pulse ring
+  useFrame(({ clock }) => {
+    if (ringRef.current) {
+      const scale = 1 + Math.sin(clock.elapsedTime * 2) * 0.15;
+      ringRef.current.scale.set(scale, 1, scale);
+      (ringRef.current.material as THREE.MeshBasicMaterial).opacity = 
+        0.3 + Math.sin(clock.elapsedTime * 2) * 0.2;
+    }
+    if (meshRef.current && hovered) {
+      meshRef.current.rotation.y += 0.02;
+    }
+  });
 
   return (
     <group position={sensor.position}>
-      <mesh
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-        position={[0, 0.5, 0]}
-      >
-        <sphereGeometry args={[0.2, 16, 16]} />
-        <meshStandardMaterial 
-          color={badgeColor} 
-          emissive={hovered ? badgeColor : '#000000'}
-          emissiveIntensity={hovered ? 0.3 : 0}
-        />
+      {/* Pulse ring */}
+      <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+        <ringGeometry args={[0.25, 0.35, 32]} />
+        <meshBasicMaterial color={statusColor} transparent opacity={0.4} side={THREE.DoubleSide} />
       </mesh>
       
+      {/* Main marker */}
+      <mesh
+        ref={meshRef}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        position={[0, 0.3, 0]}
+        scale={hovered ? 1.2 : 1}
+      >
+        <sphereGeometry args={[0.2, 32, 32]} />
+        <meshStandardMaterial 
+          color={statusColor} 
+          emissive={statusColor}
+          emissiveIntensity={hovered ? 0.5 : 0.2}
+          metalness={0.3}
+          roughness={0.4}
+        />
+      </mesh>
+
+      {/* Vertical line to show height */}
+      <mesh position={[0, 0.15, 0]}>
+        <cylinderGeometry args={[0.02, 0.02, 0.3, 8]} />
+        <meshBasicMaterial color={statusColor} transparent opacity={0.5} />
+      </mesh>
+      
+      {/* Info popup on hover */}
       {hovered && (
-        <Html position={[0, 1, 0]} center>
-          <TooltipProvider>
-            <Tooltip open={true}>
-              <TooltipTrigger asChild>
-                <div />
-              </TooltipTrigger>
-              <TooltipContent side="top" className="bg-background border shadow-lg">
-                <div className="p-2 space-y-1">
-                  <div className="font-semibold">{sensor.name}</div>
-                  <div className="text-sm text-muted-foreground">{sensor.type}</div>
-                  <div className="font-mono text-lg">
-                    {sensor.value.toFixed(1)} {sensor.unit}
-                  </div>
-                  <Badge variant={sensor.status === 'normal' ? 'default' : 'destructive'}>
-                    {sensor.status}
-                  </Badge>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <Html position={[0, 0.8, 0]} center distanceFactor={15}>
+          <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-xl p-3 min-w-[140px] animate-scale-in">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg">{sensorIcon}</span>
+              <span className="font-semibold text-sm text-foreground">{sensor.name}</span>
+            </div>
+            <div className="text-2xl font-bold text-foreground mb-1">
+              {sensor.value} <span className="text-sm font-normal text-muted-foreground">{sensor.unit}</span>
+            </div>
+            <Badge 
+              variant={sensor.status === 'normal' ? 'default' : 'destructive'}
+              className="text-xs"
+            >
+              {sensor.status}
+            </Badge>
+          </div>
         </Html>
       )}
-      
-      <Text
-        position={[0, -0.3, 0]}
-        fontSize={0.3}
-        color="black"
-        anchorX="center"
-        anchorY="middle"
-      >
-        {sensor.name}
-      </Text>
+
+      {/* Label below marker */}
+      <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
+        <Text
+          position={[0, -0.25, 0]}
+          fontSize={0.18}
+          color="#374151"
+          anchorX="center"
+          anchorY="top"
+          outlineWidth={0.02}
+          outlineColor="#ffffff"
+        >
+          {sensor.type === 'sound' ? `${sensor.value}dB` : sensor.name.split(' ')[0]}
+        </Text>
+      </Billboard>
     </group>
   );
 }
@@ -255,7 +297,7 @@ export function TwinViewer({
           
           {/* Sensors */}
           {sensors.map((sensor) => (
-            <SensorBadge key={sensor.id} sensor={sensor} />
+            <SensorMarker key={sensor.id} sensor={sensor} />
           ))}
           
           {/* Controls */}

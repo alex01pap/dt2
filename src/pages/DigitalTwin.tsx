@@ -2,12 +2,12 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { TwinViewer } from '@/components/twin/TwinViewer';
 import { 
-  restaurantSensorData, 
-  restaurantHeatData, 
-  restaurantFlowData,
-  restaurantKPIs,
-  restaurantEvents
-} from '@/data/restaurantMockData';
+  classroomSensorData, 
+  classroomHeatData, 
+  classroomFlowData,
+  classroomKPIs,
+  classroomEvents
+} from '@/data/schoolMockData';
 import { KPIWidget } from '@/components/analytics/KPIWidget';
 import { MiniAreaChart } from '@/components/dashboard/MiniAreaChart';
 import { DonutChart } from '@/components/charts/DonutChart';
@@ -242,11 +242,11 @@ export default function DigitalTwin() {
 
   const twinName = useMemo(() => {
     const twinNames = {
-      '1': 'Demo Building',
-      '2': 'Manufacturing Plant A', 
-      '3': 'Office Complex B',
+      '1': 'Platon Schools - Classroom A1',
+      '2': 'Platon Schools - Lab B2', 
+      '3': 'Platon Schools - Library',
     };
-    return twinNames[id as keyof typeof twinNames] || `Twin ${id}`;
+    return twinNames[id as keyof typeof twinNames] || `Classroom ${id}`;
   }, [id]);
 
   const getSeverityColor = (severity: string) => {
@@ -411,9 +411,9 @@ export default function DigitalTwin() {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20" />
                 <TwinViewer
                   twinId={id!}
-                  sensors={restaurantSensorData}
-                  heatData={restaurantHeatData}
-                  flowPipes={restaurantFlowData}
+                  sensors={classroomSensorData}
+                  heatData={classroomHeatData}
+                  flowPipes={classroomFlowData}
                   className="w-full h-full rounded-lg relative z-10"
                 />
                 {/* Neon border effect */}
