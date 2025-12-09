@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { TwinViewer } from '@/components/twin/TwinViewer';
+import { TwinViewer, FloorPlanType } from '@/components/twin/TwinViewer';
 import { 
   classroomSensorData, 
   classroomHeatData, 
@@ -297,6 +297,16 @@ export default function DigitalTwin() {
     return twinNames[id as keyof typeof twinNames] || `Platon Schools - Digital Twin`;
   }, [id, selectedBuilding, selectedRoom]);
 
+  // Determine floor plan type based on building/room
+  const floorPlanType: FloorPlanType = useMemo(() => {
+    if (selectedBuilding === 'gymnasium') return 'gymnasium';
+    if (selectedBuilding === 'lab') return 'laboratory';
+    if (selectedBuilding === 'computer-lab') return 'computer-lab';
+    if (selectedBuilding === 'music-room') return 'music-room';
+    if (selectedBuilding === 'cafeteria') return 'cafeteria';
+    return 'classroom';
+  }, [selectedBuilding]);
+
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical': return 'destructive';
@@ -459,6 +469,7 @@ export default function DigitalTwin() {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20" />
                 <TwinViewer
                   twinId={id!}
+                  floorPlanType={floorPlanType}
                   sensors={classroomSensorData}
                   heatData={classroomHeatData}
                   flowPipes={classroomFlowData}

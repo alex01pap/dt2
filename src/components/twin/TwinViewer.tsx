@@ -7,6 +7,23 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useRealtimeSensors } from '@/hooks/useRealtimeSensors';
 import SchoolClassroomFloorPlan from './SchoolClassroomFloorPlan';
+import GymnasiumFloorPlan from './GymnasiumFloorPlan';
+import LaboratoryFloorPlan from './LaboratoryFloorPlan';
+import MusicRoomFloorPlan from './MusicRoomFloorPlan';
+import ComputerLabFloorPlan from './ComputerLabFloorPlan';
+import CafeteriaFloorPlan from './CafeteriaFloorPlan';
+
+// Floor plan type mapping
+export type FloorPlanType = 'classroom' | 'gymnasium' | 'laboratory' | 'music-room' | 'computer-lab' | 'cafeteria';
+
+const FloorPlanComponents: Record<FloorPlanType, React.ComponentType> = {
+  'classroom': SchoolClassroomFloorPlan,
+  'gymnasium': GymnasiumFloorPlan,
+  'laboratory': LaboratoryFloorPlan,
+  'music-room': MusicRoomFloorPlan,
+  'computer-lab': ComputerLabFloorPlan,
+  'cafeteria': CafeteriaFloorPlan,
+};
 
 export interface SensorData {
   id: string;
@@ -37,6 +54,7 @@ export interface FlowPipeData {
 
 interface TwinViewerProps {
   twinId: string;
+  floorPlanType?: FloorPlanType;
   floorplanData?: any;
   sensors?: SensorData[];
   heatData?: HeatData[];
@@ -44,8 +62,11 @@ interface TwinViewerProps {
   className?: string;
 }
 
-// Floor Plan Component
-const FloorPlan = SchoolClassroomFloorPlan;
+// Dynamic Floor Plan Component
+function DynamicFloorPlan({ type }: { type: FloorPlanType }) {
+  const Component = FloorPlanComponents[type] || SchoolClassroomFloorPlan;
+  return <Component />;
+}
 
 // Heat Overlay Component with animation
 function HeatOverlay({ heatData }: { heatData: HeatData[] }) {
@@ -214,7 +235,8 @@ function LoadingScene() {
 }
 
 export function TwinViewer({ 
-  twinId, 
+  twinId,
+  floorPlanType = 'classroom',
   sensors: propSensors = [],
   heatData = [],
   flowPipes = [],
@@ -289,7 +311,7 @@ export function TwinViewer({
           />
           
           {/* Scene Components */}
-          <FloorPlan />
+          <DynamicFloorPlan type={floorPlanType} />
           
           {/* Overlays */}
           {overlayMode === 'heat' && <HeatOverlay heatData={heatData} />}
