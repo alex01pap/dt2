@@ -226,14 +226,14 @@ export function AssetForm({ open, onOpenChange, onSuccess, editAsset }: AssetFor
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Parent Asset (Optional)</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={(val) => field.onChange(val === "_none" ? "" : val)} value={field.value || "_none"}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select parent asset" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
+                      <SelectItem value="_none">None</SelectItem>
                       {assets.map((asset) => (
                         <SelectItem key={asset.id} value={asset.id}>
                           {asset.name} ({asset.type})
@@ -319,14 +319,14 @@ export function AssetForm({ open, onOpenChange, onSuccess, editAsset }: AssetFor
                       <LinkIcon className="inline h-4 w-4 mr-2" />
                       Connect to OpenHAB Item (Optional)
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={(val) => field.onChange(val === "_none" ? "" : val)} value={field.value || "_none"}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select OpenHAB item" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">None</SelectItem>
+                        <SelectItem value="_none">None</SelectItem>
                         {openhabItems.map((item) => (
                           <SelectItem key={item.id} value={item.openhab_item_name}>
                             {item.openhab_item_label || item.openhab_item_name} (
