@@ -59,6 +59,7 @@ export default function Admin() {
         activeSensors: sensorCount || 0,
         openhabConnected: openhabConfig?.enabled || false,
         totalAssets: assetCount || 0,
+        totalTwins: 0,
       });
     } catch (error) {
       console.error("Error loading stats:", error);
