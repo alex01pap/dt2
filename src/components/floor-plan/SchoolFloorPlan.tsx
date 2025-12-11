@@ -115,11 +115,11 @@ export function SchoolFloorPlan({ className }: SchoolFloorPlanProps) {
   const handleBuildingClick = (building: Building) => {
     setSelectedBuilding(building.id);
     // Navigate to digital twin with the selected building
-    navigate(`/digital-twin?building=${building.id}`);
+    navigate(`/twin/${building.id}`);
   };
 
   const handleRoomClick = (buildingId: string, roomId: string) => {
-    navigate(`/digital-twin?building=${buildingId}&room=${roomId}`);
+    navigate(`/twin/${buildingId}?room=${roomId}`);
   };
 
   const getStatusColor = (status: Room["status"]) => {
