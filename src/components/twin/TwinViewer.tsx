@@ -1,5 +1,18 @@
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, Html, Billboard } from '@react-three/drei';
+import { 
+  OrbitControls, 
+  Text, 
+  Html, 
+  Billboard, 
+  Environment, 
+  ContactShadows, 
+  Grid, 
+  GizmoHelper, 
+  GizmoViewport,
+  Float,
+  Sparkles,
+  Stars
+} from '@react-three/drei';
 import { Suspense, useMemo, useState, useRef } from 'react';
 import * as THREE from 'three';
 import { Vector3 } from 'three';
@@ -117,7 +130,7 @@ function FlowPipes({ pipes }: { pipes: FlowPipeData[] }) {
   );
 }
 
-// Animated Sensor Marker
+// Animated Sensor Marker with Float and Sparkles
 function SensorMarker({ sensor }: { sensor: SensorData }) {
   const [hovered, setHovered] = useState(false);
   const meshRef = useRef<THREE.Mesh>(null);
@@ -150,34 +163,49 @@ function SensorMarker({ sensor }: { sensor: SensorData }) {
 
   return (
     <group position={sensor.position}>
+      {/* Sparkles for warning/critical sensors */}
+      {sensor.status !== 'normal' && (
+        <Sparkles
+          count={20}
+          scale={1}
+          size={3}
+          speed={0.4}
+          color={statusColor}
+        />
+      )}
+      
       {/* Pulse ring */}
       <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
         <ringGeometry args={[0.25, 0.35, 32]} />
         <meshBasicMaterial color={statusColor} transparent opacity={0.4} side={THREE.DoubleSide} />
       </mesh>
       
-      {/* Main marker */}
-      <mesh
-        ref={meshRef}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-        position={[0, 0.3, 0]}
-        scale={hovered ? 1.2 : 1}
-      >
-        <sphereGeometry args={[0.2, 32, 32]} />
-        <meshStandardMaterial 
-          color={statusColor} 
-          emissive={statusColor}
-          emissiveIntensity={hovered ? 0.5 : 0.2}
-          metalness={0.3}
-          roughness={0.4}
-        />
-      </mesh>
+      {/* Floating main marker */}
+      <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+        <mesh
+          ref={meshRef}
+          onPointerOver={() => setHovered(true)}
+          onPointerOut={() => setHovered(false)}
+          position={[0, 0.3, 0]}
+          scale={hovered ? 1.2 : 1}
+        >
+          <sphereGeometry args={[0.2, 32, 32]} />
+          <meshPhysicalMaterial 
+            color={statusColor} 
+            emissive={statusColor}
+            emissiveIntensity={hovered ? 0.8 : 0.4}
+            metalness={0.5}
+            roughness={0.2}
+            clearcoat={1}
+            clearcoatRoughness={0.1}
+          />
+        </mesh>
+      </Float>
 
-      {/* Vertical line to show height */}
+      {/* Vertical line to show height - glowing beam */}
       <mesh position={[0, 0.15, 0]}>
-        <cylinderGeometry args={[0.02, 0.02, 0.3, 8]} />
-        <meshBasicMaterial color={statusColor} transparent opacity={0.5} />
+        <cylinderGeometry args={[0.015, 0.03, 0.3, 8]} />
+        <meshBasicMaterial color={statusColor} transparent opacity={0.7} />
       </mesh>
       
       {/* Info popup on hover */}
@@ -298,16 +326,59 @@ export function TwinViewer({
         camera={{ position: [15, 15, 15], fov: 60 }}
         shadows
         className="w-full h-full"
+        gl={{ antialias: true, alpha: true }}
+        dpr={[1, 2]}
       >
         <Suspense fallback={<LoadingScene />}>
-          {/* Lighting */}
-          <ambientLight intensity={0.4} />
+          {/* Environment & Sky */}
+          <Environment preset="city" />
+          <Stars radius={100} depth={50} count={1000} factor={4} saturation={0} fade speed={1} />
+          
+          {/* Enhanced Lighting */}
+          <ambientLight intensity={0.3} />
           <directionalLight 
-            position={[10, 10, 5]} 
-            intensity={1} 
+            position={[15, 20, 10]} 
+            intensity={1.5} 
             castShadow
-            shadow-mapSize-width={2048}
-            shadow-mapSize-height={2048}
+            shadow-mapSize-width={4096}
+            shadow-mapSize-height={4096}
+            shadow-camera-far={50}
+            shadow-camera-left={-20}
+            shadow-camera-right={20}
+            shadow-camera-top={20}
+            shadow-camera-bottom={-20}
+          />
+          <directionalLight 
+            position={[-10, 10, -10]} 
+            intensity={0.5} 
+            color="#b4c5e4"
+          />
+          <pointLight position={[0, 8, 0]} intensity={0.5} color="#fff5e6" />
+          
+          {/* Contact Shadows for realistic grounding */}
+          <ContactShadows 
+            position={[0, -0.01, 0]} 
+            opacity={0.4} 
+            scale={30} 
+            blur={2} 
+            far={10}
+            color="#1a1a2e"
+          />
+          
+          {/* Technical Grid - Digital Twin aesthetic */}
+          <Grid 
+            position={[0, -0.02, 0]}
+            args={[50, 50]}
+            cellSize={1}
+            cellThickness={0.5}
+            cellColor="#3b82f6"
+            sectionSize={5}
+            sectionThickness={1}
+            sectionColor="#6366f1"
+            fadeDistance={40}
+            fadeStrength={1}
+            followCamera={false}
+            infiniteGrid={true}
           />
           
           {/* Scene Components */}
@@ -327,10 +398,20 @@ export function TwinViewer({
             enablePan={true}
             enableZoom={true}
             enableRotate={true}
-            maxPolarAngle={Math.PI / 2}
+            maxPolarAngle={Math.PI / 2.1}
             minDistance={5}
             maxDistance={50}
+            enableDamping
+            dampingFactor={0.05}
           />
+          
+          {/* Orientation Gizmo */}
+          <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+            <GizmoViewport 
+              axisColors={['#ef4444', '#22c55e', '#3b82f6']} 
+              labelColor="white"
+            />
+          </GizmoHelper>
         </Suspense>
       </Canvas>
     </div>
