@@ -104,7 +104,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <Button variant="outline" size="sm" className="rounded-full" asChild>
-                  <Link to="/digital-twin">
+                  <Link to="/twin/main-building">
                     <Eye className="h-4 w-4 mr-2" />
                     3D View
                   </Link>
