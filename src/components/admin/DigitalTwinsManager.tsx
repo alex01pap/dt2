@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Box, Pencil, Trash2, Building2, Tag, Calendar, Loader2 } from 'lucide-react';
+import { Plus, Box, Pencil, Trash2, Building2, Tag, Calendar, Loader2, Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,13 +9,15 @@ import { Label } from '@/components/ui/label';
 import { TwinCreatorWizard, TwinConfig } from '@/components/twin/creator/TwinCreatorWizard';
 import { useDigitalTwins, DigitalTwin, CreateTwinData } from '@/hooks/useDigitalTwins';
 import { getTemplateById, ROOM_TEMPLATES } from '@/components/twin/templates/templateConfig';
+import { SensorPlacementMode } from '@/components/twin/SensorPlacementMode';
 import { format } from 'date-fns';
 
 export function DigitalTwinsManager() {
-  const { twins, isLoading, createTwin, updateTwin, deleteTwin } = useDigitalTwins();
+  const { twins, isLoading, createTwin, updateTwin, deleteTwin, fetchTwins } = useDigitalTwins();
   const [wizardOpen, setWizardOpen] = useState(false);
   const [editingTwin, setEditingTwin] = useState<DigitalTwin | null>(null);
   const [deleteConfirmTwin, setDeleteConfirmTwin] = useState<DigitalTwin | null>(null);
+  const [configuringTwin, setConfiguringTwin] = useState<DigitalTwin | null>(null);
   const [editName, setEditName] = useState('');
   const [editBuilding, setEditBuilding] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -108,7 +110,7 @@ export function DigitalTwinsManager() {
                       style={{ backgroundColor: template.previewColor }}
                     />
                     <CardContent className="pt-6">
-                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-start justify-between mb-3">
                         <div 
                           className="w-10 h-10 rounded-lg flex items-center justify-center"
                           style={{ 
@@ -119,6 +121,15 @@ export function DigitalTwinsManager() {
                           <Icon className="w-5 h-5" />
                         </div>
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            title="Configure Sensors"
+                            onClick={() => setConfiguringTwin(twin)}
+                          >
+                            <Settings2 className="h-4 w-4" />
+                          </Button>
                           <Button 
                             variant="ghost" 
                             size="icon" 
@@ -260,6 +271,19 @@ export function DigitalTwinsManager() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Sensor Placement Mode */}
+      {configuringTwin && (
+        <SensorPlacementMode
+          twinId={configuringTwin.id}
+          templateId={configuringTwin.template_id}
+          size={configuringTwin.size}
+          onClose={() => setConfiguringTwin(null)}
+          onSensorPlaced={() => {
+            // Optionally refresh data
+          }}
+        />
+      )}
     </>
   );
 }

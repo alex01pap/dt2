@@ -1,17 +1,26 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Activity, Wifi, Map, Eye, Plus } from "lucide-react";
+import { Activity, Wifi, Map, Eye, Plus, LayoutGrid } from "lucide-react";
 import { SchoolFloorPlan } from "@/components/floor-plan/SchoolFloorPlan";
+import { TwinsGridView } from "@/components/dashboard/TwinsGridView";
 import { useRealtimeSensors } from "@/hooks/useRealtimeSensors";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const { sensors, isLoading } = useRealtimeSensors();
+  const [activeTab, setActiveTab] = useState("twins");
+  const navigate = useNavigate();
 
   const sensorsOnline = sensors.filter(s => s.status === 'online').length;
   const hasData = sensors.length > 0;
+
+  const handleConfigureTwin = (twinId: string) => {
+    navigate(`/admin?configure=${twinId}`);
+  };
 
   return (
     <motion.div
@@ -49,74 +58,96 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Empty State */}
-      {!hasData && !isLoading && (
-        <Card className="card-enterprise">
-          <CardContent className="pt-12 pb-12">
-            <div className="text-center space-y-6 max-w-md mx-auto">
-              <div className="inline-block p-4 rounded-2xl bg-accent/50">
-                <Activity className="h-12 w-12 text-foreground" />
-              </div>
-              
-              <div className="space-y-2">
-                <h2 className="text-2xl font-bold">Welcome to Your Digital Twin</h2>
-                <p className="text-muted-foreground">
-                  Add sensors to start monitoring your infrastructure
-                </p>
-              </div>
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="twins" className="gap-2">
+            <LayoutGrid className="h-4 w-4" />
+            All Twins
+          </TabsTrigger>
+          <TabsTrigger value="floorplan" className="gap-2">
+            <Map className="h-4 w-4" />
+            Floor Plan
+          </TabsTrigger>
+        </TabsList>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
-                <Button className="rounded-full" asChild>
-                  <Link to="/sensors">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add First Sensor
-                  </Link>
-                </Button>
-                <Button variant="outline" className="rounded-full" asChild>
-                  <Link to="/digital-twin">
-                    <Eye className="h-4 w-4 mr-2" />
-                    View 3D Twin
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+        {/* Twins Grid View */}
+        <TabsContent value="twins" className="mt-6">
+          <TwinsGridView onConfigureTwin={handleConfigureTwin} />
+        </TabsContent>
 
-      {/* School Floor Plan */}
-      {(hasData || isLoading) && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <Card className="overflow-hidden">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Map className="h-5 w-5 text-primary" />
+        {/* Floor Plan View */}
+        <TabsContent value="floorplan" className="mt-6">
+          {/* Empty State */}
+          {!hasData && !isLoading && (
+            <Card className="card-enterprise">
+              <CardContent className="pt-12 pb-12">
+                <div className="text-center space-y-6 max-w-md mx-auto">
+                  <div className="inline-block p-4 rounded-2xl bg-accent/50">
+                    <Activity className="h-12 w-12 text-foreground" />
                   </div>
-                  <div>
-                    <CardTitle className="text-lg">Κάτοψη Σχολείου</CardTitle>
-                    <CardDescription>Επιλέξτε κτίριο για 3D προβολή</CardDescription>
+                  
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-bold">Welcome to Your Digital Twin</h2>
+                    <p className="text-muted-foreground">
+                      Add sensors to start monitoring your infrastructure
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+                    <Button className="rounded-full" asChild>
+                      <Link to="/sensors">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add First Sensor
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="rounded-full" asChild>
+                      <Link to="/digital-twin">
+                        <Eye className="h-4 w-4 mr-2" />
+                        View 3D Twin
+                      </Link>
+                    </Button>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" className="rounded-full" asChild>
-                  <Link to="/twin/main-building">
-                    <Eye className="h-4 w-4 mr-2" />
-                    3D View
-                  </Link>
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <SchoolFloorPlan className="min-h-[500px]" />
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* School Floor Plan */}
+          {(hasData || isLoading) && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <Card className="overflow-hidden">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-primary/10">
+                        <Map className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Κάτοψη Σχολείου</CardTitle>
+                        <CardDescription>Επιλέξτε κτίριο για 3D προβολή</CardDescription>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" className="rounded-full" asChild>
+                      <Link to="/twin/main-building">
+                        <Eye className="h-4 w-4 mr-2" />
+                        3D View
+                      </Link>
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-4 pt-0">
+                  <SchoolFloorPlan className="min-h-[500px]" />
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </TabsContent>
+      </Tabs>
     </motion.div>
   );
 }

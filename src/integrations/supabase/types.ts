@@ -444,8 +444,10 @@ export type Database = {
           last_reading_at: string | null
           location: Json | null
           name: string
+          position_3d: Json | null
           status: Database["public"]["Enums"]["sensor_status"]
           thresholds: Json | null
+          twin_id: string | null
           type: Database["public"]["Enums"]["sensor_type"]
           updated_at: string
         }
@@ -458,8 +460,10 @@ export type Database = {
           last_reading_at?: string | null
           location?: Json | null
           name: string
+          position_3d?: Json | null
           status?: Database["public"]["Enums"]["sensor_status"]
           thresholds?: Json | null
+          twin_id?: string | null
           type: Database["public"]["Enums"]["sensor_type"]
           updated_at?: string
         }
@@ -472,8 +476,10 @@ export type Database = {
           last_reading_at?: string | null
           location?: Json | null
           name?: string
+          position_3d?: Json | null
           status?: Database["public"]["Enums"]["sensor_status"]
           thresholds?: Json | null
+          twin_id?: string | null
           type?: Database["public"]["Enums"]["sensor_type"]
           updated_at?: string
         }
@@ -483,6 +489,13 @@ export type Database = {
             columns: ["asset_id"]
             isOneToOne: false
             referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sensors_twin_id_fkey"
+            columns: ["twin_id"]
+            isOneToOne: false
+            referencedRelation: "digital_twins"
             referencedColumns: ["id"]
           },
         ]
