@@ -12,6 +12,7 @@ import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import ImmersiveDashboard from "./pages/ImmersiveDashboard";
 import Assets from "./pages/Assets";
 import Sensors from "./pages/Sensors";
 import Rules from "./pages/Rules";
@@ -32,7 +33,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="system" storageKey="enterprise-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="enterprise-theme">
       <TooltipProvider>
         <AuthProvider>
           <Toaster />
@@ -45,6 +46,14 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route 
                 path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <ImmersiveDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard/classic" 
                 element={
                   <ProtectedRoute>
                     <DashboardLayout>
