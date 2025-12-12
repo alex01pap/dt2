@@ -9,6 +9,7 @@ import { ScalableClassroom } from '../../templates/ScalableClassroom';
 import { ITClassroomFloorPlan } from '../../templates/ITClassroomFloorPlan';
 import { SoccerFieldFloorPlan } from '../../templates/SoccerFieldFloorPlan';
 import { OutdoorAreaFloorPlan } from '../../templates/OutdoorAreaFloorPlan';
+import { GymnasiumFloorPlan } from '../../templates/GymnasiumFloorPlan';
 
 interface SelectSizeStepProps {
   template: RoomTemplate;
@@ -22,8 +23,8 @@ function TemplatePreview({ templateId, size }: { templateId: string; size: RoomS
     'it-classroom': <ITClassroomFloorPlan size={size} />,
     'soccer-field': <SoccerFieldFloorPlan size={size} />,
     'outdoor-area': <OutdoorAreaFloorPlan size={size} />,
-    'restaurant': <ScalableClassroom size={size} />, // Fallback for now
-    'gymnasium': <ScalableClassroom size={size} />, // Fallback for now
+    'restaurant': <ScalableClassroom size={size} />,
+    'gymnasium': <GymnasiumFloorPlan size={size} />,
   };
 
   return previewComponents[templateId] || <ScalableClassroom size={size} />;

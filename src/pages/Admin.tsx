@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Shield, Users, Settings, Database, Activity, Link as LinkIcon, Video, Box, Plus } from "lucide-react";
+import { Shield, Users, Settings, Database, Activity, Link as LinkIcon, Video, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardGrid, StatsCard, CardSkeleton } from "@/components/ui/card-grid";
 import { RBACGuard } from "@/components/auth/RBACGuard";
@@ -11,13 +11,13 @@ import { UserManagement } from "@/components/admin/UserManagement";
 import { SystemConfiguration } from "@/components/admin/SystemConfiguration";
 import { SecurityCenter } from "@/components/admin/SecurityCenter";
 import { HeroVideoUpload } from "@/components/admin/HeroVideoUpload";
-import { TwinCreatorWizard } from "@/components/twin/creator/TwinCreatorWizard";
+import { DigitalTwinsManager } from "@/components/admin/DigitalTwinsManager";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useDigitalTwins } from "@/hooks/useDigitalTwins";
 
 export default function Admin() {
   const [isLoading] = useState(false);
-  const [twinWizardOpen, setTwinWizardOpen] = useState(false);
+  const { twins } = useDigitalTwins();
   const [stats, setStats] = useState({
     totalUsers: 0,
     activeSensors: 0,
@@ -59,7 +59,7 @@ export default function Admin() {
         activeSensors: sensorCount || 0,
         openhabConnected: openhabConfig?.enabled || false,
         totalAssets: assetCount || 0,
-        totalTwins: 0,
+        totalTwins: twins.length,
       });
     } catch (error) {
       console.error("Error loading stats:", error);
@@ -248,31 +248,7 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="twins">
-            <Card className="card-enterprise">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Digital Twins</CardTitle>
-                    <CardDescription>Create and manage your 3D digital twin spaces</CardDescription>
-                  </div>
-                  <Button onClick={() => setTwinWizardOpen(true)} className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    Create New Twin
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <Box className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                  <p className="text-lg font-medium mb-2">No digital twins yet</p>
-                  <p className="text-sm mb-6">Create your first digital twin to get started</p>
-                  <Button onClick={() => setTwinWizardOpen(true)} variant="outline" className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    Create Your First Twin
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <DigitalTwinsManager />
           </TabsContent>
 
           <TabsContent value="content">
@@ -297,16 +273,6 @@ export default function Admin() {
             <OpenHABIntegration />
           </TabsContent>
         </Tabs>
-
-        {/* Twin Creator Wizard */}
-        <TwinCreatorWizard
-          open={twinWizardOpen}
-          onOpenChange={setTwinWizardOpen}
-          onComplete={(config) => {
-            toast.success(`Digital Twin "${config.name}" created successfully!`);
-            // Here you would typically save to database
-          }}
-        />
       </div>
     </RBACGuard>
   );

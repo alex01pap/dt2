@@ -82,6 +82,42 @@ export type Database = {
           },
         ]
       }
+      digital_twins: {
+        Row: {
+          building: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          name: string
+          size: string
+          tags: string[] | null
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          building?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          name: string
+          size?: string
+          tags?: string[] | null
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          building?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          name?: string
+          size?: string
+          tags?: string[] | null
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           acknowledged: boolean | null
