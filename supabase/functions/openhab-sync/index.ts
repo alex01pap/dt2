@@ -73,32 +73,58 @@ serve(async (req) => {
 
     // Auto-sync requires service role authentication (called by cron/internal)
     if (action === 'auto-sync') {
-      // Verify this is a service role request by checking the JWT
+      // Verify the authorization header exists
       const authHeader = req.headers.get('Authorization');
       if (!authHeader) {
+        console.log('Auto-sync rejected: Missing authorization header');
         return new Response(JSON.stringify({ error: 'Unauthorized: Missing authorization' }), {
           status: 401,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
       
-      // Create a service role client to verify the request
+      // Extract the token and verify it matches the expected anon key
+      // This prevents replay attacks with arbitrary tokens
+      const token = authHeader.replace('Bearer ', '');
+      const expectedAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+      
+      if (token !== expectedAnonKey) {
+        console.log('Auto-sync rejected: Invalid authorization token');
+        return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      // Create a service role client for database operations
       const serviceClient = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
       );
       
-      // Verify the config_id exists and is enabled before processing
-      if (!config_id) {
+      // Validate config_id format (UUID)
+      if (!config_id || typeof config_id !== 'string') {
+        console.log('Auto-sync rejected: Missing or invalid config_id');
         return new Response(JSON.stringify({ error: 'Missing config_id' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
       
+      // UUID format validation to prevent injection
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(config_id)) {
+        console.log('Auto-sync rejected: Invalid config_id format:', config_id);
+        return new Response(JSON.stringify({ error: 'Invalid config_id format' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      // Verify the config_id exists and is enabled before processing
       const { data: config, error: configError } = await serviceClient
         .from('openhab_config')
-        .select('id, enabled')
+        .select('id, enabled, last_sync_at, sync_interval')
         .eq('id', config_id)
         .eq('enabled', true)
         .single();
@@ -111,6 +137,25 @@ serve(async (req) => {
         });
       }
       
+      // Rate limiting: Check if enough time has passed since last sync
+      if (config.last_sync_at && config.sync_interval) {
+        const lastSync = new Date(config.last_sync_at).getTime();
+        const minInterval = (config.sync_interval * 1000) * 0.9; // Allow 10% tolerance
+        const now = Date.now();
+        
+        if (now - lastSync < minInterval) {
+          console.log('Auto-sync rate limited:', config_id, 'Last sync:', config.last_sync_at);
+          return new Response(JSON.stringify({ 
+            error: 'Rate limited: Sync interval not reached',
+            next_sync_allowed_at: new Date(lastSync + minInterval).toISOString()
+          }), {
+            status: 429,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+      
+      console.log('Auto-sync authorized for config:', config_id);
       return await autoSyncData(serviceClient, config_id);
     }
 
