@@ -69,7 +69,8 @@ serve(async (req) => {
       }
     );
 
-    const { action, config_id } = await req.json();
+    const body = await req.json();
+    const { action, config_id } = body;
 
     // Auto-sync requires service role authentication (called by cron/internal)
     if (action === 'auto-sync') {
@@ -168,14 +169,15 @@ serve(async (req) => {
       });
     }
 
+
     if (action === 'test-connection') {
-      return await testConnection(req, supabaseClient, user.id);
+      return await testConnection(body, supabaseClient, user.id);
     } else if (action === 'fetch-items') {
-      return await fetchItems(req, supabaseClient, user.id);
+      return await fetchItems(supabaseClient, user.id);
     } else if (action === 'sync-data') {
-      return await syncData(req, supabaseClient, user.id);
+      return await syncData(supabaseClient, user.id);
     } else if (action === 'send-command') {
-      return await sendCommand(req, supabaseClient, user.id);
+      return await sendCommand(body, supabaseClient, user.id);
     } else {
       return new Response(JSON.stringify({ error: 'Invalid action' }), {
         status: 400,
@@ -192,8 +194,8 @@ serve(async (req) => {
   }
 });
 
-async function testConnection(req: Request, supabaseClient: any, userId: string) {
-  const { openhabUrl, apiToken } = await req.json();
+async function testConnection(body: any, supabaseClient: any, userId: string) {
+  const { openhabUrl, apiToken } = body;
 
   // Validate URL to prevent SSRF
   const urlValidation = isValidExternalUrl(openhabUrl);
@@ -248,7 +250,7 @@ async function testConnection(req: Request, supabaseClient: any, userId: string)
   }
 }
 
-async function fetchItems(req: Request, supabaseClient: any, userId: string) {
+async function fetchItems(supabaseClient: any, userId: string) {
   // Get user's OpenHAB config
   const { data: config, error: configError } = await supabaseClient
     .from('openhab_config')
@@ -343,7 +345,7 @@ async function autoSyncData(supabaseClient: any, configId: string) {
   return await performSync(supabaseClient, config, 'automatic');
 }
 
-async function syncData(req: Request, supabaseClient: any, userId: string) {
+async function syncData(supabaseClient: any, userId: string) {
   // Get user's OpenHAB config
   const { data: config, error: configError } = await supabaseClient
     .from('openhab_config')
@@ -529,8 +531,8 @@ async function performSync(supabaseClient: any, config: any, syncType: string) {
   }
 }
 
-async function sendCommand(req: Request, supabaseClient: any, userId: string) {
-  const { itemName, command } = await req.json();
+async function sendCommand(body: any, supabaseClient: any, userId: string) {
+  const { itemName, command } = body;
 
   if (!itemName || command === undefined) {
     return new Response(
