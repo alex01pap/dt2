@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,7 +17,9 @@ import {
   Info,
   ExternalLink,
   Copy,
-  Check
+  Check,
+  Activity,
+  Zap
 } from "lucide-react";
 import { useOpenHABConfig, OpenHABItem } from "@/hooks/useOpenHABConfig";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,6 +43,11 @@ export function OpenHABIntegration() {
   const [syncLogs, setSyncLogs] = useState<any[]>([]);
   const [commandValues, setCommandValues] = useState<Record<string, string>>({});
   const [sendingCommand, setSendingCommand] = useState<string | null>(null);
+  const [isMappingAll, setIsMappingAll] = useState(false);
+  const [liveItems, setLiveItems] = useState<OpenHABItem[]>([]);
+  const [isLoadingLive, setIsLoadingLive] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [refreshInterval, setRefreshInterval] = useState(5);
 
   useEffect(() => {
     if (config) {
@@ -178,6 +185,89 @@ export function OpenHABIntegration() {
     }
   };
 
+  const handleMapAllItems = async () => {
+    if (!config || items.length === 0) return;
+
+    setIsMappingAll(true);
+    let successCount = 0;
+    let failCount = 0;
+
+    try {
+      for (const item of items) {
+        try {
+          const sensorType = item.type.includes("Temperature") ? "temperature" 
+            : item.type.includes("Pressure") ? "pressure"
+            : item.type.includes("Humidity") ? "humidity"
+            : "temperature";
+
+          const { data: sensor, error: sensorError } = await supabase
+            .from("sensors")
+            .insert({
+              name: item.label || item.name,
+              type: sensorType,
+              status: "online",
+            })
+            .select()
+            .single();
+
+          if (sensorError) throw sensorError;
+
+          const { error: mapError } = await supabase
+            .from("openhab_items")
+            .insert({
+              config_id: config.id,
+              sensor_id: sensor.id,
+              openhab_item_name: item.name,
+              openhab_item_type: item.type,
+              openhab_item_label: item.label,
+              sync_enabled: true,
+            });
+
+          if (mapError) throw mapError;
+          successCount++;
+        } catch (error) {
+          console.error(`Failed to map ${item.name}:`, error);
+          failCount++;
+        }
+      }
+
+      if (successCount > 0) {
+        toast.success(`Successfully mapped ${successCount} items${failCount > 0 ? `, ${failCount} failed` : ""}`);
+        setItems([]);
+        await loadMappedItems();
+      } else {
+        toast.error("Failed to map any items");
+      }
+    } finally {
+      setIsMappingAll(false);
+    }
+  };
+
+  // Fetch live data for dashboard
+  const fetchLiveData = useCallback(async () => {
+    if (!config) return;
+    
+    setIsLoadingLive(true);
+    try {
+      const fetchedItems = await fetchItems();
+      setLiveItems(fetchedItems);
+    } catch (error) {
+      console.error("Error fetching live data:", error);
+    } finally {
+      setIsLoadingLive(false);
+    }
+  }, [config, fetchItems]);
+
+  // Auto-refresh effect
+  useEffect(() => {
+    if (!autoRefresh || !config) return;
+
+    fetchLiveData();
+    const interval = setInterval(fetchLiveData, refreshInterval * 1000);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, config, fetchLiveData]);
+
   const handleSendCommand = async (itemName: string) => {
     const command = commandValues[itemName];
     if (!command) {
@@ -250,13 +340,163 @@ export function OpenHABIntegration() {
         </AlertDescription>
       </Alert>
 
-      <Tabs defaultValue="setup" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="live" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="live" className="flex items-center gap-1">
+            <Activity className="h-4 w-4" />
+            Live Dashboard
+          </TabsTrigger>
           <TabsTrigger value="setup">Setup</TabsTrigger>
           <TabsTrigger value="items">Available Items</TabsTrigger>
           <TabsTrigger value="mapped">Mapped Items ({mappedItems.length})</TabsTrigger>
           <TabsTrigger value="status">Sync Status</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="live" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-primary" />
+                    Live OpenHAB Sensors
+                  </CardTitle>
+                  <CardDescription>
+                    Real-time sensor values from your OpenHAB instance
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="auto-refresh" className="text-sm">Auto-refresh</Label>
+                    <Switch
+                      id="auto-refresh"
+                      checked={autoRefresh}
+                      onCheckedChange={setAutoRefresh}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="refresh-interval" className="text-sm">Every</Label>
+                    <Input
+                      id="refresh-interval"
+                      type="number"
+                      min="2"
+                      max="60"
+                      value={refreshInterval}
+                      onChange={(e) => setRefreshInterval(parseInt(e.target.value) || 5)}
+                      className="w-16"
+                    />
+                    <span className="text-sm text-muted-foreground">sec</span>
+                  </div>
+                  <Button
+                    onClick={fetchLiveData}
+                    disabled={isLoadingLive}
+                    variant="outline"
+                    size="sm"
+                  >
+                    {isLoadingLive ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {!config ? (
+                <Alert>
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    Please configure your OpenHAB connection in the "Setup" tab first.
+                  </AlertDescription>
+                </Alert>
+              ) : liveItems.length === 0 ? (
+                <div className="text-center py-8 space-y-4">
+                  {isLoadingLive ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      <p className="text-muted-foreground">Fetching live data...</p>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-muted-foreground">
+                        No sensor data available. Make sure OpenHAB is connected and has sensor items.
+                      </p>
+                      <Button onClick={fetchLiveData} variant="outline">
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Refresh Data
+                      </Button>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {liveItems.map((item) => (
+                    <Card key={item.name} className="relative overflow-hidden border-border/50 hover:border-primary/50 transition-colors">
+                      <div className="absolute top-0 right-0 w-16 h-16 opacity-10">
+                        {item.type.includes("Temperature") && (
+                          <div className="w-full h-full bg-gradient-to-br from-red-500 to-orange-500 rounded-full blur-xl" />
+                        )}
+                        {item.type.includes("Humidity") && (
+                          <div className="w-full h-full bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full blur-xl" />
+                        )}
+                        {item.type.includes("Pressure") && (
+                          <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-xl" />
+                        )}
+                      </div>
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate" title={item.label || item.name}>
+                              {item.label || item.name}
+                            </p>
+                            <Badge variant="secondary" className="text-xs mt-1">
+                              {item.type.replace("Number:", "")}
+                            </Badge>
+                          </div>
+                          {autoRefresh && (
+                            <div className="w-2 h-2 rounded-full bg-success animate-pulse" title="Live" />
+                          )}
+                        </div>
+                        <div className="mt-4">
+                          {item.state && item.state !== 'NULL' && item.state !== 'UNDEF' ? (
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-3xl font-bold text-primary">
+                                {parseFloat(item.state).toFixed(1)}
+                              </span>
+                              <span className="text-sm text-muted-foreground">
+                                {item.type.includes("Temperature") && "°C"}
+                                {item.type.includes("Humidity") && "%"}
+                                {item.type.includes("Pressure") && "hPa"}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-2xl font-bold text-muted-foreground">--</span>
+                          )}
+                        </div>
+                        {item.category && (
+                          <p className="text-xs text-muted-foreground mt-2">{item.category}</p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+              
+              {liveItems.length > 0 && (
+                <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                  <p className="text-sm text-muted-foreground">
+                    Showing {liveItems.length} sensors
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="w-2 h-2 rounded-full bg-success" />
+                    <span>Live updates {autoRefresh ? `every ${refreshInterval}s` : "paused"}</span>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="setup" className="space-y-4">
           <Card>
@@ -443,19 +683,36 @@ export function OpenHABIntegration() {
                     Sensor-compatible items from your OpenHAB instance
                   </CardDescription>
                 </div>
-                <Button 
-                  onClick={handleFetchItems} 
-                  disabled={isLoadingItems || !config} 
-                  variant="outline" 
-                  size="sm"
-                >
-                  {isLoadingItems ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <RefreshCw className="h-4 w-4 mr-2" />
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleFetchItems} 
+                    disabled={isLoadingItems || !config} 
+                    variant="outline" 
+                    size="sm"
+                  >
+                    {isLoadingItems ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                    )}
+                    Fetch Items
+                  </Button>
+                  {items.length > 0 && (
+                    <Button 
+                      onClick={handleMapAllItems} 
+                      disabled={isMappingAll} 
+                      size="sm"
+                      className="btn-enterprise"
+                    >
+                      {isMappingAll ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Zap className="h-4 w-4 mr-2" />
+                      )}
+                      Map All ({items.length})
+                    </Button>
                   )}
-                  Fetch Items
-                </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
