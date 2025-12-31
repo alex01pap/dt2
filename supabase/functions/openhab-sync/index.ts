@@ -53,6 +53,27 @@ function isValidItemName(name: string): boolean {
   return /^[a-zA-Z0-9_:-]+$/.test(name);
 }
 
+// Build authorization header - myopenHAB uses Basic Auth (email:password)
+function buildAuthHeader(apiToken: string | null): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Accept': 'application/json',
+  };
+  
+  if (apiToken) {
+    // Check if it's in email:password format (Basic Auth for myopenHAB.org)
+    if (apiToken.includes(':') && apiToken.includes('@')) {
+      // It's email:password format - use Basic Auth
+      const base64Credentials = btoa(apiToken);
+      headers['Authorization'] = `Basic ${base64Credentials}`;
+    } else {
+      // It's a token - use Bearer Auth (for local OpenHAB)
+      headers['Authorization'] = `Bearer ${apiToken}`;
+    }
+  }
+  
+  return headers;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -208,13 +229,7 @@ async function testConnection(body: any, supabaseClient: any, userId: string) {
   }
 
   try {
-    const headers: Record<string, string> = {
-      'Accept': 'application/json',
-    };
-    
-    if (apiToken) {
-      headers['Authorization'] = `Bearer ${apiToken}`;
-    }
+    const headers = buildAuthHeader(apiToken);
 
     const response = await fetch(`${openhabUrl}/rest/items`, {
       headers,
@@ -276,13 +291,7 @@ async function fetchItems(supabaseClient: any, userId: string) {
   }
 
   try {
-    const headers: Record<string, string> = {
-      'Accept': 'application/json',
-    };
-    
-    if (config.api_token) {
-      headers['Authorization'] = `Bearer ${config.api_token}`;
-    }
+    const headers = buildAuthHeader(config.api_token);
 
     const response = await fetch(`${config.openhab_url}/rest/items`, {
       headers,
@@ -398,13 +407,7 @@ async function performSync(supabaseClient: any, config: any, syncType: string) {
       );
     }
 
-    const headers: Record<string, string> = {
-      'Accept': 'application/json',
-    };
-    
-    if (config.api_token) {
-      headers['Authorization'] = `Bearer ${config.api_token}`;
-    }
+    const headers = buildAuthHeader(config.api_token);
 
     let syncedCount = 0;
     const errors: string[] = [];
@@ -574,13 +577,8 @@ async function sendCommand(body: any, supabaseClient: any, userId: string) {
   }
 
   try {
-    const headers: Record<string, string> = {
-      'Content-Type': 'text/plain',
-    };
-    
-    if (config.api_token) {
-      headers['Authorization'] = `Bearer ${config.api_token}`;
-    }
+    const headers = buildAuthHeader(config.api_token);
+    headers['Content-Type'] = 'text/plain'; // Override for command POST
 
     console.log(`Sending command to ${itemName}: ${command}`);
 
