@@ -344,11 +344,24 @@ async function autoSyncData(supabaseClient: any, configId: string) {
     .single();
 
   if (configError || !config || !config.enabled) {
-    console.log('Config not found or not enabled');
+    console.log('Config not found or not enabled:', configError?.message);
     return new Response(
       JSON.stringify({ error: 'Config not found or not enabled' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
+  }
+
+  // Check if there are any mapped items to sync
+  const { data: itemCount, error: countError } = await supabaseClient
+    .from('openhab_items')
+    .select('id', { count: 'exact', head: true })
+    .eq('config_id', configId)
+    .eq('sync_enabled', true);
+
+  if (countError) {
+    console.log('Error checking mapped items:', countError.message);
+  } else {
+    console.log(`Found ${itemCount?.length || 0} mapped items for config ${configId}`);
   }
 
   return await performSync(supabaseClient, config, 'automatic');
