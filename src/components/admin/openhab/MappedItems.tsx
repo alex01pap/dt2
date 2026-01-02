@@ -2,16 +2,27 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { GitBranch, RefreshCw, CheckCircle, XCircle, Send } from "lucide-react";
+import { GitBranch, RefreshCw, Send, MapPin } from "lucide-react";
 import { 
   SectionHeader, 
   EmptyState, 
   ActionButton, 
-  DataListRow,
   StatusIndicator 
 } from "@/components/enterprise";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface DigitalTwin {
+  id: string;
+  name: string;
+}
 
 interface MappedItem {
   id: string;
@@ -21,7 +32,12 @@ interface MappedItem {
   sync_enabled: boolean;
   last_value: string | null;
   last_synced_at: string | null;
-  sensors: { name: string } | null;
+  sensor_id: string | null;
+  sensors: { 
+    id: string;
+    name: string;
+    twin_id: string | null;
+  } | null;
 }
 
 interface MappedItemsProps {
@@ -42,6 +58,70 @@ export function MappedItems({
   const [isSyncing, setIsSyncing] = useState(false);
   const [commandValues, setCommandValues] = useState<Record<string, string>>({});
   const [sendingCommand, setSendingCommand] = useState<string | null>(null);
+  const [twins, setTwins] = useState<DigitalTwin[]>([]);
+  const [bulkTwinId, setBulkTwinId] = useState<string>("");
+  const [isAssigning, setIsAssigning] = useState(false);
+
+  useEffect(() => {
+    loadTwins();
+  }, []);
+
+  const loadTwins = async () => {
+    const { data } = await supabase
+      .from("digital_twins")
+      .select("id, name")
+      .order("name");
+    if (data) setTwins(data);
+  };
+
+  const handleBulkAssign = async () => {
+    if (!bulkTwinId) return;
+
+    const unassigned = mappedItems.filter(
+      (item) => item.sensors && !item.sensors.twin_id
+    );
+    
+    if (unassigned.length === 0) {
+      toast.info("All sensors are already assigned");
+      return;
+    }
+
+    setIsAssigning(true);
+    try {
+      const sensorIds = unassigned
+        .map((item) => item.sensors?.id)
+        .filter(Boolean) as string[];
+
+      const { error } = await supabase
+        .from("sensors")
+        .update({ twin_id: bulkTwinId })
+        .in("id", sensorIds);
+
+      if (error) throw error;
+
+      toast.success(`Assigned ${sensorIds.length} sensors to twin`);
+      onRefresh();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to assign sensors");
+    } finally {
+      setIsAssigning(false);
+    }
+  };
+
+  const handleAssignSingle = async (sensorId: string, twinId: string) => {
+    try {
+      const { error } = await supabase
+        .from("sensors")
+        .update({ twin_id: twinId })
+        .eq("id", sensorId);
+
+      if (error) throw error;
+      toast.success("Sensor assigned");
+      onRefresh();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to assign");
+    }
+  };
 
   const handleSync = async () => {
     setIsSyncing(true);
@@ -80,6 +160,10 @@ export function MappedItems({
     );
   }
 
+  const unassignedCount = mappedItems.filter(
+    (item) => item.sensors && !item.sensors.twin_id
+  ).length;
+
   return (
     <div className="space-y-6">
       <SectionHeader
@@ -87,15 +171,43 @@ export function MappedItems({
         title="Mapped Sensors"
         description={`${mappedItems.length} items syncing from OpenHAB`}
         actions={
-          <ActionButton
-            size="sm"
-            onClick={handleSync}
-            loading={isSyncing}
-            icon={RefreshCw}
-            disabled={mappedItems.length === 0}
-          >
-            Sync Now
-          </ActionButton>
+          <div className="flex items-center gap-3">
+            {unassignedCount > 0 && (
+              <>
+                <Select value={bulkTwinId} onValueChange={setBulkTwinId}>
+                  <SelectTrigger className="w-[160px]">
+                    <SelectValue placeholder="Assign to..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {twins.map((twin) => (
+                      <SelectItem key={twin.id} value={twin.id}>
+                        {twin.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <ActionButton
+                  size="sm"
+                  variant="outline"
+                  onClick={handleBulkAssign}
+                  loading={isAssigning}
+                  disabled={!bulkTwinId}
+                  icon={MapPin}
+                >
+                  Assign ({unassignedCount})
+                </ActionButton>
+              </>
+            )}
+            <ActionButton
+              size="sm"
+              onClick={handleSync}
+              loading={isSyncing}
+              icon={RefreshCw}
+              disabled={mappedItems.length === 0}
+            >
+              Sync Now
+            </ActionButton>
+          </div>
         }
       />
 
@@ -133,6 +245,28 @@ export function MappedItems({
                         <Badge variant="outline" className="text-xs">
                           → {item.sensors.name}
                         </Badge>
+                      )}
+                      {item.sensors?.twin_id ? (
+                        <Badge className="text-xs bg-primary/10 text-primary border-primary/20">
+                          {twins.find((t) => t.id === item.sensors?.twin_id)?.name || "Assigned"}
+                        </Badge>
+                      ) : (
+                        <Select
+                          onValueChange={(value) =>
+                            item.sensors && handleAssignSingle(item.sensors.id, value)
+                          }
+                        >
+                          <SelectTrigger className="h-6 text-xs w-[120px]">
+                            <SelectValue placeholder="Unassigned" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {twins.map((twin) => (
+                              <SelectItem key={twin.id} value={twin.id}>
+                                {twin.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       )}
                       {item.last_value && (
                         <Badge variant="outline" className="text-xs font-mono">
