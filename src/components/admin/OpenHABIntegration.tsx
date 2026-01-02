@@ -28,7 +28,7 @@ export function OpenHABIntegration() {
     try {
       const { data, error } = await supabase
         .from("openhab_items")
-        .select("*, sensors(*)")
+        .select("*, sensors(id, name, twin_id)")
         .eq("config_id", config.id);
 
       if (error) throw error;

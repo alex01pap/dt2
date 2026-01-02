@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Layers, RefreshCw, Zap } from "lucide-react";
@@ -11,6 +11,19 @@ import {
 import { OpenHABItem } from "@/hooks/useOpenHABConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface DigitalTwin {
+  id: string;
+  name: string;
+  template_id: string;
+}
 
 interface ItemMapperProps {
   config: { id: string } | null;
@@ -29,6 +42,25 @@ export function ItemMapper({
 }: ItemMapperProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isMappingAll, setIsMappingAll] = useState(false);
+  const [twins, setTwins] = useState<DigitalTwin[]>([]);
+  const [selectedTwinId, setSelectedTwinId] = useState<string>("");
+
+  useEffect(() => {
+    loadTwins();
+  }, []);
+
+  const loadTwins = async () => {
+    const { data } = await supabase
+      .from("digital_twins")
+      .select("id, name, template_id")
+      .order("name");
+    if (data) {
+      setTwins(data);
+      if (data.length === 1) {
+        setSelectedTwinId(data[0].id);
+      }
+    }
+  };
 
   const handleFetch = async () => {
     setIsLoading(true);
@@ -61,6 +93,7 @@ export function ItemMapper({
           name: item.label || item.name,
           type: detectSensorType(item.type),
           status: "online",
+          twin_id: selectedTwinId || null,
         })
         .select()
         .single();
@@ -104,6 +137,7 @@ export function ItemMapper({
             name: item.label || item.name,
             type: detectSensorType(item.type),
             status: "online",
+            twin_id: selectedTwinId || null,
           })
           .select()
           .single();
@@ -156,7 +190,19 @@ export function ItemMapper({
         title="Available Items"
         description="OpenHAB items that can be mapped to sensors"
         actions={
-          <div className="flex gap-2">
+          <div className="flex items-center gap-3">
+            <Select value={selectedTwinId} onValueChange={setSelectedTwinId}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Assign to twin..." />
+              </SelectTrigger>
+              <SelectContent>
+                {twins.map((twin) => (
+                  <SelectItem key={twin.id} value={twin.id}>
+                    {twin.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <ActionButton
               variant="outline"
               size="sm"
@@ -171,6 +217,7 @@ export function ItemMapper({
                 size="sm"
                 onClick={handleMapAll}
                 loading={isMappingAll}
+                disabled={!selectedTwinId}
                 icon={Zap}
               >
                 Map All ({items.length})
