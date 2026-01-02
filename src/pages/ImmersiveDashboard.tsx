@@ -1,3 +1,4 @@
+import { useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Activity, AlertTriangle, Wifi, Plus, Eye, Settings } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -27,10 +28,44 @@ const templateIcons: Record<string, string> = {
   restaurant: "🍽️",
 };
 
+// Predefined twins to seed if only 1 exists
+const defaultTwins = [
+  { name: "Gymnasium", template_id: "gymnasium", size: "large", building: "Athletics", tags: ["sports", "fitness"] },
+  { name: "Cafeteria", template_id: "restaurant", size: "large", building: "Main Building", tags: ["dining", "food-service"] },
+  { name: "Computer Lab A", template_id: "it_classroom", size: "medium", building: "Technology Wing", tags: ["IT", "workstations"] },
+  { name: "Science Lab", template_id: "classroom", size: "medium", building: "Science Wing", tags: ["chemistry", "experiments"] },
+  { name: "Outdoor Courtyard", template_id: "outdoor", size: "large", building: "Campus", tags: ["recreation", "events"] },
+];
+
 export default function ImmersiveDashboard() {
   const navigate = useNavigate();
-  const { twins, isLoading } = useDigitalTwins();
+  const { twins, isLoading, createTwin } = useDigitalTwins();
   const { sensors } = useRealtimeSensors();
+  const seededRef = useRef(false);
+
+  // Seed default twins if only 1 exists
+  useEffect(() => {
+    if (!isLoading && twins.length === 1 && !seededRef.current) {
+      seededRef.current = true;
+      defaultTwins.forEach((twin) => createTwin(twin));
+    }
+  }, [twins, isLoading, createTwin]);
+
+  // Group sensors by twin_id
+  const sensorsByTwin = useMemo(() => {
+    const grouped: Record<string, number> = {};
+    let unassigned = 0;
+    
+    sensors.forEach((sensor) => {
+      if (sensor.twin_id) {
+        grouped[sensor.twin_id] = (grouped[sensor.twin_id] || 0) + 1;
+      } else {
+        unassigned++;
+      }
+    });
+    
+    return { grouped, unassigned };
+  }, [sensors]);
 
   const onlineSensors = sensors.filter(s => s.status === "online").length;
   const alertSensors = sensors.filter(s => s.status === "warning" || s.status === "critical").length;
@@ -39,7 +74,7 @@ export default function ImmersiveDashboard() {
     { icon: Box, label: "Digital Twins", value: twins.length, color: "text-primary" },
     { icon: Activity, label: "Active Sensors", value: onlineSensors, color: "text-green-500" },
     { icon: AlertTriangle, label: "Alerts", value: alertSensors, color: alertSensors > 0 ? "text-destructive" : "text-muted-foreground" },
-    { icon: Wifi, label: "Connected", value: sensors.length, color: "text-purple-500" },
+    { icon: Wifi, label: "Unassigned", value: sensorsByTwin.unassigned, color: sensorsByTwin.unassigned > 0 ? "text-amber-500" : "text-muted-foreground" },
   ];
 
   return (
@@ -133,7 +168,7 @@ export default function ImmersiveDashboard() {
                       )}
                       <span className="flex items-center gap-1">
                         <Activity className="h-3.5 w-3.5 text-green-500" />
-                        {sensors.length} sensors
+                        {sensorsByTwin.grouped[twin.id] || 0} sensors
                       </span>
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

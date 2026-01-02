@@ -10,6 +10,7 @@ export interface RealtimeSensor {
   last_reading: number | null;
   last_reading_at: string | null;
   asset_id: string | null;
+  twin_id: string | null;
   thresholds: any;
 }
 
