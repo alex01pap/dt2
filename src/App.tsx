@@ -13,6 +13,10 @@ import Auth from "./pages/Auth";
 import ImmersiveDashboard from "./pages/ImmersiveDashboard";
 import DigitalTwin from "./pages/DigitalTwin";
 import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
+import Architecture from "./pages/Architecture";
+import Resources from "./pages/Resources";
+import ClientDemo from "./pages/ClientDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -57,10 +61,23 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
-              {/* Redirects for removed pages */}
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Profile />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route path="/architecture" element={<Architecture />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/client-demo" element={<ClientDemo />} />
+              {/* Redirects for old routes */}
               <Route path="/admin" element={<Navigate to="/settings" replace />} />
-              <Route path="/sensors" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/assets" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/sensors" element={<Navigate to="/settings" replace />} />
+              <Route path="/assets" element={<Navigate to="/settings" replace />} />
               <Route path="/rules" element={<Navigate to="/settings" replace />} />
               <Route path="/scenarios" element={<Navigate to="/settings" replace />} />
               <Route path="/playback" element={<Navigate to="/settings" replace />} />
