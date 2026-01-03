@@ -1,15 +1,7 @@
 import { 
   LayoutDashboard, 
-  Boxes,
-  Cpu,
   Settings,
-  Workflow,
-  Play,
-  GraduationCap,
-  ShieldCheck,
   Building2,
-  GitBranch,
-  Layers,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -17,7 +9,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -25,72 +16,16 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
-const mainNavItems = [
+const navItems = [
   { 
     title: "Dashboard", 
     url: "/dashboard", 
     icon: LayoutDashboard,
-    description: "System overview"
   },
   { 
-    title: "Assets", 
-    url: "/assets", 
-    icon: Boxes,
-    description: "Digital assets"
-  },
-  { 
-    title: "Sensors", 
-    url: "/sensors", 
-    icon: Cpu,
-    description: "IoT sensors"
-  },
-  { 
-    title: "Rules", 
-    url: "/rules", 
+    title: "Settings", 
+    url: "/settings", 
     icon: Settings,
-    description: "Automation rules"
-  },
-];
-
-const simulationItems = [
-  { 
-    title: "Scenarios", 
-    url: "/scenarios", 
-    icon: Workflow,
-    description: "Test scenarios"
-  },
-  { 
-    title: "Playback", 
-    url: "/playback", 
-    icon: Play,
-    description: "Historical data"
-  },
-];
-
-const systemItems = [
-  { 
-    title: "Architecture", 
-    url: "/architecture", 
-    icon: Layers,
-    description: "Platform overview"
-  },
-  { 
-    title: "Platform Status", 
-    url: "/status", 
-    icon: GitBranch,
-    description: "Development status"
-  },
-  { 
-    title: "Tutorials", 
-    url: "/tutorials", 
-    icon: GraduationCap,
-    description: "Learning guides"
-  },
-  { 
-    title: "Admin", 
-    url: "/admin", 
-    icon: ShieldCheck,
-    description: "System admin"
   },
 ];
 
@@ -100,49 +35,6 @@ export function AppSidebar() {
   const isCollapsed = state === "collapsed";
   
   const isActive = (path: string) => location.pathname === path;
-  
-  const SidebarNavGroup = ({ 
-    items, 
-    label 
-  }: { 
-    items: typeof mainNavItems; 
-    label: string; 
-  }) => (
-    <SidebarGroup>
-      {!isCollapsed && <SidebarGroupLabel>{label}</SidebarGroupLabel>}
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton 
-                asChild 
-                tooltip={isCollapsed ? item.title : undefined}
-                className={cn(
-                  "sidebar-item",
-                  isActive(item.url) && "sidebar-item-active"
-                )}
-              >
-                <NavLink 
-                  to={item.url}
-                  className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors"
-                >
-                  <item.icon className="h-4 w-4 flex-shrink-0" />
-                  {!isCollapsed && (
-                    <div className="flex-1 min-w-0">
-                      <span className="font-medium">{item.title}</span>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {item.description}
-                      </p>
-                    </div>
-                  )}
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
 
   return (
     <Sidebar 
@@ -164,9 +56,34 @@ export function AppSidebar() {
           </div>
         </div>
         
-        <SidebarNavGroup items={mainNavItems} label="Main" />
-        <SidebarNavGroup items={simulationItems} label="Simulation" />
-        <SidebarNavGroup items={systemItems} label="System" />
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild 
+                    tooltip={isCollapsed ? item.title : undefined}
+                    className={cn(
+                      "sidebar-item",
+                      isActive(item.url) && "sidebar-item-active"
+                    )}
+                  >
+                    <NavLink 
+                      to={item.url}
+                      className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors"
+                    >
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      {!isCollapsed && (
+                        <span className="font-medium">{item.title}</span>
+                      )}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );

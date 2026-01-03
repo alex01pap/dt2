@@ -1,23 +1,12 @@
 import { useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Activity, AlertTriangle, Wifi, Plus, Eye, Settings } from "lucide-react";
+import { Box, Activity, Plus } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useDigitalTwins } from "@/hooks/useDigitalTwins";
 import { useRealtimeSensors } from "@/hooks/useRealtimeSensors";
-import { SectionHeader, EmptyState } from "@/components/enterprise";
 import { cn } from "@/lib/utils";
-
-const templateLabels: Record<string, string> = {
-  classroom: "Classroom",
-  it_classroom: "IT Lab",
-  soccer_field: "Soccer Field",
-  outdoor: "Outdoor Area",
-  gymnasium: "Gymnasium",
-  restaurant: "Restaurant",
-};
 
 const templateIcons: Record<string, string> = {
   classroom: "📚",
@@ -30,11 +19,11 @@ const templateIcons: Record<string, string> = {
 
 // Predefined twins to seed if only 1 exists
 const defaultTwins = [
-  { name: "Gymnasium", template_id: "gymnasium", size: "large", building: "Athletics", tags: ["sports", "fitness"] },
-  { name: "Cafeteria", template_id: "restaurant", size: "large", building: "Main Building", tags: ["dining", "food-service"] },
-  { name: "Computer Lab A", template_id: "it_classroom", size: "medium", building: "Technology Wing", tags: ["IT", "workstations"] },
-  { name: "Science Lab", template_id: "classroom", size: "medium", building: "Science Wing", tags: ["chemistry", "experiments"] },
-  { name: "Outdoor Courtyard", template_id: "outdoor", size: "large", building: "Campus", tags: ["recreation", "events"] },
+  { name: "Gymnasium", template_id: "gymnasium", size: "large", building: "Athletics", tags: ["sports"] },
+  { name: "Cafeteria", template_id: "restaurant", size: "large", building: "Main Building", tags: ["dining"] },
+  { name: "Computer Lab A", template_id: "it_classroom", size: "medium", building: "Technology Wing", tags: ["IT"] },
+  { name: "Science Lab", template_id: "classroom", size: "medium", building: "Science Wing", tags: ["science"] },
+  { name: "Outdoor Courtyard", template_id: "outdoor", size: "large", building: "Campus", tags: ["outdoor"] },
 ];
 
 export default function ImmersiveDashboard() {
@@ -54,176 +43,91 @@ export default function ImmersiveDashboard() {
   // Group sensors by twin_id
   const sensorsByTwin = useMemo(() => {
     const grouped: Record<string, number> = {};
-    let unassigned = 0;
-    
     sensors.forEach((sensor) => {
       if (sensor.twin_id) {
         grouped[sensor.twin_id] = (grouped[sensor.twin_id] || 0) + 1;
-      } else {
-        unassigned++;
       }
     });
-    
-    return { grouped, unassigned };
+    return grouped;
   }, [sensors]);
 
   const onlineSensors = sensors.filter(s => s.status === "online").length;
-  const alertSensors = sensors.filter(s => s.status === "warning" || s.status === "critical").length;
-
-  const stats = [
-    { icon: Box, label: "Digital Twins", value: twins.length, color: "text-primary" },
-    { icon: Activity, label: "Active Sensors", value: onlineSensors, color: "text-green-500" },
-    { icon: AlertTriangle, label: "Alerts", value: alertSensors, color: alertSensors > 0 ? "text-destructive" : "text-muted-foreground" },
-    { icon: Wifi, label: "Unassigned", value: sensorsByTwin.unassigned, color: sensorsByTwin.unassigned > 0 ? "text-amber-500" : "text-muted-foreground" },
-  ];
 
   return (
     <DashboardLayout>
       <div className="p-6 space-y-6">
-        {/* Header */}
-        <SectionHeader
-          title="Digital Twin Dashboard"
-          description="Monitor and manage your digital twin ecosystem"
-          icon={Box}
-          actions={
-            <Button onClick={() => navigate("/admin")}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Twin
-            </Button>
-          }
-        />
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <Card key={stat.label}>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className={cn("p-2 rounded-lg bg-muted", stat.color)}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-semibold">{stat.value}</p>
-                      <p className="text-sm text-muted-foreground">{stat.label}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+        {/* Simple Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">Dashboard</h1>
+            <p className="text-muted-foreground">
+              {twins.length} twins · {onlineSensors} active sensors
+            </p>
+          </div>
+          <Button onClick={() => navigate("/settings")}>
+            <Plus className="h-4 w-4 mr-2" />
+            New Twin
+          </Button>
         </div>
 
         {/* Twins Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
               <Card key={i} className="animate-pulse">
-                <CardContent className="p-6 h-40" />
+                <CardContent className="p-6 h-28" />
               </Card>
             ))}
           </div>
         ) : twins.length === 0 ? (
-          <EmptyState
-            icon={Box}
-            title="No Digital Twins Yet"
-            description="Create your first digital twin to start monitoring your spaces"
-            action={
-              <Button onClick={() => navigate("/admin")}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Digital Twin
-              </Button>
-            }
-          />
+          <Card className="p-12 text-center">
+            <div className="inline-flex p-4 rounded-full bg-muted mb-4">
+              <Box className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-medium mb-2">No Digital Twins Yet</h3>
+            <p className="text-muted-foreground mb-4">Create your first twin to get started</p>
+            <Button onClick={() => navigate("/settings")}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Twin
+            </Button>
+          </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {twins.map((twin) => (
-              <Card
-                key={twin.id}
-                className="group hover:border-primary/50 transition-colors cursor-pointer"
-                onClick={() => navigate(`/twin/${twin.id}`)}
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {twins.map((twin) => {
+              const sensorCount = sensorsByTwin[twin.id] || 0;
+              return (
+                <Card
+                  key={twin.id}
+                  className={cn(
+                    "group hover:border-primary/50 transition-all cursor-pointer",
+                    "hover:shadow-md"
+                  )}
+                  onClick={() => navigate(`/twin/${twin.id}`)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-2xl">
                         {templateIcons[twin.template_id] || "📦"}
                       </span>
-                      <div>
-                        <CardTitle className="text-lg">{twin.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground">
-                          {templateLabels[twin.template_id] || twin.template_id}
-                        </p>
-                      </div>
+                      <span className="font-medium truncate">{twin.name}</span>
                     </div>
-                    <Badge variant="secondary">{twin.size}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      {twin.building && (
-                        <span>{twin.building}</span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <Activity className="h-3.5 w-3.5 text-green-500" />
-                        {sensorsByTwin.grouped[twin.id] || 0} sensors
-                      </span>
+                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <Activity className="h-3.5 w-3.5 text-green-500" />
+                      {sensorCount} sensor{sensorCount !== 1 ? 's' : ''}
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/twin/${twin.id}`);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate("/admin");
-                        }}
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Tags */}
-                  {twin.tags && twin.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-3">
-                      {twin.tags.slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                      {twin.tags.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{twin.tags.length - 3}
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
 
             {/* Add New Card */}
             <Card
-              className="flex items-center justify-center min-h-[180px] border-dashed hover:border-primary/50 hover:bg-muted/50 transition-colors cursor-pointer"
-              onClick={() => navigate("/admin")}
+              className="flex items-center justify-center border-dashed hover:border-primary/50 hover:bg-muted/30 transition-all cursor-pointer"
+              onClick={() => navigate("/settings")}
             >
-              <CardContent className="text-center py-8">
-                <div className="inline-flex p-3 rounded-full bg-muted mb-3">
-                  <Plus className="h-6 w-6 text-muted-foreground" />
-                </div>
-                <p className="font-medium text-muted-foreground">Create New Twin</p>
+              <CardContent className="p-4 text-center">
+                <Plus className="h-6 w-6 text-muted-foreground mx-auto mb-1" />
+                <span className="text-sm text-muted-foreground">Add Twin</span>
               </CardContent>
             </Card>
           </div>
