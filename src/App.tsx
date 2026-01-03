@@ -2,30 +2,16 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import Home from "./pages/Home";
-import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
 import ImmersiveDashboard from "./pages/ImmersiveDashboard";
-import Assets from "./pages/Assets";
-import Sensors from "./pages/Sensors";
-import Rules from "./pages/Rules";
-import Scenarios from "./pages/Scenarios";
-import Playbook from "./pages/Playback";
-import Tutorials from "./pages/Tutorials";
-import Resources from "./pages/Resources";
-import Admin from "./pages/Admin";
 import DigitalTwin from "./pages/DigitalTwin";
-import PlatformStatus from "./pages/PlatformStatus";
-import Architecture from "./pages/Architecture";
-import ClientDemo from "./pages/ClientDemo";
-import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -42,7 +28,6 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/home" element={<Home />} />
-              <Route path="/landing" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
               <Route 
                 path="/dashboard" 
@@ -53,123 +38,11 @@ const App = () => (
                 } 
               />
               <Route 
-                path="/dashboard/classic" 
+                path="/twin/:id" 
                 element={
                   <ProtectedRoute>
                     <DashboardLayout>
-                      <Dashboard />
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                } 
-              />
-            <Route 
-              path="/assets" 
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <Assets />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/twin/:id" 
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <DigitalTwin />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/sensors" 
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <Sensors />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/rules" 
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <Rules />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/scenarios" 
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <Scenarios />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/playback" 
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <Playbook />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/tutorials" 
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <Tutorials />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              } 
-            />
-              <Route
-                path="/admin" 
-                element={
-                  <ProtectedRoute>
-                    <DashboardLayout>
-                      <Admin />
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/status" 
-                element={
-                  <ProtectedRoute>
-                    <DashboardLayout>
-                      <PlatformStatus />
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/architecture" 
-                element={<Architecture />} 
-              />
-              <Route 
-                path="/resources" 
-                element={<Resources />} 
-              />
-              <Route 
-                path="/client-demo" 
-                element={<ClientDemo />} 
-              />
-              <Route 
-                path="/profile" 
-                element={
-                  <ProtectedRoute>
-                    <DashboardLayout>
-                      <Profile />
+                      <DigitalTwin />
                     </DashboardLayout>
                   </ProtectedRoute>
                 } 
@@ -184,9 +57,18 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
+              {/* Redirects for removed pages */}
+              <Route path="/admin" element={<Navigate to="/settings" replace />} />
+              <Route path="/sensors" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/assets" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/rules" element={<Navigate to="/settings" replace />} />
+              <Route path="/scenarios" element={<Navigate to="/settings" replace />} />
+              <Route path="/playback" element={<Navigate to="/settings" replace />} />
+              <Route path="/tutorials" element={<Navigate to="/settings" replace />} />
+              <Route path="/status" element={<Navigate to="/settings" replace />} />
               <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+            </Routes>
+          </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>
     </ThemeProvider>
