@@ -2,7 +2,7 @@ import { useMemo, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Box, Activity, Plus, ChevronDown, ChevronUp,
-  Globe, Users, Server, Shield, Settings as SettingsIcon
+  Globe, Users, Server, Shield, Settings as SettingsIcon, Cpu
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,6 +18,7 @@ import { OpenHABIntegration } from "@/components/admin/OpenHABIntegration";
 import { UserManagement } from "@/components/admin/UserManagement";
 import { SystemConfiguration } from "@/components/admin/SystemConfiguration";
 import { SecurityCenter } from "@/components/admin/SecurityCenter";
+import { SensorAssignment } from "@/components/admin/SensorAssignment";
 
 const templateIcons: Record<string, string> = {
   classroom: "📚",
@@ -171,6 +172,10 @@ export default function ImmersiveDashboard() {
                         <Box className="h-4 w-4" />
                         Twins
                       </TabsTrigger>
+                      <TabsTrigger value="sensors" className="gap-2">
+                        <Cpu className="h-4 w-4" />
+                        Sensors
+                      </TabsTrigger>
                       <TabsTrigger value="openhab" className="gap-2">
                         <Globe className="h-4 w-4" />
                         OpenHAB
@@ -193,6 +198,10 @@ export default function ImmersiveDashboard() {
 
                   <TabsContent value="twins" className="space-y-6">
                     <DigitalTwinsManager />
+                  </TabsContent>
+
+                  <TabsContent value="sensors" className="space-y-6">
+                    <SensorAssignment />
                   </TabsContent>
 
                   <TabsContent value="openhab" className="space-y-6">
