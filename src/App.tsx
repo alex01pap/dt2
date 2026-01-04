@@ -12,13 +12,11 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ImmersiveDashboard from "./pages/ImmersiveDashboard";
 import DigitalTwin from "./pages/DigitalTwin";
-import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import Architecture from "./pages/Architecture";
 import Resources from "./pages/Resources";
 import ClientDemo from "./pages/ClientDemo";
 import NotFound from "./pages/NotFound";
-
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -51,16 +49,7 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
-              <Route 
-                path="/settings" 
-                element={
-                  <ProtectedRoute>
-                    <DashboardLayout>
-                      <Settings />
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                } 
-              />
+              <Route path="/settings" element={<Navigate to="/dashboard" replace />} />
               <Route 
                 path="/profile" 
                 element={
@@ -75,14 +64,14 @@ const App = () => (
               <Route path="/resources" element={<Resources />} />
               <Route path="/client-demo" element={<ClientDemo />} />
               {/* Redirects for old routes */}
-              <Route path="/admin" element={<Navigate to="/settings" replace />} />
-              <Route path="/sensors" element={<Navigate to="/settings" replace />} />
-              <Route path="/assets" element={<Navigate to="/settings" replace />} />
-              <Route path="/rules" element={<Navigate to="/settings" replace />} />
-              <Route path="/scenarios" element={<Navigate to="/settings" replace />} />
-              <Route path="/playback" element={<Navigate to="/settings" replace />} />
-              <Route path="/tutorials" element={<Navigate to="/settings" replace />} />
-              <Route path="/status" element={<Navigate to="/settings" replace />} />
+              <Route path="/admin" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/sensors" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/assets" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/rules" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/scenarios" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/playback" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/tutorials" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/status" element={<Navigate to="/dashboard" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
