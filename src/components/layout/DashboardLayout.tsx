@@ -1,6 +1,4 @@
 import { ReactNode } from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "./AppSidebar";
 import { TopBar } from "./TopBar";
 
 interface DashboardLayoutProps {
@@ -9,16 +7,11 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
-          <TopBar />
-          <main className="flex-1 bg-gradient-to-br from-background to-muted/20">
-            {children}
-          </main>
-        </div>
-      </div>
-    </SidebarProvider>
+    <div className="min-h-screen flex flex-col bg-background">
+      <TopBar />
+      <main className="flex-1 bg-gradient-to-br from-background to-muted/20">
+        {children}
+      </main>
+    </div>
   );
 }
