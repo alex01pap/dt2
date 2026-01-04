@@ -271,7 +271,8 @@ export function TwinViewer({
   className 
 }: TwinViewerProps) {
   const [overlayMode, setOverlayMode] = useState<'none' | 'heat' | 'flow'>('none');
-  const { sensors: realtimeSensors, isConnected } = useRealtimeSensors();
+  // Filter sensors by twinId
+  const { sensors: realtimeSensors, isConnected } = useRealtimeSensors(twinId);
 
   // Use realtime sensors if no sensors provided via props
   const sensors = propSensors.length > 0 ? propSensors : realtimeSensors.map(s => ({

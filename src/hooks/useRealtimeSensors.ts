@@ -23,7 +23,7 @@ export interface SensorReading {
   metadata: any;
 }
 
-export function useRealtimeSensors() {
+export function useRealtimeSensors(twinId?: string) {
   const [sensors, setSensors] = useState<RealtimeSensor[]>([]);
   const [readings, setReadings] = useState<SensorReading[]>([]);
   const [isConnected, setIsConnected] = useState(false);
@@ -31,18 +31,22 @@ export function useRealtimeSensors() {
 
   useEffect(() => {
     loadInitialData();
-    setupRealtimeSubscriptions();
-  }, []);
+    const cleanup = setupRealtimeSubscriptions();
+    return cleanup;
+  }, [twinId]);
 
   const loadInitialData = async () => {
     try {
       setIsLoading(true);
 
-      // Load sensors
-      const { data: sensorsData, error: sensorsError } = await supabase
-        .from('sensors')
-        .select('*')
-        .order('name');
+      // Load sensors - filter by twin_id if provided
+      let query = supabase.from('sensors').select('*');
+      
+      if (twinId) {
+        query = query.eq('twin_id', twinId);
+      }
+      
+      const { data: sensorsData, error: sensorsError } = await query.order('name');
 
       if (sensorsError) throw sensorsError;
       
