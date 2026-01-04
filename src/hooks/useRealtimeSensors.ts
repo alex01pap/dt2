@@ -7,6 +7,7 @@ export interface RealtimeSensor {
   type: string;
   status: 'online' | 'offline' | 'warning' | 'critical';
   location: { x: number; y: number; z: number } | null;
+  position_3d: { x: number; y: number; z: number } | null;
   last_reading: number | null;
   last_reading_at: string | null;
   asset_id: string | null;
@@ -53,7 +54,8 @@ export function useRealtimeSensors(twinId?: string) {
       // Transform the data to match our interface
       const transformedSensors = (sensorsData || []).map(sensor => ({
         ...sensor,
-        location: sensor.location as { x: number; y: number; z: number } | null
+        location: sensor.location as { x: number; y: number; z: number } | null,
+        position_3d: sensor.position_3d as { x: number; y: number; z: number } | null
       }));
       
       setSensors(transformedSensors);
@@ -94,7 +96,8 @@ export function useRealtimeSensors(twinId?: string) {
           
           const transformSensor = (sensor: any): RealtimeSensor => ({
             ...sensor,
-            location: sensor.location as { x: number; y: number; z: number } | null
+            location: sensor.location as { x: number; y: number; z: number } | null,
+            position_3d: sensor.position_3d as { x: number; y: number; z: number } | null
           });
           
           if (payload.eventType === 'INSERT') {

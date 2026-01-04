@@ -274,16 +274,34 @@ export function TwinViewer({
   // Filter sensors by twinId
   const { sensors: realtimeSensors, isConnected } = useRealtimeSensors(twinId);
 
-  // Use realtime sensors if no sensors provided via props
-  const sensors = propSensors.length > 0 ? propSensors : realtimeSensors.map(s => ({
-    id: s.id,
-    name: s.name,
-    type: s.type,
-    position: s.location ? [s.location.x, s.location.y, s.location.z] as [number, number, number] : [0, 0, 0] as [number, number, number],
-    value: s.last_reading || 0,
-    unit: s.type === 'temperature' ? '°C' : s.type === 'power' ? 'W' : '',
-    status: s.status === 'online' ? 'normal' : s.status === 'warning' ? 'warning' : 'critical' as 'normal' | 'warning' | 'critical'
-  }));
+  // Get unit for sensor type
+  const getUnit = (type: string) => {
+    const units: Record<string, string> = {
+      temperature: '°C',
+      humidity: '%',
+      air_quality: 'ppm',
+      pressure: 'hPa',
+      flow: 'L/min',
+      vibration: 'Hz'
+    };
+    return units[type] || '';
+  };
+
+  // Use realtime sensors if no sensors provided via props - prefer position_3d, fallback to location
+  const sensors = propSensors.length > 0 ? propSensors : realtimeSensors
+    .filter(s => s.position_3d || s.location) // Only show sensors with 3D positions
+    .map(s => {
+      const pos = s.position_3d || s.location!;
+      return {
+        id: s.id,
+        name: s.name,
+        type: s.type,
+        position: [pos.x, pos.y + 0.1, pos.z] as [number, number, number],
+        value: s.last_reading || 0,
+        unit: getUnit(s.type),
+        status: s.status === 'online' ? 'normal' : s.status === 'warning' ? 'warning' : 'critical' as 'normal' | 'warning' | 'critical'
+      };
+    });
 
   return (
     <div className={className}>
