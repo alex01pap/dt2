@@ -53,7 +53,8 @@ export default function DigitalTwin() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedSensorId, setSelectedSensorId] = useState<string | null>(null);
   
-  const { sensors, isConnected, isLoading, refresh } = useRealtimeSensors();
+  // Filter sensors by twinId for the sidebar panel
+  const { sensors, isConnected, isLoading, refresh } = useRealtimeSensors(id);
 
   const selectedBuilding = searchParams.get('building');
   const selectedRoom = searchParams.get('room');
