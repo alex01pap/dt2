@@ -4,10 +4,11 @@ import { Eye, ArrowRight, Check, Database, LineChart, Zap, Box, GraduationCap } 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DemoTwinViewer } from "@/components/home/DemoTwinViewer";
+import { TechnoEconomicAnalysis } from "@/components/home/TechnoEconomicAnalysis";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("monitoring");
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -62,6 +63,25 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Live Demo Section */}
+      <section className="container max-w-screen-xl px-8 py-24 border-t">
+        <div className="text-center mb-8">
+          <Badge variant="secondary" className="gap-2 py-2 px-4 mb-4">
+            Interactive Demo
+          </Badge>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            See it in action
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Explore a classroom digital twin with real-time sensor data, heat maps, and HVAC visualization.
+          </p>
+        </div>
+        <DemoTwinViewer />
+      </section>
+
+      {/* Techno-Economic Analysis */}
+      <TechnoEconomicAnalysis />
 
       {/* Features Section */}
       <section className="container max-w-screen-xl px-8 py-24 border-t">
