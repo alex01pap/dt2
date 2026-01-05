@@ -18,13 +18,16 @@ import * as THREE from 'three';
 import { Vector3 } from 'three';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useRealtimeSensors } from '@/hooks/useRealtimeSensors';
+import { SensorEditDialog } from './SensorEditDialog';
 import SchoolClassroomFloorPlan from './SchoolClassroomFloorPlan';
 import GymnasiumFloorPlan from './GymnasiumFloorPlan';
 import LaboratoryFloorPlan from './LaboratoryFloorPlan';
 import MusicRoomFloorPlan from './MusicRoomFloorPlan';
 import ComputerLabFloorPlan from './ComputerLabFloorPlan';
 import CafeteriaFloorPlan from './CafeteriaFloorPlan';
+import { Settings } from 'lucide-react';
 
 // Floor plan type mapping
 export type FloorPlanType = 'classroom' | 'gymnasium' | 'laboratory' | 'music-room' | 'computer-lab' | 'cafeteria';
@@ -47,6 +50,7 @@ export interface SensorData {
   unit: string;
   status: 'normal' | 'warning' | 'critical';
   lastUpdated?: Date;
+  thresholds?: { min?: number; max?: number; unit?: string };
 }
 
 export interface HeatData {
@@ -131,7 +135,7 @@ function FlowPipes({ pipes }: { pipes: FlowPipeData[] }) {
 }
 
 // Animated Sensor Marker with Float and Sparkles
-function SensorMarker({ sensor }: { sensor: SensorData }) {
+function SensorMarker({ sensor, onEdit }: { sensor: SensorData; onEdit: (sensor: SensorData) => void }) {
   const [hovered, setHovered] = useState(false);
   const meshRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
@@ -161,6 +165,11 @@ function SensorMarker({ sensor }: { sensor: SensorData }) {
     }
   });
 
+  const handleClick = (e: any) => {
+    e.stopPropagation();
+    onEdit(sensor);
+  };
+
   return (
     <group position={sensor.position}>
       {/* Sparkles for warning/critical sensors */}
@@ -186,6 +195,7 @@ function SensorMarker({ sensor }: { sensor: SensorData }) {
           ref={meshRef}
           onPointerOver={() => setHovered(true)}
           onPointerOut={() => setHovered(false)}
+          onClick={handleClick}
           position={[0, 0.3, 0]}
           scale={hovered ? 1.2 : 1}
         >
@@ -211,7 +221,7 @@ function SensorMarker({ sensor }: { sensor: SensorData }) {
       {/* Info popup on hover */}
       {hovered && (
         <Html position={[0, 0.8, 0]} center distanceFactor={15}>
-          <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-xl p-3 min-w-[140px] animate-scale-in">
+          <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-xl p-3 min-w-[160px] animate-scale-in">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-lg">{sensorIcon}</span>
               <span className="font-semibold text-sm text-foreground">{sensor.name}</span>
@@ -219,12 +229,17 @@ function SensorMarker({ sensor }: { sensor: SensorData }) {
             <div className="text-2xl font-bold text-foreground mb-1">
               {sensor.value} <span className="text-sm font-normal text-muted-foreground">{sensor.unit}</span>
             </div>
-            <Badge 
-              variant={sensor.status === 'normal' ? 'default' : 'destructive'}
-              className="text-xs"
-            >
-              {sensor.status}
-            </Badge>
+            <div className="flex items-center justify-between">
+              <Badge 
+                variant={sensor.status === 'normal' ? 'default' : 'destructive'}
+                className="text-xs"
+              >
+                {sensor.status}
+              </Badge>
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Settings className="h-3 w-3" /> Click to edit
+              </span>
+            </div>
           </div>
         </Html>
       )}
@@ -271,8 +286,10 @@ export function TwinViewer({
   className 
 }: TwinViewerProps) {
   const [overlayMode, setOverlayMode] = useState<'none' | 'heat' | 'flow'>('none');
+  const [editingSensor, setEditingSensor] = useState<SensorData | null>(null);
+  
   // Filter sensors by twinId
-  const { sensors: realtimeSensors, isConnected } = useRealtimeSensors(twinId);
+  const { sensors: realtimeSensors, isConnected, refresh } = useRealtimeSensors(twinId);
 
   // Get unit for sensor type
   const getUnit = (type: string) => {
@@ -292,6 +309,7 @@ export function TwinViewer({
     .filter(s => s.position_3d || s.location) // Only show sensors with 3D positions
     .map(s => {
       const pos = s.position_3d || s.location!;
+      const thresholds = s.thresholds as { min?: number; max?: number; unit?: string } | null;
       return {
         id: s.id,
         name: s.name,
@@ -299,9 +317,14 @@ export function TwinViewer({
         position: [pos.x, pos.y + 0.1, pos.z] as [number, number, number],
         value: s.last_reading || 0,
         unit: getUnit(s.type),
-        status: s.status === 'online' ? 'normal' : s.status === 'warning' ? 'warning' : 'critical' as 'normal' | 'warning' | 'critical'
+        status: s.status === 'online' ? 'normal' : s.status === 'warning' ? 'warning' : 'critical' as 'normal' | 'warning' | 'critical',
+        thresholds: thresholds || undefined
       };
     });
+
+  const handleEditSensor = (sensor: SensorData) => {
+    setEditingSensor(sensor);
+  };
 
   return (
     <div className={className}>
@@ -409,7 +432,7 @@ export function TwinViewer({
           
           {/* Sensors */}
           {sensors.map((sensor) => (
-            <SensorMarker key={sensor.id} sensor={sensor} />
+            <SensorMarker key={sensor.id} sensor={sensor} onEdit={handleEditSensor} />
           ))}
           
           {/* Controls */}
@@ -433,6 +456,15 @@ export function TwinViewer({
           </GizmoHelper>
         </Suspense>
       </Canvas>
+
+      {/* Sensor Edit Dialog */}
+      <SensorEditDialog
+        open={!!editingSensor}
+        onOpenChange={(open) => !open && setEditingSensor(null)}
+        sensor={editingSensor}
+        onSensorUpdated={refresh}
+        onSensorDeleted={refresh}
+      />
     </div>
   );
 }
