@@ -5,6 +5,7 @@ import { Eye, Star, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
+import { TechnoEconomicAnalysis } from "@/components/home/TechnoEconomicAnalysis";
 
 const Index = () => {
   const { user } = useAuth();
@@ -115,6 +116,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Techno-Economic Analysis Section */}
+      <TechnoEconomicAnalysis />
 
       {/* Footer CTA */}
       <section className="py-16 bg-muted/30">
