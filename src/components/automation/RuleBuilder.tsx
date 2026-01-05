@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Plus, Trash2, Clock, Zap, AlertTriangle, Settings } from 'lucide-react';
+import { z } from 'zod';
+import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -75,6 +77,46 @@ const operatorLabels = {
   contains: 'Contains',
   in_range: 'In Range'
 };
+
+// Zod validation schemas for rule input security
+const conditionSchema = z.object({
+  id: z.string().max(50),
+  field: z.string().min(1, "Field is required").max(100),
+  operator: z.enum(['equals', 'not_equals', 'greater_than', 'less_than', 'greater_equal', 'less_equal', 'contains', 'in_range']),
+  value: z.union([z.string().max(500), z.number()]),
+  secondValue: z.union([z.string().max(500), z.number()]).optional()
+});
+
+const actionParametersSchema = z.record(z.string().max(100), z.union([
+  z.string().max(500),
+  z.number(),
+  z.boolean()
+])).optional().default({});
+
+const actionSchema = z.object({
+  id: z.string().max(50),
+  type: z.enum(['send_notification', 'update_status', 'trigger_alarm', 'execute_function', 'send_email']),
+  parameters: actionParametersSchema
+});
+
+const windowConfigSchema = z.object({
+  enabled: z.boolean(),
+  duration: z.number().int().min(1).max(1440), // max 24 hours in minutes
+  debounce: z.number().int().min(0).max(3600), // max 1 hour in seconds
+  aggregation: z.enum(['any', 'all', 'count']),
+  threshold: z.number().int().min(0).max(1000).optional()
+});
+
+const ruleSchema = z.object({
+  id: z.string().max(100).optional(),
+  name: z.string().min(1, "Rule name is required").max(100, "Rule name must be less than 100 characters"),
+  description: z.string().max(500, "Description must be less than 500 characters").optional(),
+  conditions: z.array(conditionSchema).min(1, "At least one condition is required").max(10, "Maximum 10 conditions allowed"),
+  actions: z.array(actionSchema).min(1, "At least one action is required").max(10, "Maximum 10 actions allowed"),
+  windowConfig: windowConfigSchema,
+  priority: z.number().int().min(0).max(100),
+  enabled: z.boolean()
+});
 
 const actionTypeLabels = {
   send_notification: 'Send Notification',
@@ -399,13 +441,31 @@ export const RuleBuilder: React.FC<RuleBuilderProps> = ({
     }));
   }, []);
 
-  const handleSave = useCallback(() => {
-    if (rule.name && rule.conditions.length > 0 && rule.actions.length > 0) {
-      onSave(rule);
-    }
-  }, [rule, onSave]);
+  const { toast } = useToast();
 
-  const isValid = rule.name && rule.conditions.length > 0 && rule.actions.length > 0;
+  const handleSave = useCallback(() => {
+    // Validate rule using Zod schema before saving
+    const validationResult = ruleSchema.safeParse(rule);
+    
+    if (!validationResult.success) {
+      const issues = validationResult.error.issues;
+      const errorMessages = issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+      toast({
+        title: "Validation Error",
+        description: errorMessages,
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Use the validated/sanitized data
+    onSave(validationResult.data as Rule);
+  }, [rule, onSave, toast]);
+
+  const isValid = useMemo(() => {
+    const result = ruleSchema.safeParse(rule);
+    return result.success;
+  }, [rule]);
 
   return (
     <Card className={className}>
