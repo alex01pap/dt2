@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, Star, Zap } from "lucide-react";
@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { TechnoEconomicAnalysis } from "@/components/home/TechnoEconomicAnalysis";
+import { DemoTwinViewer } from "@/components/home/DemoTwinViewer";
 
 const Index = () => {
   const { user } = useAuth();
@@ -114,6 +115,37 @@ const Index = () => {
               ))}
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Live Demo Section */}
+      <section className="py-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-8"
+          >
+            <span className="inline-block px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full mb-4">
+              Interactive Demo
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              See it in action
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Explore a classroom digital twin with real-time sensor data, heat maps, and HVAC visualization.
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            <DemoTwinViewer />
+          </motion.div>
         </div>
       </section>
 
