@@ -8,7 +8,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import Home from "./pages/Home";
-import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ImmersiveDashboard from "./pages/ImmersiveDashboard";
 import DigitalTwin from "./pages/DigitalTwin";
@@ -28,8 +27,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
               <Route 
                 path="/dashboard" 
