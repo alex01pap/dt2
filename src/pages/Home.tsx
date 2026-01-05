@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DemoTwinViewer } from "@/components/home/DemoTwinViewer";
 import { TechnoEconomicAnalysis } from "@/components/home/TechnoEconomicAnalysis";
+import { DigitalTwinExplainer } from "@/components/home/DigitalTwinExplainer";
+import { ROICalculator } from "@/components/home/ROICalculator";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("monitoring");
@@ -64,6 +66,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* What is a Digital Twin? */}
+      <DigitalTwinExplainer />
+
       {/* Live Demo Section */}
       <section className="container max-w-screen-xl px-8 py-24 border-t">
         <div className="text-center mb-8">
@@ -80,10 +85,11 @@ export default function Home() {
         <DemoTwinViewer />
       </section>
 
+      {/* ROI Calculator */}
+      <ROICalculator />
+
       {/* Techno-Economic Analysis */}
       <TechnoEconomicAnalysis />
-
-      {/* Features Section */}
       <section className="container max-w-screen-xl px-8 py-24 border-t">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
