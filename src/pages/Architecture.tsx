@@ -35,6 +35,7 @@ import { DataFlowDiagram } from "@/components/ui/data-flow-diagram";
 import { IntegrationArchitecture } from "@/components/ui/integration-architecture";
 import { DeploymentArchitecture } from "@/components/ui/deployment-architecture";
 import { FadeInView, StaggerContainer, StaggerItem } from "@/components/ui/scroll-animations";
+import { AcademicFooter } from "@/components/layout/AcademicFooter";
 
 const principles = [
   {
@@ -466,29 +467,7 @@ export default function Architecture() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#dadce0] bg-white">
-        <div className="container max-w-screen-xl px-6 py-12">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[#1a73e8] flex items-center justify-center">
-                <GraduationCap className="h-5 w-5 text-white" />
-              </div>
-              <span className="font-semibold text-[#202124]">Platon Schools</span>
-            </Link>
-            <div className="flex gap-8 text-sm">
-              <Link to="/resources" className="text-[#5f6368] hover:text-[#202124] transition-colors">
-                Case Study
-              </Link>
-              <Link to="/architecture" className="text-[#5f6368] hover:text-[#202124] transition-colors">
-                Architecture
-              </Link>
-            </div>
-            <p className="text-sm text-[#5f6368]">
-              © 2024 Platon Schools. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <AcademicFooter />
     </div>
   );
 }
