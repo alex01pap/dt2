@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { FadeInView, StaggerContainer, StaggerItem } from "@/components/ui/scroll-animations";
 import { ResearchFindings } from "@/components/research/ResearchFindings";
 import { ProjectTimeline } from "@/components/research/ProjectTimeline";
+import { ComparisonCharts } from "@/components/research/ComparisonCharts";
+import { LessonsLearned } from "@/components/research/LessonsLearned";
 import { Link } from "react-router-dom";
 
 export default function Resources() {
@@ -108,8 +110,8 @@ export default function Resources() {
           {/* Floating Pill Navigation */}
           <FadeInView delay={0.2}>
             <div className="flex justify-center mt-10">
-              <div className="inline-flex items-center gap-1 bg-[#f8f9fa] rounded-full p-1.5 border border-[#dadce0]">
-                {["Research Findings", "Timeline", "Technology", "References"].map((item, index) => (
+              <div className="inline-flex items-center gap-1 bg-[#f8f9fa] rounded-full p-1.5 border border-[#dadce0] flex-wrap justify-center">
+                {["Research Findings", "Comparison", "Timeline", "Lessons", "Technology", "References"].map((item, index) => (
                   <button
                     key={item}
                     onClick={() => {
@@ -138,6 +140,11 @@ export default function Resources() {
         </div>
       </section>
 
+      {/* Comparison Charts Section */}
+      <section id="comparison">
+        <ComparisonCharts />
+      </section>
+
       {/* Project Timeline Section */}
       <section id="timeline" className="px-6 py-16">
         <div className="max-w-6xl mx-auto">
@@ -154,6 +161,9 @@ export default function Resources() {
           <ProjectTimeline />
         </div>
       </section>
+
+      {/* Lessons Learned Section */}
+      <LessonsLearned />
 
       {/* Technology Stack Section */}
       <section id="technology" className="px-6 py-16 bg-[#f8f9fa]">
