@@ -9,6 +9,7 @@ import { FeatureIconTabs } from "@/components/home/FeatureIconTabs";
 import { TrustSection } from "@/components/home/TrustSection";
 import { ContactForm } from "@/components/home/ContactForm";
 import { FadeInView } from "@/components/ui/scroll-animations";
+import { AcademicFooter } from "@/components/layout/AcademicFooter";
 
 export default function Home() {
   return (
@@ -53,6 +54,12 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
               <Sparkles className="h-4 w-4" />
               Digital Twin Technology
+            </div>
+            
+            {/* Thesis Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted text-xs text-muted-foreground ml-3">
+              <GraduationCap className="h-3.5 w-3.5" />
+              Diploma Thesis – AUTH
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground leading-tight">
@@ -138,29 +145,7 @@ export default function Home() {
       <ContactForm />
 
       {/* Footer */}
-      <footer className="border-t border-border bg-muted/30">
-        <div className="container max-w-screen-xl px-6 py-12">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <GraduationCap className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="font-semibold text-foreground">Platon Schools</span>
-            </div>
-            <div className="flex gap-8 text-sm">
-              <Link to="/resources" className="text-muted-foreground hover:text-foreground transition-colors">
-                Case Study
-              </Link>
-              <Link to="/architecture" className="text-muted-foreground hover:text-foreground transition-colors">
-                Architecture
-              </Link>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              © 2024 Platon Schools. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <AcademicFooter />
     </div>
   );
 }
