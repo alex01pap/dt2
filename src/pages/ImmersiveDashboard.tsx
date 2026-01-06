@@ -19,6 +19,7 @@ import { UserManagement } from "@/components/admin/UserManagement";
 import { SystemConfiguration } from "@/components/admin/SystemConfiguration";
 import { SecurityCenter } from "@/components/admin/SecurityCenter";
 import { SensorAssignment } from "@/components/admin/SensorAssignment";
+import { DemoPasswordGate } from "@/components/auth/DemoPasswordGate";
 
 const templateIcons: Record<string, string> = {
   classroom: "📚",
@@ -45,6 +46,9 @@ export default function ImmersiveDashboard() {
   const seededRef = useRef(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState("twins");
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return sessionStorage.getItem("demo_authenticated") === "true";
+  });
 
   // Seed default twins if only 1 exists
   useEffect(() => {
@@ -66,6 +70,11 @@ export default function ImmersiveDashboard() {
   }, [sensors]);
 
   const onlineSensors = sensors.filter(s => s.status === "online").length;
+
+  // Show password gate if not authenticated
+  if (!isAuthenticated) {
+    return <DemoPasswordGate onSuccess={() => setIsAuthenticated(true)} />;
+  }
 
   return (
     <DashboardLayout>

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileText, ExternalLink, Github, BookOpen, Code, ArrowRight, ChevronRight } from "lucide-react";
+import { FileText, ExternalLink, Github, BookOpen, Code, ArrowRight, ChevronRight, GraduationCap } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { ResearchFindings } from "@/components/research/ResearchFindings";
 import { ProjectTimeline } from "@/components/research/ProjectTimeline";
 import { ComparisonCharts } from "@/components/research/ComparisonCharts";
 import { LessonsLearned } from "@/components/research/LessonsLearned";
+import { FutureWork } from "@/components/research/FutureWork";
 import { Link } from "react-router-dom";
 
 export default function Resources() {
@@ -79,7 +80,30 @@ export default function Resources() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full bg-white border-b border-[#dadce0]">
+        <div className="container flex h-16 max-w-screen-xl items-center justify-between px-6">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#1a73e8] flex items-center justify-center">
+              <GraduationCap className="h-5 w-5 text-white" />
+            </div>
+            <span className="font-semibold text-lg text-[#202124]">Platon Schools</span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-8">
+            <Link to="/resources" className="text-sm font-medium text-[#1a73e8] transition-colors">
+              Case Study
+            </Link>
+            <Link to="/architecture" className="text-sm font-medium text-[#5f6368] hover:text-[#202124] transition-colors">
+              Architecture
+            </Link>
+          </nav>
+          <Link to="/dashboard">
+            <Button size="sm" className="rounded-full px-5 bg-[#1a73e8] hover:bg-[#1557b0]">
+              View Dashboard
+            </Button>
+          </Link>
+        </div>
+      </header>
       <section className="relative pt-8 pb-16 px-6 overflow-hidden">
         {/* Decorative shapes */}
         <div className="absolute top-20 right-10 w-32 h-32 bg-[#1a73e8]/10 rounded-full blur-3xl" />
@@ -111,7 +135,7 @@ export default function Resources() {
           <FadeInView delay={0.2}>
             <div className="flex justify-center mt-10">
               <div className="inline-flex items-center gap-1 bg-[#f8f9fa] rounded-full p-1.5 border border-[#dadce0] flex-wrap justify-center">
-                {["Research Findings", "Comparison", "Timeline", "Lessons", "Technology", "References"].map((item, index) => (
+                {["Research Findings", "Comparison", "Timeline", "Lessons", "Future Work", "Technology", "References"].map((item, index) => (
                   <button
                     key={item}
                     onClick={() => {
@@ -164,6 +188,9 @@ export default function Resources() {
 
       {/* Lessons Learned Section */}
       <LessonsLearned />
+
+      {/* Future Work Section */}
+      <FutureWork />
 
       {/* Technology Stack Section */}
       <section id="technology" className="px-6 py-16 bg-[#f8f9fa]">
@@ -295,6 +322,31 @@ export default function Resources() {
           </FadeInView>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="border-t border-[#dadce0] bg-white">
+        <div className="container max-w-screen-xl px-6 py-12">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <Link to="/" className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-[#1a73e8] flex items-center justify-center">
+                <GraduationCap className="h-5 w-5 text-white" />
+              </div>
+              <span className="font-semibold text-[#202124]">Platon Schools</span>
+            </Link>
+            <div className="flex gap-8 text-sm">
+              <Link to="/resources" className="text-[#5f6368] hover:text-[#202124] transition-colors">
+                Case Study
+              </Link>
+              <Link to="/architecture" className="text-[#5f6368] hover:text-[#202124] transition-colors">
+                Architecture
+              </Link>
+            </div>
+            <p className="text-sm text-[#5f6368]">
+              © 2024 Platon Schools. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

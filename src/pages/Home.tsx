@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Play, Shield, Lock, Sparkles, GraduationCap } from "lucide-react";
+import { ArrowRight, Play, Sparkles, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DemoTwinViewer } from "@/components/home/DemoTwinViewer";
 import { TechnoEconomicAnalysis } from "@/components/home/TechnoEconomicAnalysis";
@@ -9,12 +8,7 @@ import { ROICalculator } from "@/components/home/ROICalculator";
 import { FeatureIconTabs } from "@/components/home/FeatureIconTabs";
 import { TrustSection } from "@/components/home/TrustSection";
 import { ContactForm } from "@/components/home/ContactForm";
-import { 
-  FadeInView, 
-  ScaleInView, 
-  StaggerContainer, 
-  StaggerItem 
-} from "@/components/ui/scroll-animations";
+import { FadeInView } from "@/components/ui/scroll-animations";
 
 export default function Home() {
   return (
@@ -44,7 +38,7 @@ export default function Home() {
             </Link>
             <Link to="/dashboard">
               <Button size="sm" className="rounded-full px-5">
-                Get started
+                View Dashboard
               </Button>
             </Link>
           </div>
@@ -56,47 +50,39 @@ export default function Home() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left: Text Content */}
           <div className="space-y-8">
-            <FadeInView>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                <Sparkles className="h-4 w-4" />
-                Digital Twin Technology
-              </div>
-            </FadeInView>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
+              <Sparkles className="h-4 w-4" />
+              Digital Twin Technology
+            </div>
             
-            <ScaleInView delay={0.1} duration={0.8}>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground leading-tight">
-                Transform your school with{" "}
-                <span className="text-primary">Digital Twins</span>
-              </h1>
-            </ScaleInView>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground leading-tight">
+              Transform your school with{" "}
+              <span className="text-primary">Digital Twins</span>
+            </h1>
             
-            <FadeInView delay={0.2}>
-              <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
-                Monitor, visualize, and control your school infrastructure in real-time. 
-                Reduce energy costs by up to 30% with intelligent building automation.
-              </p>
-            </FadeInView>
+            <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
+              Monitor, visualize, and control your school infrastructure in real-time. 
+              Reduce energy costs by up to 30% with intelligent building automation.
+            </p>
             
-            <StaggerContainer className="flex flex-col sm:flex-row gap-4" staggerDelay={0.1}>
-              <StaggerItem>
-                <Link to="/dashboard">
-                  <Button size="lg" className="rounded-full px-8 h-12 text-base gap-2">
-                    Contact sales
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </StaggerItem>
-              <StaggerItem>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link to="/dashboard">
+                <Button size="lg" className="rounded-full px-8 h-12 text-base gap-2">
+                  View Dashboard
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/resources">
                 <Button variant="ghost" size="lg" className="h-12 text-base gap-2 text-primary hover:text-primary hover:bg-primary/5">
                   <Play className="h-4 w-4" />
-                  Watch demo
+                  Case Study
                 </Button>
-              </StaggerItem>
-            </StaggerContainer>
+              </Link>
+            </div>
           </div>
 
           {/* Right: Visual */}
-          <FadeInView direction="right" delay={0.3} className="relative">
+          <FadeInView direction="right" className="relative">
             <div className="relative rounded-2xl overflow-hidden border border-border bg-muted/30">
               <img 
                 src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80" 
@@ -127,23 +113,15 @@ export default function Home() {
       <section className="bg-muted/30">
         <div className="container max-w-screen-xl px-6 py-24">
           <div className="text-center mb-12">
-            <FadeInView>
-              <p className="text-sm font-medium text-primary mb-3">INTERACTIVE DEMO</p>
-            </FadeInView>
-            <ScaleInView delay={0.1}>
-              <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
-                See it in action
-              </h2>
-            </ScaleInView>
-            <FadeInView delay={0.2}>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Explore a classroom digital twin with real-time sensor data, heat maps, and HVAC visualization.
-              </p>
-            </FadeInView>
+            <p className="text-sm font-medium text-primary mb-3">INTERACTIVE DEMO</p>
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
+              See it in action
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Explore a classroom digital twin with real-time sensor data, heat maps, and HVAC visualization.
+            </p>
           </div>
-          <FadeInView delay={0.3} duration={0.9}>
-            <DemoTwinViewer />
-          </FadeInView>
+          <DemoTwinViewer />
         </div>
       </section>
 

@@ -6,42 +6,42 @@ const appleEasing = "easeOut" as const;
 
 // Animation variants
 const fadeInUpVariants: Variants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
 };
 
 const fadeInDownVariants: Variants = {
-  hidden: { opacity: 0, y: -40 },
+  hidden: { opacity: 0, y: -20 },
   visible: { opacity: 1, y: 0 },
 };
 
 const fadeInLeftVariants: Variants = {
-  hidden: { opacity: 0, x: -40 },
+  hidden: { opacity: 0, x: -20 },
   visible: { opacity: 1, x: 0 },
 };
 
 const fadeInRightVariants: Variants = {
-  hidden: { opacity: 0, x: 40 },
+  hidden: { opacity: 0, x: 20 },
   visible: { opacity: 1, x: 0 },
 };
 
 const scaleBlurVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.9, filter: "blur(10px)" },
-  visible: { opacity: 1, scale: 1, filter: "blur(0px)" },
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1 },
 };
 
 const staggerContainerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.1,
+      staggerChildren: 0.08,
+      delayChildren: 0.05,
     },
   },
 };
 
 const staggerItemVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 15 },
   visible: { opacity: 1, y: 0 },
 };
 
@@ -61,7 +61,7 @@ export function FadeInView({
   children,
   direction = "up",
   delay = 0,
-  duration = 0.7,
+  duration = 0.4,
   className = "",
   threshold = 0.2,
 }: FadeInViewProps) {
@@ -100,7 +100,7 @@ interface ScaleInViewProps {
 export function ScaleInView({
   children,
   delay = 0,
-  duration = 0.8,
+  duration = 0.4,
   className = "",
   threshold = 0.2,
 }: ScaleInViewProps) {
@@ -142,7 +142,7 @@ export function StaggerContainer({
     visible: {
       transition: {
         staggerChildren: staggerDelay,
-        delayChildren: 0.1,
+        delayChildren: 0.05,
       },
     },
   };
@@ -169,7 +169,7 @@ export function StaggerItem({ children, className = "" }: StaggerItemProps) {
   return (
     <motion.div
       variants={staggerItemVariants}
-      transition={{ duration: 0.6, ease: appleEasing }}
+      transition={{ duration: 0.35, ease: appleEasing }}
       className={className}
     >
       {children}
