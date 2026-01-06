@@ -68,7 +68,7 @@ const App = () => (
               <Route path="/rules" element={<Navigate to="/dashboard" replace />} />
               <Route path="/scenarios" element={<Navigate to="/dashboard" replace />} />
               <Route path="/playback" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/tutorials" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/tutorials" element={<Navigate to="/resources" replace />} />
               <Route path="/status" element={<Navigate to="/dashboard" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

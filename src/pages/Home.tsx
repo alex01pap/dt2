@@ -29,11 +29,8 @@ export default function Home() {
             <span className="font-semibold text-lg text-foreground">Platon Schools</span>
           </div>
           <nav className="hidden md:flex items-center gap-8">
-            <Link to="/tutorials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Documentation
-            </Link>
             <Link to="/resources" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Resources
+              Case Study
             </Link>
             <Link to="/architecture" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Architecture
@@ -173,11 +170,8 @@ export default function Home() {
               <span className="font-semibold text-foreground">Platon Schools</span>
             </div>
             <div className="flex gap-8 text-sm">
-              <Link to="/tutorials" className="text-muted-foreground hover:text-foreground transition-colors">
-                Documentation
-              </Link>
               <Link to="/resources" className="text-muted-foreground hover:text-foreground transition-colors">
-                Resources
+                Case Study
               </Link>
               <Link to="/architecture" className="text-muted-foreground hover:text-foreground transition-colors">
                 Architecture
