@@ -1,25 +1,14 @@
 import { motion } from "framer-motion";
-import { FileText, ExternalLink, Github, BookOpen, Video, Code } from "lucide-react";
+import { FileText, ExternalLink, Github, BookOpen, Code, ArrowRight, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { FadeInView, StaggerContainer, StaggerItem } from "@/components/ui/scroll-animations";
+import { ResearchFindings } from "@/components/research/ResearchFindings";
+import { ProjectTimeline } from "@/components/research/ProjectTimeline";
+import { Link } from "react-router-dom";
 
 export default function Resources() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-
   const researchPapers = [
     {
       title: "Digital Twin Technology in IoT",
@@ -47,186 +36,255 @@ export default function Resources() {
       description: "Open source Firebase alternative - Backend as a Service",
       url: "https://supabase.com",
       category: "Backend",
+      color: "#34a853",
     },
     {
       name: "OpenHAB",
       description: "Open source smart home automation platform",
       url: "https://www.openhab.org",
       category: "IoT Platform",
+      color: "#ea4335",
     },
     {
       name: "Three.js",
       description: "JavaScript 3D library for digital twin visualization",
       url: "https://threejs.org",
       category: "3D Graphics",
+      color: "#1a73e8",
     },
     {
       name: "React Three Fiber",
       description: "React renderer for Three.js",
       url: "https://docs.pmnd.rs/react-three-fiber",
       category: "3D Framework",
+      color: "#fbbc04",
     },
     {
       name: "TanStack Query",
       description: "Powerful data synchronization for React applications",
       url: "https://tanstack.com/query",
       category: "Data Fetching",
+      color: "#9334ea",
     },
     {
       name: "Framer Motion",
       description: "Production-ready animation library for React",
       url: "https://www.framer.com/motion",
       category: "Animation",
+      color: "#1a73e8",
     },
   ];
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="min-h-screen p-6 space-y-8"
-    >
-      {/* Header */}
-      <motion.div variants={itemVariants} className="text-center space-y-4">
-        <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-purple-600 to-blue-600 bg-clip-text text-transparent">
-          Resources & Research
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Tools, technologies, and research that powered this digital twin platform
-        </p>
-      </motion.div>
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="relative pt-8 pb-16 px-6 overflow-hidden">
+        {/* Decorative shapes */}
+        <div className="absolute top-20 right-10 w-32 h-32 bg-[#1a73e8]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-10 w-24 h-24 bg-[#34a853]/10 rounded-full blur-2xl" />
 
-      {/* Research Section */}
-      <motion.div variants={itemVariants}>
-        <Card className="card-enterprise">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <BookOpen className="h-6 w-6 text-primary" />
-              Research & References
-            </CardTitle>
-            <CardDescription>
-              Academic papers and technical articles that informed our architecture
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {researchPapers.map((paper, index) => (
-                <Card key={index} className="hover:shadow-lg transition-all duration-200">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <paper.icon className="h-8 w-8 text-primary" />
-                      <Badge variant="secondary">{paper.type}</Badge>
-                    </div>
-                    <CardTitle className="text-lg mt-4">{paper.title}</CardTitle>
-                    <CardDescription>{paper.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      Read More
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+        <div className="max-w-6xl mx-auto">
+          {/* Breadcrumb */}
+          <FadeInView>
+            <nav className="flex items-center gap-2 text-sm text-[#5f6368] mb-8">
+              <Link to="/" className="hover:text-[#1a73e8] transition-colors">Home</Link>
+              <ChevronRight className="w-4 h-4" />
+              <span className="text-[#202124]">Case Study</span>
+            </nav>
+          </FadeInView>
+
+          {/* Title */}
+          <FadeInView delay={0.1}>
+            <div className="text-center max-w-3xl mx-auto">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-[#202124] mb-6">
+                Platon Schools <span className="text-[#1a73e8]">Digital Twin</span> Case Study
+              </h1>
+              <p className="text-lg md:text-xl text-[#5f6368]">
+                A comprehensive implementation of IoT-based facility monitoring for educational environments
+              </p>
             </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+          </FadeInView>
 
-      {/* Tools Section */}
-      <motion.div variants={itemVariants}>
-        <Card className="card-enterprise">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <Code className="h-6 w-6 text-primary" />
-              Technology Stack & Tools
-            </CardTitle>
-            <CardDescription>
-              Open source tools and frameworks used to build this platform
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tools.map((tool, index) => (
-                <Card key={index} className="hover:shadow-lg transition-all duration-200">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg">{tool.name}</CardTitle>
-                        <Badge variant="outline" className="mt-2">{tool.category}</Badge>
-                      </div>
-                    </div>
-                    <CardDescription className="mt-3">{tool.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="gap-2"
-                      onClick={() => window.open(tool.url, '_blank')}
+          {/* Floating Pill Navigation */}
+          <FadeInView delay={0.2}>
+            <div className="flex justify-center mt-10">
+              <div className="inline-flex items-center gap-1 bg-[#f8f9fa] rounded-full p-1.5 border border-[#dadce0]">
+                {["Research Findings", "Timeline", "Technology", "References"].map((item, index) => (
+                  <button
+                    key={item}
+                    onClick={() => {
+                      const sectionId = item.toLowerCase().replace(" ", "-");
+                      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className={`px-4 py-2 text-sm rounded-full transition-all ${
+                      index === 0
+                        ? "bg-white text-[#202124] shadow-sm"
+                        : "text-[#5f6368] hover:text-[#202124]"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </FadeInView>
+        </div>
+      </section>
+
+      {/* Research Findings Section */}
+      <section id="research-findings" className="px-6 bg-[#f8f9fa]">
+        <div className="max-w-6xl mx-auto">
+          <ResearchFindings />
+        </div>
+      </section>
+
+      {/* Project Timeline Section */}
+      <section id="timeline" className="px-6 py-16">
+        <div className="max-w-6xl mx-auto">
+          <FadeInView>
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-4xl font-semibold text-[#202124] mb-4">
+                Project <span className="text-[#1a73e8]">Timeline</span>
+              </h2>
+              <p className="text-lg text-[#5f6368] max-w-2xl mx-auto">
+                From research to implementation - the journey of building a digital twin platform
+              </p>
+            </div>
+          </FadeInView>
+          <ProjectTimeline />
+        </div>
+      </section>
+
+      {/* Technology Stack Section */}
+      <section id="technology" className="px-6 py-16 bg-[#f8f9fa]">
+        <div className="max-w-6xl mx-auto">
+          <FadeInView>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-semibold text-[#202124] mb-4">
+                Technology <span className="text-[#1a73e8]">Stack</span>
+              </h2>
+              <p className="text-lg text-[#5f6368] max-w-2xl mx-auto">
+                Open source tools and frameworks powering the platform
+              </p>
+            </div>
+          </FadeInView>
+
+          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tools.map((tool) => (
+              <StaggerItem key={tool.name}>
+                <div className="bg-white rounded-xl border border-[#dadce0] p-6 h-full hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
+                  {/* Colored accent bar */}
+                  <div 
+                    className="absolute bottom-0 left-0 right-0 h-1"
+                    style={{ backgroundColor: tool.color }}
+                  />
+                  
+                  <div className="flex items-start justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-[#202124]">{tool.name}</h3>
+                    <Badge 
+                      variant="outline" 
+                      className="text-xs border-[#dadce0] text-[#5f6368]"
                     >
-                      Visit Site
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+                      {tool.category}
+                    </Badge>
+                  </div>
+                  
+                  <p className="text-sm text-[#5f6368] mb-4">{tool.description}</p>
+                  
+                  <button
+                    onClick={() => window.open(tool.url, "_blank")}
+                    className="inline-flex items-center gap-1 text-sm text-[#1a73e8] hover:underline"
+                  >
+                    Learn more
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
 
-      {/* Additional Resources */}
-      <motion.div variants={itemVariants}>
-        <Card className="card-enterprise bg-gradient-to-br from-primary/5 to-purple-500/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <Github className="h-6 w-6 text-primary" />
-              Open Source & Community
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <h3 className="font-bold text-lg">Documentation</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                    <span>OpenHAB REST API documentation and integration patterns</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                    <span>Supabase real-time subscriptions and Edge Functions</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                    <span>Three.js and React Three Fiber for 3D visualization</span>
-                  </li>
-                </ul>
-              </div>
+      {/* Research & References Section */}
+      <section id="references" className="px-6 py-16">
+        <div className="max-w-6xl mx-auto">
+          <FadeInView>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-semibold text-[#202124] mb-4">
+                Research & <span className="text-[#1a73e8]">References</span>
+              </h2>
+              <p className="text-lg text-[#5f6368] max-w-2xl mx-auto">
+                Academic papers and technical articles that informed our architecture
+              </p>
+            </div>
+          </FadeInView>
+
+          <StaggerContainer className="grid md:grid-cols-3 gap-6">
+            {researchPapers.map((paper) => (
+              <StaggerItem key={paper.title}>
+                <div className="bg-white rounded-xl border border-[#dadce0] p-6 h-full hover:shadow-lg transition-shadow duration-300">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-10 h-10 rounded-lg bg-[#1a73e8]/10 flex items-center justify-center">
+                      <paper.icon className="w-5 h-5 text-[#1a73e8]" />
+                    </div>
+                    <Badge variant="secondary" className="text-xs bg-[#f1f3f4] text-[#5f6368]">
+                      {paper.type}
+                    </Badge>
+                  </div>
+                  
+                  <h3 className="text-lg font-semibold text-[#202124] mb-2">{paper.title}</h3>
+                  <p className="text-sm text-[#5f6368] mb-4">{paper.description}</p>
+                  
+                  <button className="inline-flex items-center gap-1 text-sm text-[#1a73e8] hover:underline">
+                    Read more
+                    <ExternalLink className="w-4 h-4" />
+                  </button>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section className="px-6 py-16">
+        <div className="max-w-4xl mx-auto">
+          <FadeInView>
+            <div className="bg-[#1a73e8] rounded-2xl p-8 md:p-12 text-center relative overflow-hidden">
+              {/* Decorative elements */}
+              <div className="absolute top-4 left-8 w-16 h-16 border-2 border-white/20 rounded-full" />
+              <div className="absolute bottom-4 right-8 w-12 h-12 bg-white/10 rounded-lg rotate-12" />
               
-              <div className="space-y-4">
-                <h3 className="font-bold text-lg">Community Resources</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                    <span>OpenHAB Community Forum for integration support</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                    <span>Supabase Discord for real-time architecture discussions</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
-                    <span>Three.js examples and digital twin implementations</span>
-                  </li>
-                </ul>
+              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-4">
+                Explore the live platform
+              </h3>
+              <p className="text-white/80 mb-6 max-w-xl mx-auto">
+                See the digital twin in action with real-time sensor data and interactive 3D visualization
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <Link to="/dashboard">
+                  <Button 
+                    size="lg" 
+                    className="bg-white text-[#1a73e8] hover:bg-white/90"
+                  >
+                    View Dashboard
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+                <Link to="/architecture">
+                  <Button 
+                    size="lg" 
+                    variant="outline"
+                    className="border-white/30 text-white hover:bg-white/10"
+                  >
+                    System Architecture
+                  </Button>
+                </Link>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-    </motion.div>
+          </FadeInView>
+        </div>
+      </section>
+    </div>
   );
 }
