@@ -1,7 +1,12 @@
-import { motion } from "framer-motion";
 import { Zap, Wrench, TrendingUp, Gauge, Download, Calendar, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  FadeInView, 
+  ScaleInView, 
+  StaggerContainer, 
+  StaggerItem 
+} from "@/components/ui/scroll-animations";
 
 const keyMetrics = [
   { label: "Energy Savings", value: "15-30%", description: "Annual utility cost reduction", icon: Zap },
@@ -41,55 +46,43 @@ export function TechnoEconomicAnalysis() {
     <section className="py-24 px-6 bg-muted/30">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full mb-4">
-            Investment Analysis
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            The Business Case for Digital Twins
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            A comprehensive techno-economic analysis of implementing digital twin technology 
-            for smart building infrastructure.
-          </p>
-        </motion.div>
+        <div className="text-center mb-16">
+          <FadeInView>
+            <span className="inline-block px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full mb-4">
+              Investment Analysis
+            </span>
+          </FadeInView>
+          <ScaleInView delay={0.1}>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              The Business Case for Digital Twins
+            </h2>
+          </ScaleInView>
+          <FadeInView delay={0.2}>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              A comprehensive techno-economic analysis of implementing digital twin technology 
+              for smart building infrastructure.
+            </p>
+          </FadeInView>
+        </div>
 
         {/* Key Metrics Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
-        >
-          {keyMetrics.map((metric, index) => (
-            <div
-              key={metric.label}
-              className="p-6 rounded-xl bg-card border border-border hover:border-primary/50 transition-colors"
-            >
-              <metric.icon className="w-8 h-8 text-primary mb-3" />
-              <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
-                {metric.value}
+        <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16" staggerDelay={0.1}>
+          {keyMetrics.map((metric) => (
+            <StaggerItem key={metric.label}>
+              <div className="p-6 rounded-xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:scale-[1.02]">
+                <metric.icon className="w-8 h-8 text-primary mb-3" />
+                <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+                  {metric.value}
+                </div>
+                <div className="text-sm font-medium text-foreground mb-1">{metric.label}</div>
+                <div className="text-xs text-muted-foreground">{metric.description}</div>
               </div>
-              <div className="text-sm font-medium text-foreground mb-1">{metric.label}</div>
-              <div className="text-xs text-muted-foreground">{metric.description}</div>
-            </div>
+            </StaggerItem>
           ))}
-        </motion.div>
+        </StaggerContainer>
 
         {/* Cost Breakdown Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="mb-16"
-        >
+        <FadeInView delay={0.1} className="mb-16">
           <h3 className="text-xl font-semibold text-foreground mb-6 text-center">
             Cost & Savings Breakdown
           </h3>
@@ -154,61 +147,57 @@ export function TechnoEconomicAnalysis() {
               </div>
             </TabsContent>
           </Tabs>
-        </motion.div>
+        </FadeInView>
 
         {/* Implementation Timeline */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="mb-16"
-        >
+        <FadeInView delay={0.15} className="mb-16">
           <h3 className="text-xl font-semibold text-foreground mb-6 text-center">
             Implementation Timeline
           </h3>
-          <div className="grid md:grid-cols-4 gap-4">
+          <StaggerContainer className="grid md:grid-cols-4 gap-4" staggerDelay={0.12}>
             {timeline.map((phase, index) => (
-              <div key={phase.phase} className="relative">
-                <div className="p-5 rounded-xl bg-card border border-border h-full">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                      {index + 1}
+              <StaggerItem key={phase.phase}>
+                <div className="relative">
+                  <div className="p-5 rounded-xl bg-card border border-border h-full hover:border-primary/50 transition-colors duration-300">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                        {index + 1}
+                      </div>
+                      <span className="text-xs text-muted-foreground">{phase.duration}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">{phase.duration}</span>
+                    <div className="font-semibold text-foreground mb-2">{phase.phase}</div>
+                    <div className="text-sm text-muted-foreground">{phase.description}</div>
                   </div>
-                  <div className="font-semibold text-foreground mb-2">{phase.phase}</div>
-                  <div className="text-sm text-muted-foreground">{phase.description}</div>
+                  {index < timeline.length - 1 && (
+                    <div className="hidden md:block absolute top-1/2 -right-2 w-4 h-0.5 bg-border" />
+                  )}
                 </div>
-                {index < timeline.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-2 w-4 h-0.5 bg-border" />
-                )}
-              </div>
+              </StaggerItem>
             ))}
-          </div>
-          <div className="flex items-center justify-center gap-2 mt-6 text-sm text-muted-foreground">
-            <CheckCircle2 className="w-4 h-4 text-green-500" />
-            <span>Total implementation: 9-18 weeks depending on facility complexity</span>
-          </div>
-        </motion.div>
+          </StaggerContainer>
+          <FadeInView delay={0.4}>
+            <div className="flex items-center justify-center gap-2 mt-6 text-sm text-muted-foreground">
+              <CheckCircle2 className="w-4 h-4 text-green-500" />
+              <span>Total implementation: 9-18 weeks depending on facility complexity</span>
+            </div>
+          </FadeInView>
+        </FadeInView>
 
         {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <Button size="lg" variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
-            Download Full Analysis (PDF)
-          </Button>
-          <Button size="lg" className="gap-2">
-            <Calendar className="w-4 h-4" />
-            Schedule Consultation
-          </Button>
-        </motion.div>
+        <StaggerContainer className="flex flex-col sm:flex-row items-center justify-center gap-4" staggerDelay={0.1}>
+          <StaggerItem>
+            <Button size="lg" variant="outline" className="gap-2">
+              <Download className="w-4 h-4" />
+              Download Full Analysis (PDF)
+            </Button>
+          </StaggerItem>
+          <StaggerItem>
+            <Button size="lg" className="gap-2">
+              <Calendar className="w-4 h-4" />
+              Schedule Consultation
+            </Button>
+          </StaggerItem>
+        </StaggerContainer>
       </div>
     </section>
   );

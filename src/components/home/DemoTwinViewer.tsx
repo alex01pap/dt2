@@ -18,6 +18,7 @@ import SchoolClassroomFloorPlan from '@/components/twin/SchoolClassroomFloorPlan
 import { classroomSensorData, classroomHeatData, classroomFlowData } from '@/data/schoolMockData';
 import type { SensorData, HeatData, FlowPipeData } from '@/components/twin/TwinViewer';
 import { Vector3 } from 'three';
+import { FadeInView } from '@/components/ui/scroll-animations';
 
 // Heat Overlay Component
 function HeatOverlay({ heatData }: { heatData: HeatData[] }) {
@@ -203,7 +204,7 @@ export function DemoTwinViewer() {
         <div className="bg-background/90 backdrop-blur-sm border border-border rounded-lg p-2 flex gap-2">
           <button
             onClick={() => setOverlayMode(overlayMode === 'heat' ? 'none' : 'heat')}
-            className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded text-sm font-medium transition-all duration-300 ${
               overlayMode === 'heat' 
                 ? 'bg-red-500 text-white' 
                 : 'bg-secondary hover:bg-secondary/80 text-foreground'
@@ -213,7 +214,7 @@ export function DemoTwinViewer() {
           </button>
           <button
             onClick={() => setOverlayMode(overlayMode === 'flow' ? 'none' : 'flow')}
-            className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded text-sm font-medium transition-all duration-300 ${
               overlayMode === 'flow' 
                 ? 'bg-blue-500 text-white' 
                 : 'bg-secondary hover:bg-secondary/80 text-foreground'
