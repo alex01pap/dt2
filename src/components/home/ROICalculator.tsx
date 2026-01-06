@@ -1,10 +1,9 @@
 import { useState, useMemo } from "react";
-import { Calculator, TrendingUp, Zap, Wrench, Building2, Users } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Calculator, TrendingUp, Zap, Wrench, Building2, Users, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { 
   FadeInView, 
   ScaleInView, 
@@ -75,42 +74,37 @@ export function ROICalculator() {
   };
 
   return (
-    <section className="container max-w-screen-xl px-8 py-24 border-t">
-      <div className="text-center mb-12">
+    <section className="container max-w-screen-xl px-6 py-24">
+      <div className="text-center mb-16">
         <FadeInView>
-          <Badge variant="secondary" className="gap-2 py-2 px-4 mb-4">
-            <Calculator className="h-4 w-4" />
-            ROI Calculator
-          </Badge>
+          <p className="text-sm font-medium text-primary mb-3">ROI CALCULATOR</p>
         </FadeInView>
         <ScaleInView delay={0.1}>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Calculate Your Savings
+          <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
+            Calculate your savings
           </h2>
         </ScaleInView>
         <FadeInView delay={0.2}>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Enter your school's details to see how much you could save with a digital twin system.
           </p>
         </FadeInView>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-12">
+      <div className="grid lg:grid-cols-2 gap-12 items-start">
         {/* Input Section */}
         <FadeInView direction="left" className="space-y-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-primary" />
-                School Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <div className="bg-card border border-border rounded-2xl p-6 md:p-8">
+            <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-primary" />
+              School Details
+            </h3>
+            <div className="space-y-6">
               {/* Building Area */}
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <Label>Building Area</Label>
-                  <span className="text-sm font-medium">{buildingArea.toLocaleString()} m²</span>
+                  <Label className="text-muted-foreground">Building Area</Label>
+                  <span className="text-sm font-semibold text-foreground">{buildingArea.toLocaleString()} m²</span>
                 </div>
                 <Slider
                   value={[buildingArea]}
@@ -125,8 +119,8 @@ export function ROICalculator() {
               {/* Classrooms */}
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <Label>Number of Classrooms</Label>
-                  <span className="text-sm font-medium">{classrooms}</span>
+                  <Label className="text-muted-foreground">Number of Classrooms</Label>
+                  <span className="text-sm font-semibold text-foreground">{classrooms}</span>
                 </div>
                 <Slider
                   value={[classrooms]}
@@ -141,11 +135,11 @@ export function ROICalculator() {
               {/* Students */}
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <Label className="flex items-center gap-2">
+                  <Label className="text-muted-foreground flex items-center gap-2">
                     <Users className="h-4 w-4" />
                     Total Students
                   </Label>
-                  <span className="text-sm font-medium">{students.toLocaleString()}</span>
+                  <span className="text-sm font-semibold text-foreground">{students.toLocaleString()}</span>
                 </div>
                 <Slider
                   value={[students]}
@@ -156,42 +150,40 @@ export function ROICalculator() {
                   className="py-2"
                 />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="h-5 w-5 text-primary" />
-                Current Annual Costs
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <div className="bg-card border border-border rounded-2xl p-6 md:p-8">
+            <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+              <Zap className="h-5 w-5 text-primary" />
+              Current Annual Costs
+            </h3>
+            <div className="space-y-6">
               {/* Energy Bill */}
               <div className="space-y-2">
-                <Label htmlFor="energy">Annual Energy Bill (€)</Label>
+                <Label htmlFor="energy" className="text-muted-foreground">Annual Energy Bill (€)</Label>
                 <Input
                   id="energy"
                   type="number"
                   value={annualEnergyBill}
                   onChange={(e) => setAnnualEnergyBill(Number(e.target.value))}
-                  className="text-lg"
+                  className="h-12 text-lg"
                 />
               </div>
 
               {/* Maintenance Cost */}
               <div className="space-y-2">
-                <Label htmlFor="maintenance">Annual Maintenance Cost (€)</Label>
+                <Label htmlFor="maintenance" className="text-muted-foreground">Annual Maintenance Cost (€)</Label>
                 <Input
                   id="maintenance"
                   type="number"
                   value={annualMaintenanceCost}
                   onChange={(e) => setAnnualMaintenanceCost(Number(e.target.value))}
-                  className="text-lg"
+                  className="h-12 text-lg"
                 />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </FadeInView>
 
         {/* Results Section */}
@@ -199,109 +191,99 @@ export function ROICalculator() {
           {/* Key Metrics */}
           <StaggerContainer className="grid grid-cols-2 gap-4" staggerDelay={0.1}>
             <StaggerItem>
-              <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20">
-                <CardContent className="pt-6">
-                  <div className="text-sm text-muted-foreground mb-1">Annual Savings</div>
-                  <div className="text-3xl font-bold text-green-500">
-                    {formatCurrency(calculations.totalAnnualSavings)}
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <div className="text-sm text-muted-foreground mb-1">Annual Savings</div>
+                <div className="text-3xl font-semibold text-success">
+                  {formatCurrency(calculations.totalAnnualSavings)}
+                </div>
+              </div>
             </StaggerItem>
             <StaggerItem>
-              <Card className="bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 border-cyan-500/20">
-                <CardContent className="pt-6">
-                  <div className="text-sm text-muted-foreground mb-1">Payback Period</div>
-                  <div className="text-3xl font-bold text-cyan-500">
-                    <CountUp end={calculations.paybackMonths} duration={1.5} /> <span className="text-lg font-normal">months</span>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <div className="text-sm text-muted-foreground mb-1">Payback Period</div>
+                <div className="text-3xl font-semibold text-primary">
+                  <CountUp end={calculations.paybackMonths} duration={1.5} /> <span className="text-lg font-normal">mo</span>
+                </div>
+              </div>
             </StaggerItem>
             <StaggerItem>
-              <Card className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-purple-500/20">
-                <CardContent className="pt-6">
-                  <div className="text-sm text-muted-foreground mb-1">3-Year ROI</div>
-                  <div className="text-3xl font-bold text-purple-500">
-                    <CountUp end={calculations.threeYearROI} duration={1.5} suffix="%" />
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <div className="text-sm text-muted-foreground mb-1">3-Year ROI</div>
+                <div className="text-3xl font-semibold text-foreground">
+                  <CountUp end={calculations.threeYearROI} duration={1.5} suffix="%" />
+                </div>
+              </div>
             </StaggerItem>
             <StaggerItem>
-              <Card className="bg-gradient-to-br from-orange-500/10 to-orange-500/5 border-orange-500/20">
-                <CardContent className="pt-6">
-                  <div className="text-sm text-muted-foreground mb-1">5-Year Net Savings</div>
-                  <div className="text-3xl font-bold text-orange-500">
-                    {formatCurrency(calculations.fiveYearSavings)}
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <div className="text-sm text-muted-foreground mb-1">5-Year Net Savings</div>
+                <div className="text-3xl font-semibold text-success">
+                  {formatCurrency(calculations.fiveYearSavings)}
+                </div>
+              </div>
             </StaggerItem>
           </StaggerContainer>
 
           {/* Breakdown */}
           <FadeInView delay={0.3}>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <TrendingUp className="h-5 w-5 text-primary" />
-                  Cost & Savings Breakdown
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="text-sm font-medium text-muted-foreground">Initial Investment</div>
-                  <div className="flex justify-between py-2 border-b border-border/50">
-                    <span>Sensor Hardware ({classrooms} classrooms)</span>
+            <div className="bg-card border border-border rounded-2xl p-6 md:p-8">
+              <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Cost & Savings Breakdown
+              </h3>
+              <div className="space-y-4">
+                <div className="pb-4 border-b border-border">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Initial Investment</div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-muted-foreground">Sensor Hardware ({classrooms} classrooms)</span>
                     <span className="font-medium">{formatCurrency(calculations.sensorCost)}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-border/50">
-                    <span>Platform & Integration</span>
+                  <div className="flex justify-between py-2">
+                    <span className="text-muted-foreground">Platform & Integration</span>
                     <span className="font-medium">{formatCurrency(PLATFORM_BASE_COST)}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-border/50">
-                    <span>Installation ({buildingArea.toLocaleString()} m²)</span>
+                  <div className="flex justify-between py-2">
+                    <span className="text-muted-foreground">Installation ({buildingArea.toLocaleString()} m²)</span>
                     <span className="font-medium">{formatCurrency(calculations.installationCost)}</span>
                   </div>
-                  <div className="flex justify-between py-2 font-bold">
+                  <div className="flex justify-between py-2 font-semibold border-t border-border mt-2 pt-3">
                     <span>Total Initial Investment</span>
                     <span>{formatCurrency(calculations.totalInitialInvestment)}</span>
                   </div>
                 </div>
 
-                <div className="space-y-3 pt-4">
-                  <div className="text-sm font-medium text-muted-foreground">Annual Impact</div>
-                  <div className="flex justify-between py-2 border-b border-border/50">
-                    <span className="flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-green-500" />
+                <div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Annual Impact</div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-muted-foreground flex items-center gap-2">
+                      <Zap className="h-4 w-4 text-success" />
                       Energy Savings (22%)
                     </span>
-                    <span className="font-medium text-green-500">+{formatCurrency(calculations.energySavings)}</span>
+                    <span className="font-medium text-success">+{formatCurrency(calculations.energySavings)}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-border/50">
-                    <span className="flex items-center gap-2">
-                      <Wrench className="h-4 w-4 text-green-500" />
+                  <div className="flex justify-between py-2">
+                    <span className="text-muted-foreground flex items-center gap-2">
+                      <Wrench className="h-4 w-4 text-success" />
                       Maintenance Savings (25%)
                     </span>
-                    <span className="font-medium text-green-500">+{formatCurrency(calculations.maintenanceSavings)}</span>
+                    <span className="font-medium text-success">+{formatCurrency(calculations.maintenanceSavings)}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-border/50">
-                    <span>Annual License Fee</span>
-                    <span className="font-medium text-red-400">-{formatCurrency(calculations.annualOperatingCost)}</span>
+                  <div className="flex justify-between py-2">
+                    <span className="text-muted-foreground">Annual License Fee</span>
+                    <span className="font-medium text-destructive">-{formatCurrency(calculations.annualOperatingCost)}</span>
                   </div>
-                  <div className="flex justify-between py-2 font-bold text-green-500">
+                  <div className="flex justify-between py-2 font-semibold text-success border-t border-border mt-2 pt-3">
                     <span>Net Annual Benefit</span>
                     <span>{formatCurrency(calculations.netAnnualBenefit)}</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </FadeInView>
 
           <FadeInView delay={0.4}>
             <p className="text-xs text-muted-foreground text-center">
-              * Estimates based on industry averages. Actual savings may vary based on facility conditions and usage patterns.
+              * Estimates based on industry averages. Actual savings may vary based on facility conditions.
             </p>
           </FadeInView>
         </FadeInView>

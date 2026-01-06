@@ -1,385 +1,192 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, ArrowRight, Check, Database, LineChart, Zap, Box, GraduationCap } from "lucide-react";
+import { ArrowRight, Play, Shield, Lock, Sparkles, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DemoTwinViewer } from "@/components/home/DemoTwinViewer";
 import { TechnoEconomicAnalysis } from "@/components/home/TechnoEconomicAnalysis";
 import { DigitalTwinExplainer } from "@/components/home/DigitalTwinExplainer";
 import { ROICalculator } from "@/components/home/ROICalculator";
+import { FeatureIconTabs } from "@/components/home/FeatureIconTabs";
+import { TrustSection } from "@/components/home/TrustSection";
+import { ContactForm } from "@/components/home/ContactForm";
 import { 
   FadeInView, 
   ScaleInView, 
   StaggerContainer, 
-  StaggerItem,
-  RevealText 
+  StaggerItem 
 } from "@/components/ui/scroll-animations";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("monitoring");
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 max-w-screen-2xl items-center px-8">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-lg">Platon Schools</span>
-            <Badge variant="outline" className="ml-2 text-xs">Case Study</Badge>
+      <header className="sticky top-0 z-50 w-full bg-background border-b border-border">
+        <div className="container flex h-16 max-w-screen-xl items-center justify-between px-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+              <GraduationCap className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="font-semibold text-lg text-foreground">Platon Schools</span>
           </div>
-          <nav className="flex flex-1 items-center justify-end gap-6">
-            <Link to="/tutorials" className="text-sm font-medium hover:text-primary transition-colors">
-              Docs
+          <nav className="hidden md:flex items-center gap-8">
+            <Link to="/tutorials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              Documentation
             </Link>
-            <Link to="/resources" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link to="/resources" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Resources
             </Link>
-            <Link to="/architecture" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link to="/architecture" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Architecture
             </Link>
-            <Link to="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
-              Hub
-            </Link>
           </nav>
+          <div className="flex items-center gap-3">
+            <Link to="/dashboard">
+              <Button variant="ghost" size="sm" className="text-muted-foreground">
+                Sign in
+              </Button>
+            </Link>
+            <Link to="/dashboard">
+              <Button size="sm" className="rounded-full px-5">
+                Get started
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="container max-w-screen-xl px-8 py-24 md:py-32">
-        <div className="mx-auto max-w-4xl text-center">
-          <FadeInView delay={0.1}>
-            <Badge variant="secondary" className="gap-2 py-2 px-4 mb-6">
-              <Eye className="h-4 w-4" />
-              Case Study: Digital Twin Platform
-            </Badge>
+      {/* Hero Section - Google Style */}
+      <section className="container max-w-screen-xl px-6 pt-20 pb-24 md:pt-32 md:pb-32">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left: Text Content */}
+          <div className="space-y-8">
+            <FadeInView>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                <Sparkles className="h-4 w-4" />
+                Digital Twin Technology
+              </div>
+            </FadeInView>
+            
+            <ScaleInView delay={0.1} duration={0.8}>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground leading-tight">
+                Transform your school with{" "}
+                <span className="text-primary">Digital Twins</span>
+              </h1>
+            </ScaleInView>
+            
+            <FadeInView delay={0.2}>
+              <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
+                Monitor, visualize, and control your school infrastructure in real-time. 
+                Reduce energy costs by up to 30% with intelligent building automation.
+              </p>
+            </FadeInView>
+            
+            <StaggerContainer className="flex flex-col sm:flex-row gap-4" staggerDelay={0.1}>
+              <StaggerItem>
+                <Link to="/dashboard">
+                  <Button size="lg" className="rounded-full px-8 h-12 text-base gap-2">
+                    Contact sales
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </StaggerItem>
+              <StaggerItem>
+                <Button variant="ghost" size="lg" className="h-12 text-base gap-2 text-primary hover:text-primary hover:bg-primary/5">
+                  <Play className="h-4 w-4" />
+                  Watch demo
+                </Button>
+              </StaggerItem>
+            </StaggerContainer>
+          </div>
+
+          {/* Right: Visual */}
+          <FadeInView direction="right" delay={0.3} className="relative">
+            <div className="relative rounded-2xl overflow-hidden border border-border bg-muted/30">
+              <img 
+                src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80" 
+                alt="Modern school building with smart technology"
+                className="w-full h-[400px] object-cover"
+              />
+              {/* Floating stats cards */}
+              <div className="absolute top-6 right-6 bg-background/95 backdrop-blur border border-border rounded-xl p-4 shadow-lg">
+                <div className="text-2xl font-semibold text-success">-28%</div>
+                <div className="text-sm text-muted-foreground">Energy costs</div>
+              </div>
+              <div className="absolute bottom-6 left-6 bg-background/95 backdrop-blur border border-border rounded-xl p-4 shadow-lg">
+                <div className="text-2xl font-semibold text-primary">24/7</div>
+                <div className="text-sm text-muted-foreground">Real-time monitoring</div>
+              </div>
+            </div>
           </FadeInView>
-          
-          <ScaleInView delay={0.2} duration={0.9}>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-              Smart School Infrastructure with{" "}
-              <span className="text-primary">OpenHAB Integration</span>
-            </h1>
-          </ScaleInView>
-          
-          <FadeInView delay={0.4} duration={0.8}>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              A digital twin platform designed for educational facilities, connecting smart building 
-              systems with real-time monitoring, analytics, and automated environmental control.
-            </p>
-          </FadeInView>
-          
-          <StaggerContainer className="flex flex-col sm:flex-row gap-4 justify-center items-center" staggerDelay={0.15}>
-            <StaggerItem>
-              <Badge variant="secondary" className="gap-2 py-2 px-4">
-                <Check className="h-4 w-4" />
-                Educational Environment
-              </Badge>
-            </StaggerItem>
-            <StaggerItem>
-              <Badge variant="secondary" className="gap-2 py-2 px-4">
-                <Check className="h-4 w-4" />
-                Smart Building Technology
-              </Badge>
-            </StaggerItem>
-          </StaggerContainer>
         </div>
       </section>
+
+      {/* Feature Icon Tabs */}
+      <FeatureIconTabs />
 
       {/* What is a Digital Twin? */}
       <DigitalTwinExplainer />
 
       {/* Live Demo Section */}
-      <section className="container max-w-screen-xl px-8 py-24 border-t">
-        <div className="text-center mb-8">
-          <FadeInView>
-            <Badge variant="secondary" className="gap-2 py-2 px-4 mb-4">
-              Interactive Demo
-            </Badge>
-          </FadeInView>
-          <ScaleInView delay={0.1}>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              See it in action
-            </h2>
-          </ScaleInView>
-          <FadeInView delay={0.2}>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explore a classroom digital twin with real-time sensor data, heat maps, and HVAC visualization.
-            </p>
+      <section className="bg-muted/30">
+        <div className="container max-w-screen-xl px-6 py-24">
+          <div className="text-center mb-12">
+            <FadeInView>
+              <p className="text-sm font-medium text-primary mb-3">INTERACTIVE DEMO</p>
+            </FadeInView>
+            <ScaleInView delay={0.1}>
+              <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
+                See it in action
+              </h2>
+            </ScaleInView>
+            <FadeInView delay={0.2}>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Explore a classroom digital twin with real-time sensor data, heat maps, and HVAC visualization.
+              </p>
+            </FadeInView>
+          </div>
+          <FadeInView delay={0.3} duration={0.9}>
+            <DemoTwinViewer />
           </FadeInView>
         </div>
-        <FadeInView delay={0.3} duration={0.9}>
-          <DemoTwinViewer />
-        </FadeInView>
       </section>
 
       {/* ROI Calculator */}
       <ROICalculator />
 
+      {/* Trust & Security */}
+      <TrustSection />
+
       {/* Techno-Economic Analysis */}
       <TechnoEconomicAnalysis />
-      
-      <section className="container max-w-screen-xl px-8 py-24 border-t">
-        <div className="text-center mb-12">
-          <ScaleInView>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              The Challenge
-            </h2>
-          </ScaleInView>
-          <FadeInView delay={0.15}>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Creating an intelligent building management system for Platon Schools that integrates 
-              OpenHAB automation with real-time monitoring and 3D visualization of school facilities.
-            </p>
-          </FadeInView>
-        </div>
 
-        <FadeInView delay={0.2}>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12">
-              <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="automation">Automation</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="monitoring" className="mt-0">
-              <div className="grid md:grid-cols-2 gap-12 items-center">
-                <FadeInView direction="left">
-                  <div>
-                    <h3 className="text-2xl font-bold mb-4">Real-time Infrastructure Monitoring</h3>
-                    <p className="text-muted-foreground mb-6">
-                      Track every sensor, device, and system in real-time. Get instant alerts when something needs attention, 
-                      and visualize your entire infrastructure in beautiful 3D digital twins.
-                    </p>
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary mt-0.5" />
-                        <span>Live data streaming from thousands of IoT sensors</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary mt-0.5" />
-                        <span>3D visualization of physical infrastructure</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary mt-0.5" />
-                        <span>Instant alerts and automated responses</span>
-                      </li>
-                    </ul>
-                  </div>
-                </FadeInView>
-                <FadeInView direction="right" delay={0.1}>
-                  <div className="bg-muted rounded-lg p-8 border">
-                    <div className="bg-background rounded-lg shadow-sm p-6 space-y-4">
-                      <div className="flex items-center gap-3 pb-4 border-b">
-                        <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center">
-                          <Database className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <div className="font-medium">Building A - Floor 3</div>
-                          <div className="text-sm text-muted-foreground">sensors@twinvision.io</div>
-                        </div>
-                      </div>
-                      <div className="space-y-3">
-                        <p className="text-sm">Hi there,</p>
-                        <p className="text-sm">Your infrastructure is live! All systems are operational and data is flowing.</p>
-                        <p className="text-sm">Click below to explore your digital twin workspace.</p>
-                        <Button className="w-full mt-4">View Dashboard</Button>
-                        <p className="text-xs text-muted-foreground text-center">
-                          Questions? Our support team is here to help.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </FadeInView>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="analytics" className="mt-0">
-              <div className="grid md:grid-cols-2 gap-12 items-center">
-                <FadeInView direction="left">
-                  <div>
-                    <h3 className="text-2xl font-bold mb-4">Powerful Data Analytics</h3>
-                    <p className="text-muted-foreground mb-6">
-                      Transform raw sensor data into actionable insights. Our AI-powered analytics help you 
-                      optimize operations, reduce costs, and predict maintenance needs before issues arise.
-                    </p>
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary mt-0.5" />
-                        <span>AI-driven predictive maintenance</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary mt-0.5" />
-                        <span>Custom dashboards and reports</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary mt-0.5" />
-                        <span>Historical trend analysis</span>
-                      </li>
-                    </ul>
-                  </div>
-                </FadeInView>
-                <FadeInView direction="right" delay={0.1}>
-                  <div className="bg-muted rounded-lg p-8 border flex items-center justify-center h-80">
-                    <LineChart className="h-32 w-32 text-muted-foreground/20" />
-                  </div>
-                </FadeInView>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="automation" className="mt-0">
-              <div className="grid md:grid-cols-2 gap-12 items-center">
-                <FadeInView direction="left">
-                  <div>
-                    <h3 className="text-2xl font-bold mb-4">Smart Automation Rules</h3>
-                    <p className="text-muted-foreground mb-6">
-                      Create intelligent automation rules that respond to real-world conditions. 
-                      Optimize energy usage, ensure safety compliance, and improve operational efficiency.
-                    </p>
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary mt-0.5" />
-                        <span>Visual rule builder - no coding required</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary mt-0.5" />
-                        <span>Multi-system orchestration</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-primary mt-0.5" />
-                        <span>Energy optimization algorithms</span>
-                      </li>
-                    </ul>
-                  </div>
-                </FadeInView>
-                <FadeInView direction="right" delay={0.1}>
-                  <div className="bg-muted rounded-lg p-8 border flex items-center justify-center h-80">
-                    <Zap className="h-32 w-32 text-muted-foreground/20" />
-                  </div>
-                </FadeInView>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </FadeInView>
-      </section>
-
-      {/* Platform Integration Section */}
-      <section className="container max-w-screen-xl px-8 py-24 border-t">
-        <div className="text-center">
-          <ScaleInView>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Built with Modern IoT Technologies
-            </h2>
-          </ScaleInView>
-          <FadeInView delay={0.1}>
-            <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Integrated with industry-leading platforms for reliable smart building management.
-            </p>
-          </FadeInView>
-          
-          <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto" staggerDelay={0.1}>
-            <StaggerItem>
-              <div className="flex flex-col items-center gap-3 p-6 rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="h-16 w-16 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Database className="h-8 w-8 text-primary" />
-                </div>
-                <span className="font-medium">Supabase</span>
-              </div>
-            </StaggerItem>
-            <StaggerItem>
-              <div className="flex flex-col items-center gap-3 p-6 rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="h-16 w-16 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Box className="h-8 w-8 text-primary" />
-                </div>
-                <span className="font-medium">OpenHAB</span>
-              </div>
-            </StaggerItem>
-            <StaggerItem>
-              <div className="flex flex-col items-center gap-3 p-6 rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="h-16 w-16 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <LineChart className="h-8 w-8 text-primary" />
-                </div>
-                <span className="font-medium">Grafana</span>
-              </div>
-            </StaggerItem>
-            <StaggerItem>
-              <div className="flex flex-col items-center gap-3 p-6 rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="h-16 w-16 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Zap className="h-8 w-8 text-primary" />
-                </div>
-                <span className="font-medium">MQTT</span>
-              </div>
-            </StaggerItem>
-          </StaggerContainer>
-        </div>
-      </section>
-
-      {/* Results Section */}
-      <section className="container max-w-screen-xl px-8 py-32 border-t">
-        <div className="text-center">
-          <ScaleInView duration={1}>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              The Results
-            </h2>
-          </ScaleInView>
-          <FadeInView delay={0.15}>
-            <p className="text-lg text-muted-foreground mb-12 max-w-xl mx-auto">
-              A comprehensive smart school platform that optimizes energy usage, monitors environmental 
-              conditions, and provides real-time insights for better facility management.
-            </p>
-          </FadeInView>
-          <StaggerContainer className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto" staggerDelay={0.15}>
-            <StaggerItem>
-              <div className="space-y-2">
-                <div className="text-4xl font-bold text-primary">Real-time</div>
-                <div className="text-muted-foreground">Data synchronization from OpenHAB</div>
-              </div>
-            </StaggerItem>
-            <StaggerItem>
-              <div className="space-y-2">
-                <div className="text-4xl font-bold text-primary">3D</div>
-                <div className="text-muted-foreground">Interactive digital twin visualization</div>
-              </div>
-            </StaggerItem>
-            <StaggerItem>
-              <div className="space-y-2">
-                <div className="text-4xl font-bold text-primary">Automated</div>
-                <div className="text-muted-foreground">Rule-based control & monitoring</div>
-              </div>
-            </StaggerItem>
-          </StaggerContainer>
-        </div>
-      </section>
+      {/* Contact Form */}
+      <ContactForm />
 
       {/* Footer */}
-      <footer className="border-t bg-muted/30">
-        <div className="container max-w-screen-xl px-8 py-12">
-          <FadeInView>
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Platon Schools</span>
-                <Badge variant="outline" className="text-xs">Case Study</Badge>
+      <footer className="border-t border-border bg-muted/30">
+        <div className="container max-w-screen-xl px-6 py-12">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <GraduationCap className="h-5 w-5 text-primary-foreground" />
               </div>
-              <p className="text-sm text-muted-foreground">
-                Smart building digital twin platform for educational facilities
-              </p>
-              <div className="flex gap-6 text-sm">
-                <Link to="/tutorials" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Docs
-                </Link>
-                <Link to="/resources" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Resources
-                </Link>
-                <Link to="/architecture" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Architecture
-                </Link>
-              </div>
+              <span className="font-semibold text-foreground">Platon Schools</span>
             </div>
-            <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-              © 2025 Platon Schools Digital Twin Platform - Case Study
+            <div className="flex gap-8 text-sm">
+              <Link to="/tutorials" className="text-muted-foreground hover:text-foreground transition-colors">
+                Documentation
+              </Link>
+              <Link to="/resources" className="text-muted-foreground hover:text-foreground transition-colors">
+                Resources
+              </Link>
+              <Link to="/architecture" className="text-muted-foreground hover:text-foreground transition-colors">
+                Architecture
+              </Link>
             </div>
-          </FadeInView>
+            <p className="text-sm text-muted-foreground">
+              © 2024 Platon Schools. All rights reserved.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
