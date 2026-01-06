@@ -1,4 +1,4 @@
-import { Zap, Wrench, TrendingUp, Gauge, Download, Calendar, CheckCircle2 } from "lucide-react";
+import { Zap, Wrench, TrendingUp, Gauge, Download, Calendar, CheckCircle2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/scroll-animations";
 
 const keyMetrics = [
-  { label: "Energy Savings", value: "15-30%", description: "Annual utility cost reduction", icon: Zap },
-  { label: "Maintenance Costs", value: "-25%", description: "Predictive vs reactive", icon: Wrench },
-  { label: "ROI Timeline", value: "18-24 mo", description: "Time to break even", icon: TrendingUp },
-  { label: "Efficiency Gain", value: "+40%", description: "Operational improvement", icon: Gauge },
+  { label: "Energy Savings", value: "15-30%", description: "Annual utility cost reduction", icon: Zap, color: "text-yellow-600", bgColor: "bg-yellow-50" },
+  { label: "Maintenance Costs", value: "-25%", description: "Predictive vs reactive", icon: Wrench, color: "text-blue-600", bgColor: "bg-blue-50" },
+  { label: "ROI Timeline", value: "18-24 mo", description: "Time to break even", icon: TrendingUp, color: "text-green-600", bgColor: "bg-green-50" },
+  { label: "Efficiency Gain", value: "+40%", description: "Operational improvement", icon: Gauge, color: "text-purple-600", bgColor: "bg-purple-50" },
 ];
 
 const initialCosts = [
@@ -43,22 +43,20 @@ const timeline = [
 
 export function TechnoEconomicAnalysis() {
   return (
-    <section className="py-24 px-6 bg-muted/30">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-24 px-6">
+      <div className="max-w-screen-xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
           <FadeInView>
-            <span className="inline-block px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full mb-4">
-              Investment Analysis
-            </span>
+            <p className="text-sm font-medium text-primary mb-3">INVESTMENT ANALYSIS</p>
           </FadeInView>
           <ScaleInView delay={0.1}>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              The Business Case for Digital Twins
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
+              The business case for Digital Twins
             </h2>
           </ScaleInView>
           <FadeInView delay={0.2}>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               A comprehensive techno-economic analysis of implementing digital twin technology 
               for smart building infrastructure.
             </p>
@@ -69,9 +67,11 @@ export function TechnoEconomicAnalysis() {
         <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16" staggerDelay={0.1}>
           {keyMetrics.map((metric) => (
             <StaggerItem key={metric.label}>
-              <div className="p-6 rounded-xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:scale-[1.02]">
-                <metric.icon className="w-8 h-8 text-primary mb-3" />
-                <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+              <div className="p-6 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-md transition-all duration-300">
+                <div className={`w-12 h-12 rounded-xl ${metric.bgColor} flex items-center justify-center mb-4`}>
+                  <metric.icon className={`w-6 h-6 ${metric.color}`} />
+                </div>
+                <div className="text-2xl md:text-3xl font-semibold text-foreground mb-1">
                   {metric.value}
                 </div>
                 <div className="text-sm font-medium text-foreground mb-1">{metric.label}</div>
@@ -93,7 +93,7 @@ export function TechnoEconomicAnalysis() {
               <TabsTrigger value="savings">Savings</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="initial" className="bg-card rounded-xl border border-border p-6">
+            <TabsContent value="initial" className="bg-card rounded-2xl border border-border p-6 md:p-8">
               <div className="space-y-4">
                 {initialCosts.map((cost) => (
                   <div key={cost.item} className="flex items-center justify-between py-3 border-b border-border last:border-0">
@@ -111,7 +111,7 @@ export function TechnoEconomicAnalysis() {
               </div>
             </TabsContent>
             
-            <TabsContent value="ongoing" className="bg-card rounded-xl border border-border p-6">
+            <TabsContent value="ongoing" className="bg-card rounded-2xl border border-border p-6 md:p-8">
               <div className="space-y-4">
                 {ongoingCosts.map((cost) => (
                   <div key={cost.item} className="flex items-center justify-between py-3 border-b border-border last:border-0">
@@ -129,7 +129,7 @@ export function TechnoEconomicAnalysis() {
               </div>
             </TabsContent>
             
-            <TabsContent value="savings" className="bg-card rounded-xl border border-border p-6">
+            <TabsContent value="savings" className="bg-card rounded-2xl border border-border p-6 md:p-8">
               <div className="space-y-4">
                 {projectedSavings.map((saving) => (
                   <div key={saving.period} className="flex items-center justify-between py-3 border-b border-border last:border-0">
@@ -137,12 +137,12 @@ export function TechnoEconomicAnalysis() {
                       <div className="font-medium text-foreground">{saving.period}</div>
                       <div className="text-xs text-muted-foreground">Annual savings: {saving.savings}</div>
                     </div>
-                    <div className="text-lg font-semibold text-green-500">{saving.cumulative}</div>
+                    <div className="text-lg font-semibold text-success">{saving.cumulative}</div>
                   </div>
                 ))}
-                <div className="p-4 bg-green-500/10 rounded-lg border border-green-500/20">
-                  <div className="text-sm text-green-400">5-Year Net Benefit (after costs)</div>
-                  <div className="text-2xl font-bold text-green-500">€50,000 - €120,000+</div>
+                <div className="p-4 bg-success/10 rounded-xl border border-success/20">
+                  <div className="text-sm text-success">5-Year Net Benefit (after costs)</div>
+                  <div className="text-2xl font-bold text-success">€50,000 - €120,000+</div>
                 </div>
               </div>
             </TabsContent>
@@ -158,9 +158,9 @@ export function TechnoEconomicAnalysis() {
             {timeline.map((phase, index) => (
               <StaggerItem key={phase.phase}>
                 <div className="relative">
-                  <div className="p-5 rounded-xl bg-card border border-border h-full hover:border-primary/50 transition-colors duration-300">
+                  <div className="p-6 rounded-2xl bg-card border border-border h-full hover:border-primary/30 hover:shadow-md transition-all duration-300">
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
                         {index + 1}
                       </div>
                       <span className="text-xs text-muted-foreground">{phase.duration}</span>
@@ -169,7 +169,9 @@ export function TechnoEconomicAnalysis() {
                     <div className="text-sm text-muted-foreground">{phase.description}</div>
                   </div>
                   {index < timeline.length - 1 && (
-                    <div className="hidden md:block absolute top-1/2 -right-2 w-4 h-0.5 bg-border" />
+                    <div className="hidden md:flex absolute top-1/2 -right-2 w-4 items-center justify-center">
+                      <ArrowRight className="h-4 w-4 text-muted-foreground/50" />
+                    </div>
                   )}
                 </div>
               </StaggerItem>
@@ -177,7 +179,7 @@ export function TechnoEconomicAnalysis() {
           </StaggerContainer>
           <FadeInView delay={0.4}>
             <div className="flex items-center justify-center gap-2 mt-6 text-sm text-muted-foreground">
-              <CheckCircle2 className="w-4 h-4 text-green-500" />
+              <CheckCircle2 className="w-4 h-4 text-success" />
               <span>Total implementation: 9-18 weeks depending on facility complexity</span>
             </div>
           </FadeInView>
@@ -186,13 +188,13 @@ export function TechnoEconomicAnalysis() {
         {/* CTA Section */}
         <StaggerContainer className="flex flex-col sm:flex-row items-center justify-center gap-4" staggerDelay={0.1}>
           <StaggerItem>
-            <Button size="lg" variant="outline" className="gap-2">
+            <Button size="lg" variant="outline" className="rounded-full px-8 gap-2">
               <Download className="w-4 h-4" />
-              Download Full Analysis (PDF)
+              Download Full Analysis
             </Button>
           </StaggerItem>
           <StaggerItem>
-            <Button size="lg" className="gap-2">
+            <Button size="lg" className="rounded-full px-8 gap-2">
               <Calendar className="w-4 h-4" />
               Schedule Consultation
             </Button>
