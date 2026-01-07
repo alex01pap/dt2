@@ -21,7 +21,10 @@ export default function Home() {
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <GraduationCap className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-lg text-foreground">Platon Schools</span>
+            <div>
+              <span className="font-semibold text-foreground leading-tight block">Digital Twin</span>
+              <span className="text-xs text-muted-foreground">in Education</span>
+            </div>
           </div>
           <nav className="hidden md:flex items-center gap-8">
             <Link to="/resources" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">

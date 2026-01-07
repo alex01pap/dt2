@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, User, Settings, Search, Command, Building2 } from "lucide-react";
+import { LogOut, User, Settings, Search, Command, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -31,12 +31,12 @@ export function TopBar() {
               className="flex items-center gap-3 cursor-pointer"
               onClick={() => navigate("/dashboard")}
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
-                <Building2 className="h-4 w-4 text-white" />
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <GraduationCap className="h-4 w-4 text-primary-foreground" />
               </div>
               <div className="hidden sm:block">
                 <h1 className="font-semibold text-foreground leading-tight">Digital Twin</h1>
-                <p className="text-xs text-muted-foreground">Platform</p>
+                <p className="text-xs text-muted-foreground">in Education</p>
               </div>
             </div>
             
