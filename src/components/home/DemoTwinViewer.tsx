@@ -6,8 +6,8 @@ import {
   Billboard, 
   Environment, 
   ContactShadows, 
-  Grid, 
-  Float
+  Grid,
+  Sparkles
 } from '@react-three/drei';
 import { Suspense, useMemo, useState, useRef } from 'react';
 import * as THREE from 'three';
@@ -71,6 +71,7 @@ function DemoSensorMarker({ sensor }: { sensor: SensorData }) {
   const [hovered, setHovered] = useState(false);
   const meshRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
   
   const statusColor = sensor.status === 'critical' ? '#ef4444' : 
                       sensor.status === 'warning' ? '#f59e0b' : '#22c55e';
@@ -85,48 +86,73 @@ function DemoSensorMarker({ sensor }: { sensor: SensorData }) {
   }[sensor.type] || '📡';
 
   useFrame(({ clock }) => {
+    const time = clock.elapsedTime;
+    
+    // Smooth pulsing ring animation
     if (ringRef.current) {
-      const scale = 1 + Math.sin(clock.elapsedTime * 2) * 0.15;
-      ringRef.current.scale.set(scale, 1, scale);
+      const pulse = 1 + Math.sin(time * 1.5) * 0.1;
+      ringRef.current.scale.set(pulse, 1, pulse);
       (ringRef.current.material as THREE.MeshBasicMaterial).opacity = 
-        0.3 + Math.sin(clock.elapsedTime * 2) * 0.2;
+        0.25 + Math.sin(time * 1.5) * 0.15;
     }
-    if (meshRef.current && hovered) {
-      meshRef.current.rotation.y += 0.02;
+    
+    // Outer glow pulse
+    if (glowRef.current) {
+      const glowPulse = 1 + Math.sin(time * 1.2 + 0.5) * 0.15;
+      glowRef.current.scale.set(glowPulse, 1, glowPulse);
+      (glowRef.current.material as THREE.MeshBasicMaterial).opacity = 
+        0.1 + Math.sin(time * 1.2 + 0.5) * 0.08;
+    }
+    
+    // Smooth hover rotation
+    if (meshRef.current) {
+      if (hovered) {
+        meshRef.current.rotation.y += 0.015;
+      }
+      // Gentle floating bob
+      meshRef.current.position.y = 0.3 + Math.sin(time * 2) * 0.03;
     }
   });
 
   return (
     <group position={sensor.position}>
-      <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-        <ringGeometry args={[0.25, 0.35, 32]} />
-        <meshBasicMaterial color={statusColor} transparent opacity={0.4} side={THREE.DoubleSide} />
+      {/* Outer glow ring */}
+      <mesh ref={glowRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+        <ringGeometry args={[0.35, 0.5, 32]} />
+        <meshBasicMaterial color={statusColor} transparent opacity={0.15} side={THREE.DoubleSide} />
       </mesh>
       
-      <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
-        <mesh
-          ref={meshRef}
-          onPointerOver={() => setHovered(true)}
-          onPointerOut={() => setHovered(false)}
-          position={[0, 0.3, 0]}
-          scale={hovered ? 1.2 : 1}
-        >
-          <sphereGeometry args={[0.2, 32, 32]} />
-          <meshPhysicalMaterial 
-            color={statusColor} 
-            emissive={statusColor}
-            emissiveIntensity={hovered ? 0.5 : 0.2}
-            metalness={0.3}
-            roughness={0.4}
-            clearcoat={0.8}
-            clearcoatRoughness={0.2}
-          />
-        </mesh>
-      </Float>
-
-      <mesh position={[0, 0.15, 0]}>
-        <cylinderGeometry args={[0.015, 0.03, 0.3, 8]} />
-        <meshBasicMaterial color={statusColor} transparent opacity={0.7} />
+      {/* Inner pulsing ring */}
+      <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[0.2, 0.32, 32]} />
+        <meshBasicMaterial color={statusColor} transparent opacity={0.3} side={THREE.DoubleSide} />
+      </mesh>
+      
+      {/* Sensor orb */}
+      <mesh
+        ref={meshRef}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        position={[0, 0.3, 0]}
+        scale={hovered ? 1.15 : 1}
+      >
+        <sphereGeometry args={[0.18, 32, 32]} />
+        <meshPhysicalMaterial 
+          color={statusColor} 
+          emissive={statusColor}
+          emissiveIntensity={hovered ? 0.6 : 0.3}
+          metalness={0.2}
+          roughness={0.3}
+          clearcoat={1}
+          clearcoatRoughness={0.1}
+          envMapIntensity={1.5}
+        />
+      </mesh>
+      
+      {/* Connection stem */}
+      <mesh position={[0, 0.12, 0]}>
+        <cylinderGeometry args={[0.012, 0.025, 0.24, 8]} />
+        <meshStandardMaterial color={statusColor} transparent opacity={0.6} metalness={0.5} />
       </mesh>
       
       {hovered && (
@@ -244,13 +270,16 @@ export function DemoTwinViewer() {
         dpr={[1, 1.5]}
       >
         <Suspense fallback={<LoadingScene />}>
-          <Environment preset="city" />
-          <color attach="background" args={['#f8fafc']} />
+          <Environment preset="apartment" environmentIntensity={0.8} />
+          <color attach="background" args={['#f1f5f9']} />
           
-          <ambientLight intensity={0.6} />
+          {/* Improved lighting setup */}
+          <ambientLight intensity={0.5} />
+          
+          {/* Key light - warm sun */}
           <directionalLight 
-            position={[15, 20, 10]} 
-            intensity={1.2} 
+            position={[15, 25, 12]} 
+            intensity={1.5} 
             castShadow
             shadow-mapSize-width={2048}
             shadow-mapSize-height={2048}
@@ -259,30 +288,53 @@ export function DemoTwinViewer() {
             shadow-camera-right={20}
             shadow-camera-top={20}
             shadow-camera-bottom={-20}
+            shadow-bias={-0.0001}
+            color="#fff8f0"
           />
-          <directionalLight position={[-10, 10, -10]} intensity={0.4} color="#e2e8f0" />
-          <pointLight position={[0, 8, 0]} intensity={0.3} color="#fff5e6" />
+          
+          {/* Fill light - cool blue */}
+          <directionalLight position={[-12, 15, -8]} intensity={0.6} color="#e0f2fe" />
+          
+          {/* Rim light */}
+          <directionalLight position={[0, 10, -15]} intensity={0.4} color="#f0f9ff" />
+          
+          {/* Overhead soft light */}
+          <pointLight position={[0, 10, 0]} intensity={0.4} color="#fef3c7" distance={25} decay={2} />
+          
+          {/* Accent lights */}
+          <pointLight position={[8, 3, 8]} intensity={0.2} color="#22c55e" distance={12} decay={2} />
+          <pointLight position={[-8, 3, -8]} intensity={0.2} color="#3b82f6" distance={12} decay={2} />
+          
+          {/* Ambient sparkles for visual polish */}
+          <Sparkles 
+            count={50}
+            scale={20}
+            size={1.5}
+            speed={0.3}
+            opacity={0.4}
+            color="#94a3b8"
+          />
           
           <ContactShadows 
             position={[0, -0.01, 0]} 
-            opacity={0.3} 
-            scale={30} 
-            blur={2} 
-            far={10}
-            color="#1e293b"
+            opacity={0.4} 
+            scale={35} 
+            blur={2.5} 
+            far={12}
+            color="#0f172a"
           />
           
           <Grid 
             position={[0, -0.02, 0]}
             args={[50, 50]}
             cellSize={1}
-            cellThickness={0.5}
+            cellThickness={0.4}
             cellColor="#e2e8f0"
             sectionSize={5}
-            sectionThickness={1}
+            sectionThickness={0.8}
             sectionColor="#cbd5e1"
-            fadeDistance={40}
-            fadeStrength={1}
+            fadeDistance={35}
+            fadeStrength={1.2}
             followCamera={false}
             infiniteGrid={true}
           />
