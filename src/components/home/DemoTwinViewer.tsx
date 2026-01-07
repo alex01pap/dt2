@@ -130,8 +130,18 @@ function DemoSensorMarker({ sensor }: { sensor: SensorData }) {
       </mesh>
       
       {hovered && (
-        <Html position={[0, 0.8, 0]} center distanceFactor={15}>
-          <div className="bg-background border border-border rounded-xl shadow-lg p-3 min-w-[140px] animate-scale-in">
+        <Html 
+          position={[0, 0.8, 0]} 
+          center 
+          distanceFactor={8}
+          occlude
+          style={{
+            transition: 'all 0.2s ease-out',
+            transform: 'scale(1)',
+            pointerEvents: 'none',
+          }}
+        >
+          <div className="bg-background/95 backdrop-blur-sm border border-border rounded-xl shadow-xl p-3 min-w-[140px] animate-scale-in pointer-events-none">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-lg">{sensorIcon}</span>
               <span className="font-semibold text-sm text-foreground">{sensor.name}</span>
