@@ -56,11 +56,12 @@ export default function Author() {
       <main className="container max-w-screen-lg px-6 py-16">
         {/* Hero Section */}
         <FadeInView>
-        <img 
-          src="/_R4_3335.jpg" 
-          alt="Alexandros Papadopoulos"
-          className="w-32 h-32 rounded-full object-cover mx-auto mb-6 shadow-xl ring-4 ring-[#1a73e8]/20"
-        />
+          <div className="text-center mb-16">
+            <img 
+              src="/_R4_3335.jpg" 
+              alt="Alexandros Papadopoulos"
+              className="w-32 h-32 rounded-full object-cover mx-auto mb-6 shadow-xl ring-4 ring-[#1a73e8]/20"
+            />
 
             <h1 className="text-4xl md:text-5xl font-semibold text-[#202124] dark:text-white mb-3">
               Alexandros Papadopoulos
