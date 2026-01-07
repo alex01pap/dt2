@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { GraduationCap, Linkedin } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import authSealLogo from "@/assets/logos/auth-seal.png";
 import eceAuthLogo from "@/assets/logos/ece-auth-logo.png";
 import platonLogo from "@/assets/logos/platon-schools-logo.png";
@@ -62,9 +63,9 @@ export function AcademicFooter() {
             </a>
           </div>
 
-          {/* Navigation and copyright */}
+          {/* Navigation, theme toggle, and copyright */}
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-sm">
-            <div className="flex gap-6">
+            <div className="flex items-center gap-6">
               <Link to="/resources" className="text-[#5f6368] hover:text-[#202124] transition-colors">
                 Case Study
               </Link>
@@ -80,6 +81,7 @@ export function AcademicFooter() {
                 <Linkedin className="w-3.5 h-3.5" />
                 LinkedIn
               </a>
+              <ThemeToggle />
             </div>
             <p className="text-[#5f6368]">
               © 2024 Diploma Thesis. All rights reserved.
