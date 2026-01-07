@@ -18,7 +18,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { AcademicFooter } from "@/components/layout/AcademicFooter";
 import authSealLogo from "@/assets/logos/auth-seal.png";
 import eceAuthLogo from "@/assets/logos/ece-auth-logo.png";
-import profilePhoto from "@_R4_3335.jpg";
 
 const skills = [
   { name: "IoT & Embedded Systems", icon: Cpu },
@@ -58,7 +57,7 @@ export default function Author() {
         {/* Hero Section */}
         <FadeInView>
         <img 
-          src={_R4_3335.jpg} 
+          src="/_R4_3335.jpg" 
           alt="Alexandros Papadopoulos"
           className="w-32 h-32 rounded-full object-cover mx-auto mb-6 shadow-xl ring-4 ring-[#1a73e8]/20"
         />
