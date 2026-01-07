@@ -18,7 +18,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { AcademicFooter } from "@/components/layout/AcademicFooter";
 import authSealLogo from "@/assets/logos/auth-seal.png";
 import eceAuthLogo from "@/assets/logos/ece-auth-logo.png";
-import profilePhoto from "@/_R4_3335.jpg";
+import profilePhoto from "@_R4_3335.jpg";
 
 const skills = [
   { name: "IoT & Embedded Systems", icon: Cpu },
