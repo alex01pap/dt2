@@ -1,17 +1,17 @@
 import { Link } from "react-router-dom";
-import { 
-  GraduationCap, 
-  Linkedin, 
-  Mail, 
-  MapPin, 
-  Code, 
-  Database, 
-  Cpu, 
+import {
+  GraduationCap,
+  Linkedin,
+  Mail,
+  MapPin,
+  Code,
+  Database,
+  Cpu,
   Globe,
   BookOpen,
   Award,
   ExternalLink,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 import { FadeInView, StaggerContainer, StaggerItem } from "@/components/ui/scroll-animations";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -34,11 +34,14 @@ export default function Author() {
       {/* Header */}
       <header className="border-b border-[#dadce0] dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="container max-w-screen-xl px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="inline-flex items-center gap-2 text-[#5f6368] dark:text-gray-400 hover:text-[#202124] dark:hover:text-white transition-colors">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-[#5f6368] dark:text-gray-400 hover:text-[#202124] dark:hover:text-white transition-colors"
+          >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">{language === "el" ? "Πίσω" : "Back"}</span>
           </Link>
-          
+
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1a73e8] to-[#4285f4] flex items-center justify-center">
               <GraduationCap className="h-4 w-4 text-white" />
@@ -53,26 +56,27 @@ export default function Author() {
       <main className="container max-w-screen-lg px-6 py-16">
         {/* Hero Section */}
         <FadeInView>
-          <div className="text-center mb-16">
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#1a73e8] to-[#4285f4] flex items-center justify-center mx-auto mb-6 shadow-xl">
-              <span className="text-5xl font-bold text-white">AP</span>
-            </div>
-            
+        <img 
+          src={_R4_3335.jpg} 
+          alt="Alexandros Papadopoulos"
+          className="w-32 h-32 rounded-full object-cover mx-auto mb-6 shadow-xl ring-4 ring-[#1a73e8]/20"
+        />
+
             <h1 className="text-4xl md:text-5xl font-semibold text-[#202124] dark:text-white mb-3">
               Alexandros Papadopoulos
             </h1>
-            
+
             <p className="text-xl text-[#5f6368] dark:text-gray-400 mb-4">
-              {language === "el" 
-                ? "Φοιτητής Ηλεκτρολόγων Μηχανικών & Μηχανικών Υπολογιστών" 
+              {language === "el"
+                ? "Φοιτητής Ηλεκτρολόγων Μηχανικών & Μηχανικών Υπολογιστών"
                 : "Electrical & Computer Engineering Student"}
             </p>
-            
+
             <div className="flex items-center justify-center gap-2 text-[#5f6368] dark:text-gray-500 mb-6">
               <MapPin className="w-4 h-4" />
               <span>{language === "el" ? "Θεσσαλονίκη, Ελλάδα" : "Thessaloniki, Greece"}</span>
             </div>
-            
+
             <a
               href="https://www.linkedin.com/in/alex01pap/"
               target="_blank"
@@ -96,7 +100,7 @@ export default function Author() {
                 {language === "el" ? "Εκπαίδευση" : "Education"}
               </h2>
             </div>
-            
+
             <div className="bg-[#f8f9fa] dark:bg-gray-800 rounded-2xl border border-[#dadce0] dark:border-gray-700 p-8">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex-shrink-0">
@@ -104,8 +108,8 @@ export default function Author() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-[#202124] dark:text-white mb-1">
-                    {language === "el" 
-                      ? "Τμήμα Ηλεκτρολόγων Μηχανικών & Μηχανικών Υπολογιστών" 
+                    {language === "el"
+                      ? "Τμήμα Ηλεκτρολόγων Μηχανικών & Μηχανικών Υπολογιστών"
                       : "Department of Electrical & Computer Engineering"}
                   </h3>
                   <p className="text-[#1a73e8] font-medium mb-2">
@@ -114,15 +118,15 @@ export default function Author() {
                   <div className="flex items-center gap-2 mb-3">
                     <img src={authSealLogo} alt="AUTH" className="h-6 w-auto dark:brightness-110" />
                     <span className="text-[#5f6368] dark:text-gray-400">
-                      {language === "el" 
-                        ? "Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης" 
+                      {language === "el"
+                        ? "Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης"
                         : "Aristotle University of Thessaloniki"}
                     </span>
                   </div>
                   <p className="text-sm text-[#5f6368] dark:text-gray-500">
-                    {language === "el" 
-                      ? "Διπλωματική Εργασία: «Ψηφιακό Δίδυμο στην Εκπαίδευση»" 
-                      : "Diploma Thesis: \"Digital Twin in Education\""}
+                    {language === "el"
+                      ? "Διπλωματική Εργασία: «Ψηφιακό Δίδυμο στην Εκπαίδευση»"
+                      : 'Diploma Thesis: "Digital Twin in Education"'}
                   </p>
                 </div>
               </div>
@@ -141,20 +145,20 @@ export default function Author() {
                 {language === "el" ? "Διπλωματική Εργασία" : "Thesis Project"}
               </h2>
             </div>
-            
+
             <div className="bg-gradient-to-br from-[#1a73e8]/5 to-[#4285f4]/5 dark:from-[#1a73e8]/10 dark:to-[#4285f4]/10 rounded-2xl border border-[#1a73e8]/20 p-8">
               <h3 className="text-2xl font-semibold text-[#202124] dark:text-white mb-3">
                 {language === "el" ? "Ψηφιακό Δίδυμο στην Εκπαίδευση" : "Digital Twin in Education"}
               </h3>
               <p className="text-[#5f6368] dark:text-gray-400 mb-6 leading-relaxed">
-                {language === "el" 
-                  ? "Ανάπτυξη ολοκληρωμένης πλατφόρμας Ψηφιακού Διδύμου για εκπαιδευτικές εγκαταστάσεις, με ενσωμάτωση αισθητήρων IoT, παρακολούθηση σε πραγματικό χρόνο και τρισδιάστατη απεικόνιση. Η μελέτη περίπτωσης πραγματοποιήθηκε στα Εκπαιδευτήρια Πλάτων στην Κατερίνη." 
+                {language === "el"
+                  ? "Ανάπτυξη ολοκληρωμένης πλατφόρμας Ψηφιακού Διδύμου για εκπαιδευτικές εγκαταστάσεις, με ενσωμάτωση αισθητήρων IoT, παρακολούθηση σε πραγματικό χρόνο και τρισδιάστατη απεικόνιση. Η μελέτη περίπτωσης πραγματοποιήθηκε στα Εκπαιδευτήρια Πλάτων στην Κατερίνη."
                   : "Development of a comprehensive Digital Twin platform for educational facilities, integrating IoT sensors, real-time monitoring, and 3D visualization. The case study was conducted at Platon Schools in Katerini, Greece."}
               </p>
-              
+
               <div className="flex flex-wrap gap-3 mb-6">
                 {["React", "TypeScript", "Supabase", "Three.js", "openHAB", "IoT"].map((tech) => (
-                  <span 
+                  <span
                     key={tech}
                     className="px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full text-sm text-[#5f6368] dark:text-gray-400 border border-[#dadce0] dark:border-gray-700"
                   >
@@ -162,7 +166,7 @@ export default function Author() {
                   </span>
                 ))}
               </div>
-              
+
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/resources"
@@ -193,7 +197,7 @@ export default function Author() {
                 {language === "el" ? "Δεξιότητες & Εξειδίκευση" : "Skills & Expertise"}
               </h2>
             </div>
-            
+
             <StaggerContainer className="grid sm:grid-cols-2 gap-4">
               {skills.map((skill) => (
                 <StaggerItem key={skill.name}>
@@ -220,11 +224,11 @@ export default function Author() {
                 {language === "el" ? "Επικοινωνία" : "Contact"}
               </h2>
             </div>
-            
+
             <div className="bg-[#f8f9fa] dark:bg-gray-800 rounded-2xl border border-[#dadce0] dark:border-gray-700 p-8 text-center">
               <p className="text-[#5f6368] dark:text-gray-400 mb-6">
-                {language === "el" 
-                  ? "Για επαγγελματική επικοινωνία ή ερωτήσεις σχετικά με την έρευνα, μη διστάσετε να επικοινωνήσετε μέσω LinkedIn." 
+                {language === "el"
+                  ? "Για επαγγελματική επικοινωνία ή ερωτήσεις σχετικά με την έρευνα, μη διστάσετε να επικοινωνήσετε μέσω LinkedIn."
                   : "For professional inquiries or questions about the research, feel free to reach out via LinkedIn."}
               </p>
               <a
