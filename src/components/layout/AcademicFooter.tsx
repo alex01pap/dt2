@@ -29,22 +29,19 @@ export function AcademicFooter() {
                 </span>
               </div>
             </Link>
-            
+
             {/* Author & Supervisor */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm text-[#5f6368] dark:text-gray-400 mt-4">
               <span>
                 {t("footer.by")}{" "}
-                <Link 
-                  to="/author"
-                  className="text-[#1a73e8] hover:underline font-medium"
-                >
+                <Link to="/author" className="text-[#1a73e8] hover:underline font-medium">
                   Alexandros Papadopoulos
                 </Link>
               </span>
               <span className="hidden sm:inline">•</span>
               <span>
                 {t("footer.supervisedBy")}{" "}
-                <a 
+                <a
                   href="https://ece.auth.gr/staff/alkiviadis-chatzopoulos-2/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -54,37 +51,35 @@ export function AcademicFooter() {
                 </a>
               </span>
             </div>
-            
+
             {/* Department & Division */}
             <p className="text-xs text-[#5f6368] dark:text-gray-500 mt-2">
               {t("thesis.department")} • {t("thesis.division")}
             </p>
-            <p className="text-xs text-[#5f6368] dark:text-gray-500">
-              {t("thesis.university")}
-            </p>
+            <p className="text-xs text-[#5f6368] dark:text-gray-500">{t("thesis.university")}</p>
           </div>
 
           {/* Institution logos */}
           <div className="flex items-center justify-center gap-8 flex-wrap">
-            <a 
-              href="https://www.auth.gr" 
-              target="_blank" 
+            <a
+              href="https://www.auth.gr"
+              target="_blank"
               rel="noopener noreferrer"
               className="opacity-70 hover:opacity-100 transition-opacity"
             >
               <img src={authSealLogo} alt="AUTH" className="h-10 w-auto dark:brightness-110" />
             </a>
-            <a 
-              href="https://ece.auth.gr" 
-              target="_blank" 
+            <a
+              href="https://ece.auth.gr"
+              target="_blank"
               rel="noopener noreferrer"
               className="opacity-70 hover:opacity-100 transition-opacity"
             >
               <img src={eceAuthLogo} alt="ECE AUTH" className="h-10 w-auto dark:brightness-110" />
             </a>
-            <a 
-              href="https://platon.edu.gr" 
-              target="_blank" 
+            <a
+              href="https://platon.edu.gr"
+              target="_blank"
               rel="noopener noreferrer"
               className="opacity-70 hover:opacity-100 transition-opacity"
             >
@@ -94,18 +89,27 @@ export function AcademicFooter() {
 
           {/* Navigation */}
           <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm">
-            <Link to="/resources" className="text-[#5f6368] hover:text-[#202124] dark:text-gray-400 dark:hover:text-white transition-colors">
+            <Link
+              to="/resources"
+              className="text-[#5f6368] hover:text-[#202124] dark:text-gray-400 dark:hover:text-white transition-colors"
+            >
               {t("nav.caseStudy")}
             </Link>
-            <Link to="/architecture" className="text-[#5f6368] hover:text-[#202124] dark:text-gray-400 dark:hover:text-white transition-colors">
+            <Link
+              to="/architecture"
+              className="text-[#5f6368] hover:text-[#202124] dark:text-gray-400 dark:hover:text-white transition-colors"
+            >
               {t("nav.architecture")}
             </Link>
-            <Link to="/author" className="text-[#5f6368] hover:text-[#202124] dark:text-gray-400 dark:hover:text-white transition-colors">
+            <Link
+              to="/author"
+              className="text-[#5f6368] hover:text-[#202124] dark:text-gray-400 dark:hover:text-white transition-colors"
+            >
               {t("nav.about")}
             </Link>
-            
+
             {/* Thesis Download - Placeholder */}
-            <button 
+            <button
               disabled
               className="inline-flex items-center gap-1.5 text-[#5f6368] dark:text-gray-500 cursor-not-allowed opacity-60"
               title={t("footer.comingSoon")}
@@ -120,9 +124,9 @@ export function AcademicFooter() {
 
           {/* LinkedIn & Toggles */}
           <div className="flex items-center gap-4">
-            <a 
-              href="https://www.linkedin.com/in/alex01pap/" 
-              target="_blank" 
+            <a
+              href="https://www.linkedin.com/in/alex01pap/"
+              target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 bg-[#0077B5] text-white rounded-full hover:bg-[#006399] transition-colors text-sm font-medium"
             >
@@ -138,7 +142,7 @@ export function AcademicFooter() {
           {/* Copyright */}
           <div className="text-center text-xs text-[#5f6368] dark:text-gray-500 pt-4 border-t border-[#dadce0] dark:border-gray-700 w-full">
             <p>
-              {t("footer.diplomaThesis")} • {t("footer.presented")} 2025 • {t("thesis.university")}
+              {t("footer.diplomaThesis")} • {t("footer.presenting")} 2026 • {t("thesis.university")}
             </p>
             <p className="mt-1">
               © {new Date().getFullYear()} Alexandros Papadopoulos. {t("footer.allRights")}.
