@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -15,13 +16,15 @@ import Profile from "./pages/Profile";
 import Architecture from "./pages/Architecture";
 import Resources from "./pages/Resources";
 import ClientDemo from "./pages/ClientDemo";
+import Author from "./pages/Author";
 import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="dark" storageKey="enterprise-theme">
-      <TooltipProvider>
+      <LanguageProvider>
+        <TooltipProvider>
         <AuthProvider>
           <Toaster />
           <Sonner />
@@ -61,6 +64,7 @@ const App = () => (
               <Route path="/architecture" element={<Architecture />} />
               <Route path="/resources" element={<Resources />} />
               <Route path="/client-demo" element={<ClientDemo />} />
+              <Route path="/author" element={<Author />} />
               {/* Redirects for old routes */}
               <Route path="/admin" element={<Navigate to="/dashboard" replace />} />
               <Route path="/sensors" element={<Navigate to="/dashboard" replace />} />
@@ -75,6 +79,7 @@ const App = () => (
           </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>
+      </LanguageProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
