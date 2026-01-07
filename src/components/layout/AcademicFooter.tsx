@@ -142,7 +142,7 @@ export function AcademicFooter() {
           {/* Copyright */}
           <div className="text-center text-xs text-[#5f6368] dark:text-gray-500 pt-4 border-t border-[#dadce0] dark:border-gray-700 w-full">
             <p>
-              {t("footer.diplomaThesis")} • {t("footer.presenting")} 2026 • {t("thesis.university")}
+              {t("footer.diplomaThesis")} • {t("Presenting")} 2026 • {t("thesis.university")}
             </p>
             <p className="mt-1">
               © {new Date().getFullYear()} Alexandros Papadopoulos. {t("footer.allRights")}.
