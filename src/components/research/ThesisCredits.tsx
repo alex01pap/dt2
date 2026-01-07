@@ -86,45 +86,82 @@ export function ThesisCredits() {
           ))}
         </StaggerContainer>
 
-        {/* Author Section */}
+        {/* Author & Supervisor Section */}
         <FadeInView delay={0.2}>
-          <div className="bg-[#f8f9fa] rounded-2xl border border-[#dadce0] p-8 max-w-2xl mx-auto text-center">
-            <div className="w-16 h-16 rounded-full bg-[#1a73e8]/10 flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl font-bold text-[#1a73e8]">AP</span>
-            </div>
-            
-            <h3 className="text-xl font-semibold text-[#202124] mb-1">
-              Alexandros Papadopoulos
-            </h3>
-            <p className="text-[#5f6368] italic mb-2">
-              "Digital Twin in Education"
-            </p>
-            <p className="text-sm text-[#5f6368] mb-4">
-              Department of Electrical & Computer Engineering<br />
-              Aristotle University of Thessaloniki, 2024
-            </p>
-            
-            <div className="flex items-center justify-center gap-2 text-sm text-[#5f6368] mb-4">
-              <span>Case Study Location:</span>
-              <a 
-                href="https://platon.edu.gr" 
-                target="_blank" 
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* Author Card */}
+            <div className="bg-[#f8f9fa] rounded-2xl border border-[#dadce0] p-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-[#1a73e8]/10 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-[#1a73e8]">AP</span>
+              </div>
+              
+              <p className="text-xs font-medium text-[#1a73e8] uppercase tracking-wide mb-2">
+                Author
+              </p>
+              <h3 className="text-xl font-semibold text-[#202124] mb-1">
+                Alexandros Papadopoulos
+              </h3>
+              <p className="text-[#5f6368] italic mb-2">
+                "Digital Twin in Education"
+              </p>
+              <p className="text-sm text-[#5f6368] mb-4">
+                Department of Electrical & Computer Engineering<br />
+                Aristotle University of Thessaloniki, 2024
+              </p>
+              
+              <div className="flex items-center justify-center gap-2 text-sm text-[#5f6368] mb-4">
+                <span>Case Study:</span>
+                <a 
+                  href="https://platon.edu.gr" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[#1a73e8] hover:underline"
+                >
+                  Platon Schools, Katerini
+                </a>
+              </div>
+              
+              <a
+                href="https://www.linkedin.com/in/alex01pap/"
+                target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#1a73e8] hover:underline"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0077B5] text-white rounded-full hover:bg-[#006399] transition-colors text-sm font-medium"
               >
-                Platon Schools, Katerini, Greece
+                <Linkedin className="w-4 h-4" />
+                Connect on LinkedIn
               </a>
             </div>
-            
-            <a
-              href="https://www.linkedin.com/in/alex01pap/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0077B5] text-white rounded-full hover:bg-[#006399] transition-colors text-sm font-medium"
-            >
-              <Linkedin className="w-4 h-4" />
-              Connect on LinkedIn
-            </a>
+
+            {/* Supervisor Card */}
+            <div className="bg-[#f8f9fa] rounded-2xl border border-[#dadce0] p-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-[#34a853]/10 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-[#34a853]">AC</span>
+              </div>
+              
+              <p className="text-xs font-medium text-[#34a853] uppercase tracking-wide mb-2">
+                Supervisor
+              </p>
+              <h3 className="text-xl font-semibold text-[#202124] mb-1">
+                Alkiviadis Chatzopoulos
+              </h3>
+              <p className="text-[#5f6368] mb-2">
+                Associate Professor
+              </p>
+              <p className="text-sm text-[#5f6368] mb-4">
+                Department of Electrical & Computer Engineering<br />
+                Aristotle University of Thessaloniki
+              </p>
+              
+              <a
+                href="https://ece.auth.gr/staff/alkiviadis-chatzopoulos-2/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00457C] text-white rounded-full hover:bg-[#003366] transition-colors text-sm font-medium"
+              >
+                <ExternalLink className="w-4 h-4" />
+                University Profile
+              </a>
+            </div>
           </div>
         </FadeInView>
       </div>
