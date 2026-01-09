@@ -8,9 +8,8 @@ interface DemoPasswordGateProps {
   onSuccess: () => void;
 }
 
-// The password is validated against the DEMO_PASSWORD environment variable
-// set in Supabase Edge Functions secrets
-const DEMO_PASSWORD = "platon2024"; // Fallback for development
+// Password is validated server-side only via the Supabase Edge Function
+// No client-side fallback to prevent credential exposure
 
 export function DemoPasswordGate({ onSuccess }: DemoPasswordGateProps) {
   const [password, setPassword] = useState("");
@@ -24,7 +23,7 @@ export function DemoPasswordGate({ onSuccess }: DemoPasswordGateProps) {
     setIsLoading(true);
 
     try {
-      // Validate password against edge function
+      // Validate password against edge function (server-side only)
       const response = await fetch(
         "https://vjrfdglwtpdtfkiluwah.supabase.co/functions/v1/validate-demo-password",
         {
@@ -36,9 +35,15 @@ export function DemoPasswordGate({ onSuccess }: DemoPasswordGateProps) {
         }
       );
 
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        setError(data.error || "Unable to verify password. Please try again.");
+        return;
+      }
+
       const data = await response.json();
 
-      if (response.ok && data.valid) {
+      if (data.valid) {
         // Store in session storage so they don't have to re-enter
         sessionStorage.setItem("demo_authenticated", "true");
         onSuccess();
@@ -46,13 +51,8 @@ export function DemoPasswordGate({ onSuccess }: DemoPasswordGateProps) {
         setError("Invalid password. Please try again.");
       }
     } catch {
-      // Fallback to local validation if edge function fails
-      if (password === DEMO_PASSWORD) {
-        sessionStorage.setItem("demo_authenticated", "true");
-        onSuccess();
-      } else {
-        setError("Invalid password. Please try again.");
-      }
+      // Network error - no fallback, require server validation
+      setError("Unable to connect to authentication service. Please try again later.");
     } finally {
       setIsLoading(false);
     }
