@@ -11,6 +11,7 @@ import { LessonsLearned } from "@/components/research/LessonsLearned";
 import { FutureWork } from "@/components/research/FutureWork";
 import { ThesisCredits } from "@/components/research/ThesisCredits";
 import { AcademicFooter } from "@/components/layout/AcademicFooter";
+import { StickyPillNav } from "@/components/layout/StickyPillNav";
 import { Link } from "react-router-dom";
 
 export default function Resources() {
@@ -133,31 +134,22 @@ export default function Resources() {
             </div>
           </FadeInView>
 
-          {/* Floating Pill Navigation */}
-          <FadeInView delay={0.2}>
-            <div className="flex justify-center mt-10">
-              <div className="inline-flex items-center gap-1 bg-[#f8f9fa] rounded-full p-1.5 border border-[#dadce0] flex-wrap justify-center">
-                {["Research Findings", "Comparison", "Timeline", "Lessons", "Future Work", "Technology", "References", "About"].map((item, index) => (
-                  <button
-                    key={item}
-                    onClick={() => {
-                      const sectionId = item.toLowerCase().replace(" ", "-");
-                      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className={`px-4 py-2 text-sm rounded-full transition-all ${
-                      index === 0
-                        ? "bg-white text-[#202124] shadow-sm"
-                        : "text-[#5f6368] hover:text-[#202124]"
-                    }`}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </FadeInView>
         </div>
       </section>
+
+      {/* Sticky Section Navigation */}
+      <StickyPillNav
+        items={[
+          { label: "Research", sectionId: "research-findings" },
+          { label: "Comparison", sectionId: "comparison" },
+          { label: "Timeline", sectionId: "timeline" },
+          { label: "Lessons", sectionId: "lessons" },
+          { label: "Future", sectionId: "future-work" },
+          { label: "Tech", sectionId: "technology" },
+          { label: "References", sectionId: "references" },
+          { label: "About", sectionId: "about" },
+        ]}
+      />
 
       {/* Research Findings Section */}
       <section id="research-findings" className="px-6 bg-[#f8f9fa]">

@@ -36,6 +36,7 @@ import { IntegrationArchitecture } from "@/components/ui/integration-architectur
 import { DeploymentArchitecture } from "@/components/ui/deployment-architecture";
 import { FadeInView, StaggerContainer, StaggerItem } from "@/components/ui/scroll-animations";
 import { AcademicFooter } from "@/components/layout/AcademicFooter";
+import { StickyPillNav } from "@/components/layout/StickyPillNav";
 
 const principles = [
   {
@@ -203,31 +204,18 @@ export default function Architecture() {
             </div>
           </FadeInView>
 
-          {/* Floating Pill Navigation */}
-          <FadeInView delay={0.3}>
-            <div className="flex justify-center mt-10">
-              <div className="inline-flex items-center gap-1 bg-[#f8f9fa] rounded-full p-1.5 border border-[#dadce0]">
-                {["Principles", "Technical", "Technology", "Contributions"].map((item, index) => (
-                  <button
-                    key={item}
-                    onClick={() => {
-                      const sectionId = item.toLowerCase();
-                      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className={`px-4 py-2 text-sm rounded-full transition-all ${
-                      index === 0
-                        ? "bg-white text-[#202124] shadow-sm"
-                        : "text-[#5f6368] hover:text-[#202124]"
-                    }`}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </FadeInView>
         </div>
       </section>
+
+      {/* Sticky Section Navigation */}
+      <StickyPillNav
+        items={[
+          { label: "Principles", sectionId: "principles" },
+          { label: "Technical", sectionId: "technical" },
+          { label: "Technology", sectionId: "technology" },
+          { label: "Contributions", sectionId: "contributions" },
+        ]}
+      />
 
       {/* Core Principles */}
       <section id="principles" className="px-6 py-16 bg-[#f8f9fa]">
