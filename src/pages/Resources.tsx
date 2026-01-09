@@ -12,6 +12,7 @@ import { FutureWork } from "@/components/research/FutureWork";
 import { ThesisCredits } from "@/components/research/ThesisCredits";
 import { AcademicFooter } from "@/components/layout/AcademicFooter";
 import { StickyPillNav } from "@/components/layout/StickyPillNav";
+import { CTABanner } from "@/components/enterprise/CTABanner";
 import { Link } from "react-router-dom";
 
 export default function Resources() {
@@ -281,44 +282,14 @@ export default function Resources() {
       <ThesisCredits />
 
       {/* CTA Banner */}
-      <section className="px-6 py-16">
-        <div className="max-w-4xl mx-auto">
-          <FadeInView>
-            <div className="bg-[#1a73e8] rounded-2xl p-8 md:p-12 text-center relative overflow-hidden">
-              {/* Decorative elements */}
-              <div className="absolute top-4 left-8 w-16 h-16 border-2 border-white/20 rounded-full" />
-              <div className="absolute bottom-4 right-8 w-12 h-12 bg-white/10 rounded-lg rotate-12" />
-              
-              <h3 className="text-2xl md:text-3xl font-semibold text-white mb-4">
-                Explore the live platform
-              </h3>
-              <p className="text-white/80 mb-6 max-w-xl mx-auto">
-                See the digital twin in action with real-time sensor data and interactive 3D visualization
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link to="/dashboard">
-                  <Button 
-                    size="lg" 
-                    className="bg-white text-[#1a73e8] hover:bg-white/90"
-                  >
-                    View Dashboard
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-                <Link to="/architecture">
-                  <Button 
-                    size="lg" 
-                    variant="outline"
-                    className="border-white/30 text-white hover:bg-white/10"
-                  >
-                    System Architecture
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </FadeInView>
-        </div>
-      </section>
+      <CTABanner
+        title="Explore the live platform"
+        description="See the digital twin in action with real-time sensor data and interactive 3D visualization."
+        primaryAction={{
+          label: "View Dashboard",
+          href: "/dashboard"
+        }}
+      />
 
       {/* Footer */}
       <AcademicFooter />
