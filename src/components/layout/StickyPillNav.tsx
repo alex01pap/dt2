@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -7,17 +10,22 @@ interface NavItem {
   sectionId: string;
 }
 
+interface CTAAction {
+  label: string;
+  href: string;
+}
+
 interface StickyPillNavProps {
   items: NavItem[];
+  cta?: CTAAction;
   className?: string;
 }
 
-export function StickyPillNav({ items, className }: StickyPillNavProps) {
+export function StickyPillNav({ items, cta, className }: StickyPillNavProps) {
   const [activeSection, setActiveSection] = useState(items[0]?.sectionId || "");
   const [isSticky, setIsSticky] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(true);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const lastScrollY = useRef(0);
 
   // Scroll-spy: track which section is in view
   useEffect(() => {
@@ -47,7 +55,7 @@ export function StickyPillNav({ items, className }: StickyPillNavProps) {
     };
   }, [items]);
 
-  // Detect sticky state
+  // Detect sticky state AND header visibility based on sentinel position
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
@@ -55,52 +63,31 @@ export function StickyPillNav({ items, className }: StickyPillNavProps) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          setIsSticky(!entry.isIntersecting);
+          const isPastPill = !entry.isIntersecting;
+          setIsSticky(isPastPill);
+          // Hide header when we've scrolled past the pill area
+          setHeaderVisible(!isPastPill);
         });
       },
-      { threshold: 0 }
+      { threshold: 0, rootMargin: "-64px 0px 0px 0px" } // Account for header height
     );
 
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, []);
 
-  // Header hide/show on scroll direction
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const scrollingDown = currentScrollY > lastScrollY.current;
-      const scrollDelta = Math.abs(currentScrollY - lastScrollY.current);
-
-      // Only trigger if scroll delta is significant (avoid micro-scrolls)
-      if (scrollDelta > 5) {
-        if (scrollingDown && currentScrollY > 100) {
-          setHeaderVisible(false);
-        } else {
-          setHeaderVisible(true);
-        }
-        lastScrollY.current = currentScrollY;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Dispatch custom event for header visibility (pages can listen to this)
+  // Apply header visibility to document
   useEffect(() => {
     document.documentElement.setAttribute(
       "data-header-visible",
       headerVisible ? "true" : "false"
     );
-    // Also dispatch event for components that need to react
-    window.dispatchEvent(new CustomEvent("header-visibility", { detail: { visible: headerVisible } }));
   }, [headerVisible]);
 
   const handleClick = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (section) {
-      const offset = 100; // Account for sticky nav height + spacing
+      const offset = 100;
       const top = section.offsetTop - offset;
       window.scrollTo({ top, behavior: "smooth" });
     }
@@ -119,11 +106,7 @@ export function StickyPillNav({ items, className }: StickyPillNavProps) {
         <AnimatePresence>
           <motion.nav
             initial={{ opacity: 0, y: -10 }}
-            animate={{ 
-              opacity: 1, 
-              y: 0,
-              scale: isSticky ? 1 : 1,
-            }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className={cn(
               "inline-flex items-center gap-1 rounded-full p-1.5 transition-all duration-300",
@@ -132,7 +115,7 @@ export function StickyPillNav({ items, className }: StickyPillNavProps) {
             )}
             style={{ width: "fit-content" }}
           >
-            {/* Desktop: Full labels */}
+            {/* Desktop: Full labels + CTA */}
             <div className="hidden sm:flex items-center gap-1">
               {items.map((item) => {
                 const isActive = activeSection === item.sectionId;
@@ -158,9 +141,25 @@ export function StickyPillNav({ items, className }: StickyPillNavProps) {
                   </button>
                 );
               })}
+              
+              {/* CTA Button inside pill */}
+              {cta && (
+                <>
+                  <div className="w-px h-6 bg-border mx-2" />
+                  <Link to={cta.href}>
+                    <Button 
+                      size="sm" 
+                      className="rounded-full px-4 h-9 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+                    >
+                      {cta.label}
+                      <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
-            {/* Mobile: Horizontal scrollable tabs */}
+            {/* Mobile: Horizontal scrollable tabs + CTA */}
             <div className="flex sm:hidden items-center gap-1 overflow-x-auto no-scrollbar max-w-[85vw] px-1">
               {items.map((item) => {
                 const isActive = activeSection === item.sectionId;
@@ -179,6 +178,19 @@ export function StickyPillNav({ items, className }: StickyPillNavProps) {
                   </button>
                 );
               })}
+              
+              {/* Mobile CTA */}
+              {cta && (
+                <Link to={cta.href} className="flex-shrink-0 ml-1">
+                  <Button 
+                    size="sm" 
+                    className="rounded-full px-3 h-8 text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+                  >
+                    {cta.label}
+                    <ArrowRight className="w-3 h-3 ml-1" />
+                  </Button>
+                </Link>
+              )}
             </div>
           </motion.nav>
         </AnimatePresence>

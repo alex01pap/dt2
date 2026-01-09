@@ -150,6 +150,7 @@ export default function Resources() {
           { label: "References", sectionId: "references" },
           { label: "About", sectionId: "about" },
         ]}
+        cta={{ label: "View Dashboard", href: "/dashboard" }}
       />
 
       {/* Research Findings Section */}
