@@ -216,6 +216,7 @@ export default function Architecture() {
           { label: "Technology", sectionId: "technology" },
           { label: "Contributions", sectionId: "contributions" },
         ]}
+        cta={{ label: "View Case Study", href: "/resources" }}
       />
 
       {/* Core Principles */}
