@@ -135,7 +135,7 @@ export default function Architecture() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full bg-white border-b border-[#dadce0]">
+      <header className="page-header sticky top-0 z-50 w-full bg-white border-b border-[#dadce0]">
         <div className="container flex h-16 max-w-screen-xl items-center justify-between px-6">
           <Link to="/" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-[#1a73e8] flex items-center justify-center">

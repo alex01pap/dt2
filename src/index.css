@@ -227,4 +227,17 @@
   .bg-section-alt {
     background: hsl(var(--muted) / 0.5);
   }
+
+  /* Hide/show header on scroll */
+  [data-header-visible="true"] .page-header {
+    transform: translateY(0);
+  }
+  
+  [data-header-visible="false"] .page-header {
+    transform: translateY(-100%);
+  }
+  
+  .page-header {
+    transition: transform 0.3s ease;
+  }
 }
