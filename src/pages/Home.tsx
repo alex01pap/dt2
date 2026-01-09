@@ -10,6 +10,7 @@ import { TrustSection } from "@/components/home/TrustSection";
 import { ContactForm } from "@/components/home/ContactForm";
 import { FadeInView } from "@/components/ui/scroll-animations";
 import { AcademicFooter } from "@/components/layout/AcademicFooter";
+import heroSmartSchool from "@/assets/hero-smart-school.jpg";
 
 export default function Home() {
   return (
@@ -95,8 +96,8 @@ export default function Home() {
           <FadeInView direction="right" className="relative">
             <div className="relative rounded-2xl overflow-hidden border border-border bg-muted/30">
               <img 
-                src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80" 
-                alt="Modern school building with smart technology"
+                src={heroSmartSchool}
+                alt="Smart school campus with digital twin IoT sensors and data visualization overlays"
                 className="w-full h-[400px] object-cover"
               />
               {/* Floating stats cards */}
