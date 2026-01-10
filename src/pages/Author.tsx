@@ -16,6 +16,7 @@ import {
 import { FadeInView, StaggerContainer, StaggerItem } from "@/components/ui/scroll-animations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { AcademicFooter } from "@/components/layout/AcademicFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import authSealLogo from "@/assets/logos/auth-seal.png";
 import eceAuthLogo from "@/assets/logos/ece-auth-logo.png";
 
@@ -30,28 +31,8 @@ export default function Author() {
   const { t, language } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Header */}
-      <header className="border-b border-[#dadce0] dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container max-w-screen-xl px-6 h-16 flex items-center justify-between">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-[#5f6368] dark:text-gray-400 hover:text-[#202124] dark:hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">{language === "el" ? "Πίσω" : "Back"}</span>
-          </Link>
-
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1a73e8] to-[#4285f4] flex items-center justify-center">
-              <GraduationCap className="h-4 w-4 text-white" />
-            </div>
-            <span className="font-semibold text-[#202124] dark:text-white text-sm">
-              {language === "el" ? "Ψηφιακό Δίδυμο" : "Digital Twin"}
-            </span>
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <SiteHeader />
 
       <main className="container max-w-screen-lg px-6 py-16">
         {/* Hero Section */}

@@ -10,40 +10,13 @@ import { TrustSection } from "@/components/home/TrustSection";
 import { ContactForm } from "@/components/home/ContactForm";
 import { FadeInView } from "@/components/ui/scroll-animations";
 import { AcademicFooter } from "@/components/layout/AcademicFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import heroSmartSchool from "@/assets/hero-smart-school.jpg";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full bg-background border-b border-border">
-        <div className="container flex h-16 max-w-screen-xl items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <GraduationCap className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <div>
-              <span className="font-semibold text-foreground leading-tight block">Digital Twin</span>
-              <span className="text-xs text-muted-foreground">in Education</span>
-            </div>
-          </div>
-          <nav className="hidden md:flex items-center gap-8">
-            <Link to="/case-study" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Case Study
-            </Link>
-            <Link to="/architecture" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Architecture
-            </Link>
-          </nav>
-          <div className="flex items-center gap-3">
-            <Link to="/request-access">
-              <Button size="sm" className="rounded-full px-5">
-                Request Access
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Hero Section - Google Style */}
       <section className="container max-w-screen-xl px-6 pt-20 pb-24 md:pt-32 md:pb-32">

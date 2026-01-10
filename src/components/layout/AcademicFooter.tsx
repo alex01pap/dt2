@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { GraduationCap, Linkedin, FileText, ExternalLink } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { LanguageToggle } from "@/components/ui/language-toggle";
+import { GraduationCap, Linkedin, FileText } from "lucide-react";
+import { LanguageSwitch } from "@/components/ui/language-switch";
+import { ThemeSwitch } from "@/components/ui/theme-switch";
 import { useLanguage } from "@/contexts/LanguageContext";
 import authSealLogo from "@/assets/logos/auth-seal.png";
 import eceAuthLogo from "@/assets/logos/ece-auth-logo.png";
@@ -11,30 +11,30 @@ export function AcademicFooter() {
   const { t, language } = useLanguage();
 
   return (
-    <footer className="border-t border-[#dadce0] bg-white dark:bg-gray-900 dark:border-gray-700">
+    <footer className="border-t border-border bg-background">
       <div className="container max-w-screen-xl px-6 py-12">
         <div className="flex flex-col items-center gap-8">
           {/* Logo and thesis info */}
           <div className="text-center">
             <Link to="/" className="inline-flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1a73e8] to-[#4285f4] flex items-center justify-center shadow-md">
-                <GraduationCap className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-md">
+                <GraduationCap className="h-5 w-5 text-primary-foreground" />
               </div>
               <div className="text-left">
-                <span className="font-semibold text-[#202124] dark:text-white block text-sm">
+                <span className="font-semibold text-foreground block text-sm">
                   {language === "el" ? "Ψηφιακό Δίδυμο" : "Digital Twin"}
                 </span>
-                <span className="text-xs text-[#5f6368] dark:text-gray-400">
+                <span className="text-xs text-muted-foreground">
                   {language === "el" ? "στην Εκπαίδευση" : "in Education"}
                 </span>
               </div>
             </Link>
 
             {/* Author & Supervisor */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm text-[#5f6368] dark:text-gray-400 mt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm text-muted-foreground mt-4">
               <span>
                 {t("footer.by")}{" "}
-                <Link to="/author" className="text-[#1a73e8] hover:underline font-medium">
+                <Link to="/author" className="text-primary hover:underline font-medium">
                   Alexandros Papadopoulos
                 </Link>
               </span>
@@ -45,7 +45,7 @@ export function AcademicFooter() {
                   href="https://ece.auth.gr/staff/alkiviadis-chatzopoulos-2/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#1a73e8] hover:underline"
+                  className="text-primary hover:underline"
                 >
                   Alkiviadis Chatzopoulos
                 </a>
@@ -53,10 +53,10 @@ export function AcademicFooter() {
             </div>
 
             {/* Department & Division */}
-            <p className="text-xs text-[#5f6368] dark:text-gray-500 mt-2">
+            <p className="text-xs text-muted-foreground mt-2">
               {t("thesis.department")} • {t("thesis.division")}
             </p>
-            <p className="text-xs text-[#5f6368] dark:text-gray-500">{t("thesis.university")}</p>
+            <p className="text-xs text-muted-foreground">{t("thesis.university")}</p>
           </div>
 
           {/* Institution logos */}
@@ -91,19 +91,19 @@ export function AcademicFooter() {
           <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm">
             <Link
               to="/case-study"
-              className="text-[#5f6368] hover:text-[#202124] dark:text-gray-400 dark:hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               {t("nav.caseStudy")}
             </Link>
             <Link
               to="/architecture"
-              className="text-[#5f6368] hover:text-[#202124] dark:text-gray-400 dark:hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               {t("nav.architecture")}
             </Link>
             <Link
               to="/author"
-              className="text-[#5f6368] hover:text-[#202124] dark:text-gray-400 dark:hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               {t("nav.about")}
             </Link>
@@ -111,38 +111,38 @@ export function AcademicFooter() {
             {/* Thesis Download - Placeholder */}
             <button
               disabled
-              className="inline-flex items-center gap-1.5 text-[#5f6368] dark:text-gray-500 cursor-not-allowed opacity-60"
+              className="inline-flex items-center gap-1.5 text-muted-foreground cursor-not-allowed opacity-60"
               title={t("footer.comingSoon")}
             >
               <FileText className="w-3.5 h-3.5" />
               {t("footer.downloadThesis")}
-              <span className="text-xs bg-[#f8f9fa] dark:bg-gray-800 px-1.5 py-0.5 rounded text-[#5f6368] dark:text-gray-500">
+              <span className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
                 {t("footer.comingSoon")}
               </span>
             </button>
           </div>
 
-          {/* LinkedIn & Toggles */}
-          <div className="flex items-center gap-4">
-            <a
-              href="https://www.linkedin.com/in/alex01pap/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#0077B5] text-white rounded-full hover:bg-[#006399] transition-colors text-sm font-medium"
-            >
-              <Linkedin className="w-4 h-4" />
-              LinkedIn
-            </a>
-            <div className="flex items-center gap-2">
-              <LanguageToggle />
-              <ThemeToggle />
-            </div>
+          {/* Preferences row */}
+          <div className="flex items-center gap-6">
+            <LanguageSwitch />
+            <ThemeSwitch />
           </div>
 
+          {/* LinkedIn - isolated social link */}
+          <a
+            href="https://www.linkedin.com/in/alex01pap/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#0077B5] text-white rounded-full hover:bg-[#006399] transition-colors text-sm font-medium"
+          >
+            <Linkedin className="w-4 h-4" />
+            LinkedIn
+          </a>
+
           {/* Copyright */}
-          <div className="text-center text-xs text-[#5f6368] dark:text-gray-500 pt-4 border-t border-[#dadce0] dark:border-gray-700 w-full">
+          <div className="text-center text-xs text-muted-foreground pt-4 border-t border-border w-full">
             <p>
-              {t("footer.diplomaThesis")} • {t("Presenting")} 2026 • {t("thesis.university")}
+              {t("footer.diplomaThesis")} • {t("footer.presented")} 2026 • {t("thesis.university")}
             </p>
             <p className="mt-1">
               © {new Date().getFullYear()} Alexandros Papadopoulos. {t("footer.allRights")}.
