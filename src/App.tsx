@@ -17,7 +17,11 @@ import Profile from "./pages/Profile";
 import Architecture from "./pages/Architecture";
 import Resources from "./pages/Resources";
 import RequestAccess from "./pages/RequestAccess";
+import AdminOverview from "./pages/AdminOverview";
 import AdminRequests from "./pages/AdminRequests";
+import AdminOrgs from "./pages/AdminOrgs";
+import AdminUsers from "./pages/AdminUsers";
+import AdminDigitalTwins from "./pages/AdminDigitalTwins";
 import ClientDemo from "./pages/ClientDemo";
 import Author from "./pages/Author";
 import NotFound from "./pages/NotFound";
@@ -70,11 +74,13 @@ const App = () => (
               {/* Redirect old route */}
               <Route path="/resources" element={<Navigate to="/case-study" replace />} />
               <Route path="/request-access" element={<RequestAccess />} />
+              <Route path="/admin" element={<AdminOverview />} />
               <Route path="/admin/requests" element={<AdminRequests />} />
+              <Route path="/admin/orgs" element={<AdminOrgs />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/digital-twins" element={<AdminDigitalTwins />} />
               <Route path="/client-demo" element={<ClientDemo />} />
               <Route path="/author" element={<Author />} />
-              {/* Redirects for old routes */}
-              <Route path="/admin" element={<Navigate to="/dashboard" replace />} />
               <Route path="/sensors" element={<Navigate to="/dashboard" replace />} />
               <Route path="/assets" element={<Navigate to="/dashboard" replace />} />
               <Route path="/rules" element={<Navigate to="/dashboard" replace />} />
