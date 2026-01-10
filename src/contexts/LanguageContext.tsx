@@ -15,6 +15,8 @@ const translations = {
     "nav.architecture": "Architecture",
     "nav.dashboard": "View Live Dashboard",
     "nav.about": "About the Author",
+    "nav.bookMeeting": "Book a Meeting",
+    "nav.requestAccess": "Request Access",
     
     // Thesis Credits Section
     "thesis.sectionLabel": "Diploma Thesis",
@@ -63,6 +65,8 @@ const translations = {
     "nav.architecture": "Αρχιτεκτονική",
     "nav.dashboard": "Ζωντανό Dashboard",
     "nav.about": "Σχετικά με τον Συγγραφέα",
+    "nav.bookMeeting": "Κλείστε Ραντεβού",
+    "nav.requestAccess": "Αίτηση Πρόσβασης",
     
     // Thesis Credits Section
     "thesis.sectionLabel": "Διπλωματική Εργασία",
