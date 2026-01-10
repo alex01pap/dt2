@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       access_requests: {
         Row: {
+          access_code: string | null
           created_at: string
           email: string
           full_name: string
@@ -28,6 +29,7 @@ export type Database = {
           status: string
         }
         Insert: {
+          access_code?: string | null
           created_at?: string
           email: string
           full_name: string
@@ -40,6 +42,7 @@ export type Database = {
           status?: string
         }
         Update: {
+          access_code?: string | null
           created_at?: string
           email?: string
           full_name?: string
