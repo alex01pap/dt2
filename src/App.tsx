@@ -15,6 +15,7 @@ import DigitalTwin from "./pages/DigitalTwin";
 import Profile from "./pages/Profile";
 import Architecture from "./pages/Architecture";
 import Resources from "./pages/Resources";
+import RequestAccess from "./pages/RequestAccess";
 import ClientDemo from "./pages/ClientDemo";
 import Author from "./pages/Author";
 import NotFound from "./pages/NotFound";
@@ -65,6 +66,7 @@ const App = () => (
               <Route path="/architecture" element={<Architecture />} />
               {/* Redirect old route */}
               <Route path="/resources" element={<Navigate to="/case-study" replace />} />
+              <Route path="/request-access" element={<RequestAccess />} />
               <Route path="/client-demo" element={<ClientDemo />} />
               <Route path="/author" element={<Author />} />
               {/* Redirects for old routes */}

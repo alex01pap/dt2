@@ -36,7 +36,7 @@ export default function Home() {
             </Link>
           </nav>
           <div className="flex items-center gap-3">
-            <Link to="#contact">
+            <Link to="/request-access">
               <Button size="sm" className="rounded-full px-5">
                 Request Access
               </Button>
@@ -72,12 +72,12 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#contact">
+              <Link to="/request-access">
                 <Button size="lg" className="rounded-full px-8 h-12 text-base gap-2">
                   Request Access
                   <ArrowRight className="h-4 w-4" />
                 </Button>
-              </a>
+              </Link>
               <Link to="/case-study">
                 <Button variant="ghost" size="lg" className="h-12 text-base gap-2 text-muted-foreground hover:text-foreground">
                   <Play className="h-4 w-4" />
