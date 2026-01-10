@@ -151,11 +151,11 @@ export default function Architecture() {
               Architecture
             </Link>
           </nav>
-          <a href="#contact">
+          <Link to="/request-access">
             <Button size="sm" className="rounded-full px-5 bg-[#1a73e8] hover:bg-[#1557b0]">
               Request Access
             </Button>
-          </a>
+          </Link>
         </div>
       </header>
 
@@ -216,7 +216,7 @@ export default function Architecture() {
           { label: "Technology", sectionId: "technology" },
           { label: "Contributions", sectionId: "contributions" },
         ]}
-        cta={{ label: "Request Access", href: "#contact" }}
+        cta={{ label: "Request Access", href: "/request-access" }}
       />
 
       {/* Core Principles */}
@@ -422,7 +422,7 @@ export default function Architecture() {
         description="Request access to the platform and see how digital twins can optimize your facility."
         primaryAction={{
           label: "Request Access",
-          href: "#contact"
+          href: "/request-access"
         }}
       />
 

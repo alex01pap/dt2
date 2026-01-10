@@ -101,11 +101,11 @@ export default function Resources() {
               Architecture
             </Link>
           </nav>
-          <a href="#contact">
+          <Link to="/request-access">
             <Button size="sm" className="rounded-full px-5 bg-[#1a73e8] hover:bg-[#1557b0]">
               Request Access
             </Button>
-          </a>
+          </Link>
         </div>
       </header>
       <section className="relative pt-8 pb-16 px-6 overflow-hidden">
@@ -150,7 +150,7 @@ export default function Resources() {
           { label: "References", sectionId: "references" },
           { label: "About", sectionId: "about" },
         ]}
-        cta={{ label: "Request Access", href: "#contact" }}
+        cta={{ label: "Request Access", href: "/request-access" }}
       />
 
       {/* Research Findings Section */}
@@ -288,7 +288,7 @@ export default function Resources() {
         description="Request access to the platform and see how digital twins can optimize your facility."
         primaryAction={{
           label: "Request Access",
-          href: "#contact"
+          href: "/request-access"
         }}
       />
 
