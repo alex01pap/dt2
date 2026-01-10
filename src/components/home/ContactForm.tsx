@@ -39,7 +39,7 @@ export function ContactForm() {
   }
 
   return (
-    <section className="container max-w-screen-xl px-6 py-24">
+    <section id="contact" className="container max-w-screen-xl px-6 py-24">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <FadeInView>

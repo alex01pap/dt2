@@ -151,11 +151,11 @@ export default function Architecture() {
               Architecture
             </Link>
           </nav>
-          <Link to="/dashboard">
+          <a href="#contact">
             <Button size="sm" className="rounded-full px-5 bg-[#1a73e8] hover:bg-[#1557b0]">
-              View Dashboard
+              Request Access
             </Button>
-          </Link>
+          </a>
         </div>
       </header>
 
@@ -216,7 +216,7 @@ export default function Architecture() {
           { label: "Technology", sectionId: "technology" },
           { label: "Contributions", sectionId: "contributions" },
         ]}
-        cta={{ label: "View Case Study", href: "/case-study" }}
+        cta={{ label: "Request Access", href: "#contact" }}
       />
 
       {/* Core Principles */}
@@ -418,11 +418,11 @@ export default function Architecture() {
 
       {/* CTA Banner */}
       <CTABanner
-        title="Explore the case study"
-        description="See the research findings, project timeline, and lessons learned from this implementation."
+        title="Ready to transform your school?"
+        description="Request access to the platform and see how digital twins can optimize your facility."
         primaryAction={{
-          label: "View Case Study",
-          href: "/case-study"
+          label: "Request Access",
+          href: "#contact"
         }}
       />
 

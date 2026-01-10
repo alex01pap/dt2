@@ -36,14 +36,9 @@ export default function Home() {
             </Link>
           </nav>
           <div className="flex items-center gap-3">
-            <Link to="/dashboard">
-              <Button variant="ghost" size="sm" className="text-muted-foreground">
-                Sign in
-              </Button>
-            </Link>
-            <Link to="/dashboard">
+            <Link to="#contact">
               <Button size="sm" className="rounded-full px-5">
-                View Dashboard
+                Request Access
               </Button>
             </Link>
           </div>
@@ -77,14 +72,14 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/dashboard">
+              <a href="#contact">
                 <Button size="lg" className="rounded-full px-8 h-12 text-base gap-2">
-                  View Dashboard
+                  Request Access
                   <ArrowRight className="h-4 w-4" />
                 </Button>
-              </Link>
+              </a>
               <Link to="/case-study">
-                <Button variant="ghost" size="lg" className="h-12 text-base gap-2 text-primary hover:text-primary hover:bg-primary/5">
+                <Button variant="ghost" size="lg" className="h-12 text-base gap-2 text-muted-foreground hover:text-foreground">
                   <Play className="h-4 w-4" />
                   Case Study
                 </Button>
