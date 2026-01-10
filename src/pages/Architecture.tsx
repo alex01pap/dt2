@@ -144,7 +144,7 @@ export default function Architecture() {
             <span className="font-semibold text-lg text-[#202124]">Platon Schools</span>
           </Link>
           <nav className="hidden md:flex items-center gap-8">
-            <Link to="/resources" className="text-sm font-medium text-[#5f6368] hover:text-[#202124] transition-colors">
+            <Link to="/case-study" className="text-sm font-medium text-[#5f6368] hover:text-[#202124] transition-colors">
               Case Study
             </Link>
             <Link to="/architecture" className="text-sm font-medium text-[#1a73e8] transition-colors">
@@ -216,7 +216,7 @@ export default function Architecture() {
           { label: "Technology", sectionId: "technology" },
           { label: "Contributions", sectionId: "contributions" },
         ]}
-        cta={{ label: "View Case Study", href: "/resources" }}
+        cta={{ label: "View Case Study", href: "/case-study" }}
       />
 
       {/* Core Principles */}
@@ -422,7 +422,7 @@ export default function Architecture() {
         description="See the research findings, project timeline, and lessons learned from this implementation."
         primaryAction={{
           label: "View Case Study",
-          href: "/resources"
+          href: "/case-study"
         }}
       />
 

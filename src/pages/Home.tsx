@@ -28,7 +28,7 @@ export default function Home() {
             </div>
           </div>
           <nav className="hidden md:flex items-center gap-8">
-            <Link to="/resources" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/case-study" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Case Study
             </Link>
             <Link to="/architecture" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
@@ -83,7 +83,7 @@ export default function Home() {
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link to="/resources">
+              <Link to="/case-study">
                 <Button variant="ghost" size="lg" className="h-12 text-base gap-2 text-primary hover:text-primary hover:bg-primary/5">
                   <Play className="h-4 w-4" />
                   Case Study

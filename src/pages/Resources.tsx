@@ -94,7 +94,7 @@ export default function Resources() {
             <span className="font-semibold text-lg text-[#202124]">Platon Schools</span>
           </Link>
           <nav className="hidden md:flex items-center gap-8">
-            <Link to="/resources" className="text-sm font-medium text-[#1a73e8] transition-colors">
+            <Link to="/case-study" className="text-sm font-medium text-[#1a73e8] transition-colors">
               Case Study
             </Link>
             <Link to="/architecture" className="text-sm font-medium text-[#5f6368] hover:text-[#202124] transition-colors">
