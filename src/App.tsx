@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 import Architecture from "./pages/Architecture";
 import Resources from "./pages/Resources";
 import RequestAccess from "./pages/RequestAccess";
+import AdminRequests from "./pages/AdminRequests";
 import ClientDemo from "./pages/ClientDemo";
 import Author from "./pages/Author";
 import NotFound from "./pages/NotFound";
@@ -67,6 +68,7 @@ const App = () => (
               {/* Redirect old route */}
               <Route path="/resources" element={<Navigate to="/case-study" replace />} />
               <Route path="/request-access" element={<RequestAccess />} />
+              <Route path="/admin/requests" element={<AdminRequests />} />
               <Route path="/client-demo" element={<ClientDemo />} />
               <Route path="/author" element={<Author />} />
               {/* Redirects for old routes */}
