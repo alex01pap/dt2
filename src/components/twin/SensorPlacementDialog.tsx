@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useOrganization } from '@/contexts/OrganizationContext';
 
 interface SensorPlacementDialogProps {
   open: boolean;
@@ -37,6 +38,7 @@ export function SensorPlacementDialog({
   const [minThreshold, setMinThreshold] = useState([18]);
   const [maxThreshold, setMaxThreshold] = useState([28]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { currentOrgId } = useOrganization();
 
   const selectedType = sensorTypes.find(t => t.value === type);
 
@@ -59,7 +61,8 @@ export function SensorPlacementDialog({
           min: minThreshold[0],
           max: maxThreshold[0],
           unit: selectedType?.unit
-        }
+        },
+        org_id: currentOrgId!,
       });
 
       if (error) throw error;

@@ -17,6 +17,7 @@ export type Database = {
       access_requests: {
         Row: {
           access_code: string | null
+          approved_org_id: string | null
           created_at: string
           email: string
           full_name: string
@@ -30,6 +31,7 @@ export type Database = {
         }
         Insert: {
           access_code?: string | null
+          approved_org_id?: string | null
           created_at?: string
           email: string
           full_name: string
@@ -43,6 +45,7 @@ export type Database = {
         }
         Update: {
           access_code?: string | null
+          approved_org_id?: string | null
           created_at?: string
           email?: string
           full_name?: string
@@ -54,7 +57,15 @@ export type Database = {
           role?: string
           status?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "access_requests_approved_org_id_fkey"
+            columns: ["approved_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       app_settings: {
         Row: {
@@ -87,6 +98,7 @@ export type Database = {
           id: string
           metadata: Json | null
           name: string
+          org_id: string
           parent_id: string | null
           position: Json | null
           type: Database["public"]["Enums"]["asset_type"]
@@ -98,6 +110,7 @@ export type Database = {
           id?: string
           metadata?: Json | null
           name: string
+          org_id: string
           parent_id?: string | null
           position?: Json | null
           type: Database["public"]["Enums"]["asset_type"]
@@ -109,12 +122,20 @@ export type Database = {
           id?: string
           metadata?: Json | null
           name?: string
+          org_id?: string
           parent_id?: string | null
           position?: Json | null
           type?: Database["public"]["Enums"]["asset_type"]
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "assets_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "assets_parent_id_fkey"
             columns: ["parent_id"]
@@ -131,6 +152,7 @@ export type Database = {
           id: string
           metadata: Json | null
           name: string
+          org_id: string
           size: string
           tags: string[] | null
           template_id: string
@@ -142,6 +164,7 @@ export type Database = {
           id?: string
           metadata?: Json | null
           name: string
+          org_id: string
           size?: string
           tags?: string[] | null
           template_id: string
@@ -153,12 +176,21 @@ export type Database = {
           id?: string
           metadata?: Json | null
           name?: string
+          org_id?: string
           size?: string
           tags?: string[] | null
           template_id?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "digital_twins_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       events: {
         Row: {
@@ -168,6 +200,7 @@ export type Database = {
           description: string | null
           id: string
           metadata: Json | null
+          org_id: string
           severity: Database["public"]["Enums"]["event_severity"]
           source: string | null
           source_id: string | null
@@ -180,6 +213,7 @@ export type Database = {
           description?: string | null
           id?: string
           metadata?: Json | null
+          org_id: string
           severity?: Database["public"]["Enums"]["event_severity"]
           source?: string | null
           source_id?: string | null
@@ -192,12 +226,21 @@ export type Database = {
           description?: string | null
           id?: string
           metadata?: Json | null
+          org_id?: string
           severity?: Database["public"]["Enums"]["event_severity"]
           source?: string | null
           source_id?: string | null
           title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "events_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       openhab_config: {
         Row: {
@@ -333,6 +376,65 @@ export type Database = {
           },
         ]
       }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          org_id: string
+          role: Database["public"]["Enums"]["org_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          org_id: string
+          role?: Database["public"]["Enums"]["org_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          org_id?: string
+          role?: Database["public"]["Enums"]["org_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          settings: Json | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          settings?: Json | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          settings?: Json | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -369,6 +471,7 @@ export type Database = {
           id: string
           last_triggered_at: string | null
           name: string
+          org_id: string
           priority: number | null
           status: Database["public"]["Enums"]["rule_status"]
           updated_at: string
@@ -382,6 +485,7 @@ export type Database = {
           id?: string
           last_triggered_at?: string | null
           name: string
+          org_id: string
           priority?: number | null
           status?: Database["public"]["Enums"]["rule_status"]
           updated_at?: string
@@ -395,12 +499,21 @@ export type Database = {
           id?: string
           last_triggered_at?: string | null
           name?: string
+          org_id?: string
           priority?: number | null
           status?: Database["public"]["Enums"]["rule_status"]
           updated_at?: string
           window_config?: Json | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "rules_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       scenarios: {
         Row: {
@@ -410,6 +523,7 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          org_id: string
           results: Json | null
           started_at: string | null
           status: Database["public"]["Enums"]["scenario_status"]
@@ -422,6 +536,7 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
+          org_id: string
           results?: Json | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["scenario_status"]
@@ -434,12 +549,21 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+          org_id?: string
           results?: Json | null
           started_at?: string | null
           status?: Database["public"]["Enums"]["scenario_status"]
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "scenarios_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sensor_readings: {
         Row: {
@@ -486,6 +610,7 @@ export type Database = {
           last_reading_at: string | null
           location: Json | null
           name: string
+          org_id: string
           position_3d: Json | null
           status: Database["public"]["Enums"]["sensor_status"]
           thresholds: Json | null
@@ -502,6 +627,7 @@ export type Database = {
           last_reading_at?: string | null
           location?: Json | null
           name: string
+          org_id: string
           position_3d?: Json | null
           status?: Database["public"]["Enums"]["sensor_status"]
           thresholds?: Json | null
@@ -518,6 +644,7 @@ export type Database = {
           last_reading_at?: string | null
           location?: Json | null
           name?: string
+          org_id?: string
           position_3d?: Json | null
           status?: Database["public"]["Enums"]["sensor_status"]
           thresholds?: Json | null
@@ -531,6 +658,13 @@ export type Database = {
             columns: ["asset_id"]
             isOneToOne: false
             referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sensors_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
@@ -569,6 +703,7 @@ export type Database = {
     }
     Functions: {
       auto_sync_openhab: { Args: never; Returns: undefined }
+      get_user_org_ids: { Args: { _user_id: string }; Returns: string[] }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -576,11 +711,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_org_admin: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_org_member: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
       asset_type: "building" | "room" | "equipment" | "sensor" | "system"
       event_severity: "info" | "warning" | "error" | "critical"
+      org_role: "owner" | "admin" | "member" | "viewer"
       rule_status: "active" | "inactive" | "triggered"
       scenario_status: "draft" | "running" | "completed" | "failed"
       sensor_status: "online" | "offline" | "warning" | "critical"
@@ -721,6 +865,7 @@ export const Constants = {
       app_role: ["admin", "moderator", "user"],
       asset_type: ["building", "room", "equipment", "sensor", "system"],
       event_severity: ["info", "warning", "error", "critical"],
+      org_role: ["owner", "admin", "member", "viewer"],
       rule_status: ["active", "inactive", "triggered"],
       scenario_status: ["draft", "running", "completed", "failed"],
       sensor_status: ["online", "offline", "warning", "critical"],

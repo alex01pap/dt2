@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import Home from "./pages/Home";
@@ -28,6 +29,7 @@ const App = () => (
       <LanguageProvider>
         <TooltipProvider>
         <AuthProvider>
+        <OrganizationProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -83,6 +85,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
+        </OrganizationProvider>
         </AuthProvider>
       </TooltipProvider>
       </LanguageProvider>

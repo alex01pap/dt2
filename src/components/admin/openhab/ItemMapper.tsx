@@ -10,6 +10,7 @@ import {
 } from "@/components/enterprise";
 import { OpenHABItem } from "@/hooks/useOpenHABConfig";
 import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/contexts/OrganizationContext";
 import { toast } from "sonner";
 import {
   Select,
@@ -44,6 +45,7 @@ export function ItemMapper({
   const [isMappingAll, setIsMappingAll] = useState(false);
   const [twins, setTwins] = useState<DigitalTwin[]>([]);
   const [selectedTwinId, setSelectedTwinId] = useState<string>("");
+  const { currentOrgId } = useOrganization();
 
   useEffect(() => {
     loadTwins();
@@ -84,7 +86,7 @@ export function ItemMapper({
   };
 
   const handleMapItem = async (item: OpenHABItem) => {
-    if (!config) return;
+    if (!config || !currentOrgId) return;
 
     try {
       const { data: sensor, error: sensorError } = await supabase
@@ -94,6 +96,7 @@ export function ItemMapper({
           type: detectSensorType(item.type),
           status: "online",
           twin_id: selectedTwinId || null,
+          org_id: currentOrgId,
         })
         .select()
         .single();
@@ -123,7 +126,7 @@ export function ItemMapper({
   };
 
   const handleMapAll = async () => {
-    if (!config || items.length === 0) return;
+    if (!config || items.length === 0 || !currentOrgId) return;
 
     setIsMappingAll(true);
     let success = 0;
@@ -138,6 +141,7 @@ export function ItemMapper({
             type: detectSensorType(item.type),
             status: "online",
             twin_id: selectedTwinId || null,
+            org_id: currentOrgId,
           })
           .select()
           .single();
