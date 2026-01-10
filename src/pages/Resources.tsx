@@ -101,11 +101,11 @@ export default function Resources() {
               Architecture
             </Link>
           </nav>
-          <Link to="/dashboard">
+          <a href="#contact">
             <Button size="sm" className="rounded-full px-5 bg-[#1a73e8] hover:bg-[#1557b0]">
-              View Dashboard
+              Request Access
             </Button>
-          </Link>
+          </a>
         </div>
       </header>
       <section className="relative pt-8 pb-16 px-6 overflow-hidden">
@@ -150,7 +150,7 @@ export default function Resources() {
           { label: "References", sectionId: "references" },
           { label: "About", sectionId: "about" },
         ]}
-        cta={{ label: "View Dashboard", href: "/dashboard" }}
+        cta={{ label: "Request Access", href: "#contact" }}
       />
 
       {/* Research Findings Section */}
@@ -284,11 +284,11 @@ export default function Resources() {
 
       {/* CTA Banner */}
       <CTABanner
-        title="Explore the live platform"
-        description="See the digital twin in action with real-time sensor data and interactive 3D visualization."
+        title="Ready to transform your school?"
+        description="Request access to the platform and see how digital twins can optimize your facility."
         primaryAction={{
-          label: "View Dashboard",
-          href: "/dashboard"
+          label: "Request Access",
+          href: "#contact"
         }}
       />
 
