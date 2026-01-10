@@ -61,8 +61,10 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
+              <Route path="/case-study" element={<Resources />} />
               <Route path="/architecture" element={<Architecture />} />
-              <Route path="/resources" element={<Resources />} />
+              {/* Redirect old route */}
+              <Route path="/resources" element={<Navigate to="/case-study" replace />} />
               <Route path="/client-demo" element={<ClientDemo />} />
               <Route path="/author" element={<Author />} />
               {/* Redirects for old routes */}
@@ -72,7 +74,7 @@ const App = () => (
               <Route path="/rules" element={<Navigate to="/dashboard" replace />} />
               <Route path="/scenarios" element={<Navigate to="/dashboard" replace />} />
               <Route path="/playback" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/tutorials" element={<Navigate to="/resources" replace />} />
+              <Route path="/tutorials" element={<Navigate to="/case-study" replace />} />
               <Route path="/status" element={<Navigate to="/dashboard" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

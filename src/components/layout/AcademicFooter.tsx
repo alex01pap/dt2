@@ -90,7 +90,7 @@ export function AcademicFooter() {
           {/* Navigation */}
           <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm">
             <Link
-              to="/resources"
+              to="/case-study"
               className="text-[#5f6368] hover:text-[#202124] dark:text-gray-400 dark:hover:text-white transition-colors"
             >
               {t("nav.caseStudy")}

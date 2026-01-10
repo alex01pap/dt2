@@ -170,7 +170,7 @@ export default function Author() {
 
               <div className="flex flex-wrap gap-4">
                 <Link
-                  to="/resources"
+                  to="/case-study"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a73e8] text-white rounded-full hover:bg-[#1557b0] transition-colors text-sm font-medium"
                 >
                   {language === "el" ? "Δείτε τη Μελέτη Περίπτωσης" : "View Case Study"}
