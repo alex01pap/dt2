@@ -11,6 +11,7 @@ import { LessonsLearned } from "@/components/research/LessonsLearned";
 import { FutureWork } from "@/components/research/FutureWork";
 import { ThesisCredits } from "@/components/research/ThesisCredits";
 import { AcademicFooter } from "@/components/layout/AcademicFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StickyPillNav } from "@/components/layout/StickyPillNav";
 import { CTABanner } from "@/components/enterprise/CTABanner";
 import { Link } from "react-router-dom";
@@ -83,31 +84,8 @@ export default function Resources() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="page-header sticky top-0 z-50 w-full bg-white border-b border-[#dadce0]">
-        <div className="container flex h-16 max-w-screen-xl items-center justify-between px-6">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#1a73e8] flex items-center justify-center">
-              <GraduationCap className="h-5 w-5 text-white" />
-            </div>
-            <span className="font-semibold text-lg text-[#202124]">Platon Schools</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-8">
-            <Link to="/case-study" className="text-sm font-medium text-[#1a73e8] transition-colors">
-              Case Study
-            </Link>
-            <Link to="/architecture" className="text-sm font-medium text-[#5f6368] hover:text-[#202124] transition-colors">
-              Architecture
-            </Link>
-          </nav>
-          <Link to="/request-access">
-            <Button size="sm" className="rounded-full px-5 bg-[#1a73e8] hover:bg-[#1557b0]">
-              Request Access
-            </Button>
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <SiteHeader />
       <section className="relative pt-8 pb-16 px-6 overflow-hidden">
         {/* Decorative shapes */}
         <div className="absolute top-20 right-10 w-32 h-32 bg-[#1a73e8]/10 rounded-full blur-3xl" />
