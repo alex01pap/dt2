@@ -31,6 +31,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Link as LinkIcon } from "lucide-react";
+import { useOrganization } from "@/contexts/OrganizationContext";
 
 const assetFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -54,6 +55,7 @@ interface AssetFormProps {
 
 export function AssetForm({ open, onOpenChange, onSuccess, editAsset }: AssetFormProps) {
   const { toast } = useToast();
+  const { currentOrgId } = useOrganization();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [assets, setAssets] = useState<any[]>([]);
   const [openhabItems, setOpenhabItems] = useState<any[]>([]);
@@ -128,6 +130,7 @@ export function AssetForm({ open, onOpenChange, onSuccess, editAsset }: AssetFor
         parent_id: values.parent_id || null,
         position,
         metadata,
+        org_id: currentOrgId!,
       };
 
       if (editAsset) {

@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Link as LinkIcon } from "lucide-react";
 import { useOpenHABConfig, OpenHABItem } from "@/hooks/useOpenHABConfig";
+import { useOrganization } from "@/contexts/OrganizationContext";
 
 interface SensorFormProps {
   open: boolean;
@@ -19,6 +20,7 @@ export function SensorForm({ open, onOpenChange, onSuccess }: SensorFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openhabItems, setOpenhabItems] = useState<OpenHABItem[]>([]);
   const { config, fetchItems } = useOpenHABConfig();
+  const { currentOrgId } = useOrganization();
   const [formData, setFormData] = useState({
     name: "",
     type: "temperature" as const,
@@ -81,6 +83,7 @@ export function SensorForm({ open, onOpenChange, onSuccess }: SensorFormProps) {
         status: formData.status,
         location,
         thresholds,
+        org_id: currentOrgId!,
       }).select().single();
 
       if (error) throw error;

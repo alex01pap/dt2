@@ -12,11 +12,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useOrganization } from "@/contexts/OrganizationContext";
 
 export default function Rules() {
   const { rules, isLoading } = useRealtimeRules();
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const { currentOrgId } = useOrganization();
   const [editingRule, setEditingRule] = useState<any>(null);
 
   const filteredRules = useMemo(() => {
@@ -73,6 +75,7 @@ export default function Rules() {
           window_config: rule.windowConfig,
           priority: rule.priority,
           status: rule.enabled ? "active" : "inactive",
+          org_id: currentOrgId!,
         });
 
         if (error) throw error;

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Json } from '@/integrations/supabase/types';
+import { useOrganization } from '@/contexts/OrganizationContext';
 
 export interface DigitalTwin {
   id: string;
@@ -13,6 +14,7 @@ export interface DigitalTwin {
   metadata: Json;
   created_at: string;
   updated_at: string;
+  org_id: string;
 }
 
 export interface CreateTwinData {
@@ -28,6 +30,7 @@ export function useDigitalTwins() {
   const [twins, setTwins] = useState<DigitalTwin[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { currentOrgId } = useOrganization();
 
   const fetchTwins = useCallback(async () => {
     try {
@@ -52,6 +55,11 @@ export function useDigitalTwins() {
   }, []);
 
   const createTwin = async (data: CreateTwinData): Promise<DigitalTwin | null> => {
+    if (!currentOrgId) {
+      toast.error('No organization selected');
+      return null;
+    }
+    
     try {
       const { data: newTwin, error: createError } = await supabase
         .from('digital_twins')
@@ -62,6 +70,7 @@ export function useDigitalTwins() {
           building: data.building || null,
           tags: data.tags || [],
           metadata: data.metadata || {},
+          org_id: currentOrgId,
         })
         .select()
         .single();
