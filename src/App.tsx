@@ -24,6 +24,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminDigitalTwins from "./pages/AdminDigitalTwins";
 import ClientDemo from "./pages/ClientDemo";
 import Author from "./pages/Author";
+import BookMeeting from "./pages/BookMeeting";
 import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
@@ -81,6 +82,7 @@ const App = () => (
               <Route path="/admin/digital-twins" element={<AdminDigitalTwins />} />
               <Route path="/client-demo" element={<ClientDemo />} />
               <Route path="/author" element={<Author />} />
+              <Route path="/book-meeting" element={<BookMeeting />} />
               <Route path="/sensors" element={<Navigate to="/dashboard" replace />} />
               <Route path="/assets" element={<Navigate to="/dashboard" replace />} />
               <Route path="/rules" element={<Navigate to="/dashboard" replace />} />

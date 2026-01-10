@@ -107,6 +107,12 @@ export function AcademicFooter() {
             >
               {t("nav.about")}
             </Link>
+            <Link
+              to="/book-meeting"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {t("nav.bookMeeting")}
+            </Link>
 
             {/* Thesis Download - Placeholder */}
             <button

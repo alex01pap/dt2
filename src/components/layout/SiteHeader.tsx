@@ -42,6 +42,12 @@ export function SiteHeader() {
           >
             {t("nav.about")}
           </Link>
+          <Link
+            to="/book-meeting"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {t("nav.bookMeeting")}
+          </Link>
         </nav>
 
         {/* Right side: Controls + CTA */}
@@ -52,7 +58,7 @@ export function SiteHeader() {
           </div>
           <Link to="/request-access">
             <Button size="sm" className="rounded-full px-5">
-              Request Access
+              {t("nav.requestAccess")}
             </Button>
           </Link>
         </div>
