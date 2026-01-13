@@ -114,7 +114,7 @@ export default function Home() {
       <TechnoEconomicAnalysis />
 
       {/* Contact Form 
-      <ContactForm />*/}
+      <ContactForm /> */}
 
       {/* Footer */}
       <AcademicFooter />

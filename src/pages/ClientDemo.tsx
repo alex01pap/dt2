@@ -423,10 +423,10 @@ export default function ClientDemo() {
                 <CheckCircle2 className="h-4 w-4 text-green-500" />
                 <span>No commitment required</span>
               </div>
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-green-500" />
                 <span>Free consultation</span>
-              </div>
+              </div> */}
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-green-500" />
                 <span>Custom ROI analysis</span>
