@@ -36,7 +36,8 @@ export function SiteHeader() {
           >
             {t("nav.architecture")}
           </Link>
-          <Link
+          {
+  /* <Link
             to="/author"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
@@ -47,7 +48,8 @@ export function SiteHeader() {
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             {t("nav.bookMeeting")}
-          </Link>
+          </Link> */
+}
         </nav>
 
         {/* Right side: Controls + CTA */}
