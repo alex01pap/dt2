@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Activity, Wifi, Map, Eye, Plus, LayoutGrid } from "lucide-react";
+import { Activity, Wifi, Map, Eye, Plus, LayoutGrid, Building2 } from "lucide-react";
 import { SchoolFloorPlan } from "@/components/floor-plan/SchoolFloorPlan";
 import { TwinsGridView } from "@/components/dashboard/TwinsGridView";
+import { IsometricCampusView } from "@/components/campus/IsometricCampusView";
 import { useRealtimeSensors } from "@/hooks/useRealtimeSensors";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const { sensors, isLoading } = useRealtimeSensors();
-  const [activeTab, setActiveTab] = useState("twins");
+  const [activeTab, setActiveTab] = useState("campus");
   const navigate = useNavigate();
 
   const sensorsOnline = sensors.filter(s => s.status === 'online').length;
@@ -61,6 +62,10 @@ export default function Dashboard() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
+          <TabsTrigger value="campus" className="gap-2">
+            <Building2 className="h-4 w-4" />
+            Campus
+          </TabsTrigger>
           <TabsTrigger value="twins" className="gap-2">
             <LayoutGrid className="h-4 w-4" />
             All Twins
@@ -70,6 +75,13 @@ export default function Dashboard() {
             Floor Plan
           </TabsTrigger>
         </TabsList>
+
+        {/* Campus 2.5D View */}
+        <TabsContent value="campus" className="mt-6">
+          <IsometricCampusView 
+            onBuildingSelect={(buildingId) => navigate(`/twin/${buildingId}`)}
+          />
+        </TabsContent>
 
         {/* Twins Grid View */}
         <TabsContent value="twins" className="mt-6">
