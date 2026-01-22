@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Activity, Wifi, Map, Eye, Plus, LayoutGrid, Building2 } from "lucide-react";
 import { SchoolFloorPlan } from "@/components/floor-plan/SchoolFloorPlan";
 import { TwinsGridView } from "@/components/dashboard/TwinsGridView";
-import { IsometricCampusView } from "@/components/campus/IsometricCampusView";
+import { PlatonCampusViewer } from "@/components/campus/PlatonCampusViewer";
 import { useRealtimeSensors } from "@/hooks/useRealtimeSensors";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -76,10 +76,10 @@ export default function Dashboard() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Campus 2.5D View */}
+        {/* Campus 3D View */}
         <TabsContent value="campus" className="mt-6">
-          <IsometricCampusView 
-            onBuildingSelect={(buildingId) => navigate(`/twin/${buildingId}`)}
+          <PlatonCampusViewer 
+            onBuildingSelect={(building) => navigate(`/twin/${building.id}`)}
           />
         </TabsContent>
 
