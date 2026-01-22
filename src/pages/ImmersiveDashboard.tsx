@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
+import {
   Box, Activity, Plus, ChevronDown, ChevronUp,
   Globe, Users, Server, Shield, Settings as SettingsIcon, Cpu
 } from "lucide-react";
@@ -20,6 +20,7 @@ import { SystemConfiguration } from "@/components/admin/SystemConfiguration";
 import { SecurityCenter } from "@/components/admin/SecurityCenter";
 import { SensorAssignment } from "@/components/admin/SensorAssignment";
 import { DemoPasswordGate } from "@/components/auth/DemoPasswordGate";
+import { CampusVisualization3D } from "@/components/dashboard/CampusVisualization3D";
 
 const templateIcons: Record<string, string> = {
   classroom: "📚",
@@ -92,6 +93,9 @@ export default function ImmersiveDashboard() {
             New Twin
           </Button>
         </div>
+
+        {/* 3D Campus Visualization */}
+        <CampusVisualization3D />
 
         {/* Twins Grid */}
         {isLoading ? (
