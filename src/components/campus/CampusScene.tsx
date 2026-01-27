@@ -2,7 +2,7 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import { useState, useEffect, Suspense } from 'react';
 import * as THREE from 'three';
-import { BuildingInfoPanel } from './BuildingInfoPanel';
+import { BuildingInfoPanel } from './panel/BuildingInfoPanel';
 
 // Import specialized building components
 import { KindergartenBuilding } from './buildings/KindergartenBuilding';
@@ -44,19 +44,25 @@ const campusBuildingsData: CampusBuilding[] = [
       accent: '#7dd3fc',
     },
     rooms: [
-      { id: 'k-1', name: 'Τάξη Α', floor: 1, type: 'classroom', capacity: 20, sensors: [
-        { type: 'temperature', value: 22.5, unit: '°C', status: 'online' },
-        { type: 'humidity', value: 45, unit: '%', status: 'online' },
-        { type: 'occupancy', value: 18, unit: 'άτομα', status: 'online' },
-      ]},
-      { id: 'k-2', name: 'Τάξη Β', floor: 1, type: 'classroom', capacity: 20, sensors: [
-        { type: 'temperature', value: 23.1, unit: '°C', status: 'online' },
-        { type: 'humidity', value: 48, unit: '%', status: 'online' },
-        { type: 'occupancy', value: 15, unit: 'άτομα', status: 'online' },
-      ]},
-      { id: 'k-3', name: 'Τάξη Γ', floor: 1, type: 'classroom', capacity: 20, sensors: [
-        { type: 'temperature', value: 21.8, unit: '°C', status: 'warning' },
-      ]},
+      {
+        id: 'k-1', name: 'Τάξη Α', floor: 1, type: 'classroom', capacity: 20, sensors: [
+          { type: 'temperature', value: 22.5, unit: '°C', status: 'online' },
+          { type: 'humidity', value: 45, unit: '%', status: 'online' },
+          { type: 'occupancy', value: 18, unit: 'άτομα', status: 'online' },
+        ]
+      },
+      {
+        id: 'k-2', name: 'Τάξη Β', floor: 1, type: 'classroom', capacity: 20, sensors: [
+          { type: 'temperature', value: 23.1, unit: '°C', status: 'online' },
+          { type: 'humidity', value: 48, unit: '%', status: 'online' },
+          { type: 'occupancy', value: 15, unit: 'άτομα', status: 'online' },
+        ]
+      },
+      {
+        id: 'k-3', name: 'Τάξη Γ', floor: 1, type: 'classroom', capacity: 20, sensors: [
+          { type: 'temperature', value: 21.8, unit: '°C', status: 'warning' },
+        ]
+      },
     ],
   },
   // KINDERGARTEN INNER BUILDING - Blue 2-story rectangle inside the bow
@@ -79,12 +85,16 @@ const campusBuildingsData: CampusBuilding[] = [
       roof: '#475569',
     },
     rooms: [
-      { id: 'ki-1', name: 'Αίθουσα Παιχνιδιού', floor: 1, type: 'other', sensors: [
-        { type: 'temperature', value: 23.0, unit: '°C', status: 'online' },
-      ]},
-      { id: 'ki-2', name: 'Διοίκηση', floor: 2, type: 'office', sensors: [
-        { type: 'temperature', value: 22.5, unit: '°C', status: 'online' },
-      ]},
+      {
+        id: 'ki-1', name: 'Αίθουσα Παιχνιδιού', floor: 1, type: 'other', sensors: [
+          { type: 'temperature', value: 23.0, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'ki-2', name: 'Διοίκηση', floor: 2, type: 'office', sensors: [
+          { type: 'temperature', value: 22.5, unit: '°C', status: 'online' },
+        ]
+      },
     ],
   },
   // ELEMENTARY - THE ARROW (Center, Chevron/Λ pointing SOUTH)
@@ -108,26 +118,38 @@ const campusBuildingsData: CampusBuilding[] = [
       accent: '#7dd3fc', // Light blue stripe
     },
     rooms: [
-      { id: 'e-1a', name: 'Α\' Τάξη - Τμήμα 1', floor: 1, type: 'classroom', capacity: 25, sensors: [
-        { type: 'temperature', value: 22.3, unit: '°C', status: 'online' },
-        { type: 'humidity', value: 44, unit: '%', status: 'online' },
-        { type: 'occupancy', value: 22, unit: 'άτομα', status: 'online' },
-      ]},
-      { id: 'e-1b', name: 'Α\' Τάξη - Τμήμα 2', floor: 1, type: 'classroom', capacity: 25, sensors: [
-        { type: 'temperature', value: 22.8, unit: '°C', status: 'online' },
-      ]},
-      { id: 'e-2a', name: 'Β\' Τάξη', floor: 1, type: 'classroom', capacity: 25, sensors: [
-        { type: 'temperature', value: 23.1, unit: '°C', status: 'online' },
-      ]},
-      { id: 'e-3', name: 'Γ\' Τάξη', floor: 2, type: 'classroom', capacity: 25, sensors: [
-        { type: 'temperature', value: 22.4, unit: '°C', status: 'online' },
-      ]},
-      { id: 'e-4', name: 'Δ\' Τάξη', floor: 2, type: 'classroom', capacity: 25, sensors: [
-        { type: 'temperature', value: 23.0, unit: '°C', status: 'online' },
-      ]},
-      { id: 'e-lab', name: 'Εργαστήριο Η/Υ', floor: 2, type: 'lab', sensors: [
-        { type: 'temperature', value: 21.5, unit: '°C', status: 'online' },
-      ]},
+      {
+        id: 'e-1a', name: 'Α\' Τάξη - Τμήμα 1', floor: 1, type: 'classroom', capacity: 25, sensors: [
+          { type: 'temperature', value: 22.3, unit: '°C', status: 'online' },
+          { type: 'humidity', value: 44, unit: '%', status: 'online' },
+          { type: 'occupancy', value: 22, unit: 'άτομα', status: 'online' },
+        ]
+      },
+      {
+        id: 'e-1b', name: 'Α\' Τάξη - Τμήμα 2', floor: 1, type: 'classroom', capacity: 25, sensors: [
+          { type: 'temperature', value: 22.8, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'e-2a', name: 'Β\' Τάξη', floor: 1, type: 'classroom', capacity: 25, sensors: [
+          { type: 'temperature', value: 23.1, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'e-3', name: 'Γ\' Τάξη', floor: 2, type: 'classroom', capacity: 25, sensors: [
+          { type: 'temperature', value: 22.4, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'e-4', name: 'Δ\' Τάξη', floor: 2, type: 'classroom', capacity: 25, sensors: [
+          { type: 'temperature', value: 23.0, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'e-lab', name: 'Εργαστήριο Η/Υ', floor: 2, type: 'lab', sensors: [
+          { type: 'temperature', value: 21.5, unit: '°C', status: 'online' },
+        ]
+      },
     ],
   },
   // LYCEUM - THE TARGET (South, C-shape opening NORTH)
@@ -151,209 +173,58 @@ const campusBuildingsData: CampusBuilding[] = [
       accent: '#7dd3fc', // Upper: light blue
     },
     rooms: [
-      { id: 'l-reception', name: 'Υποδοχή', floor: 1, type: 'office', sensors: [
-        { type: 'temperature', value: 22.0, unit: '°C', status: 'online' },
-      ]},
-      { id: 'l-cafeteria', name: 'Κυλικείο', floor: 1, type: 'cafeteria', sensors: [
-        { type: 'temperature', value: 23.5, unit: '°C', status: 'online' },
-      ]},
-      { id: 'l-gym', name: 'Γυμναστήριο', floor: 1, type: 'gym', sensors: [
-        { type: 'temperature', value: 24.0, unit: '°C', status: 'online' },
-      ]},
-      { id: 'l-1a', name: 'Α\' Γυμνασίου', floor: 2, type: 'classroom', capacity: 30, sensors: [
-        { type: 'temperature', value: 22.5, unit: '°C', status: 'online' },
-      ]},
-      { id: 'l-2a', name: 'Β\' Γυμνασίου', floor: 2, type: 'classroom', capacity: 30, sensors: [
-        { type: 'temperature', value: 22.8, unit: '°C', status: 'online' },
-      ]},
-      { id: 'l-1b', name: 'Α\' Λυκείου', floor: 3, type: 'classroom', capacity: 30, sensors: [
-        { type: 'temperature', value: 22.6, unit: '°C', status: 'online' },
-      ]},
-      { id: 'l-library', name: 'Βιβλιοθήκη', floor: 3, type: 'library', sensors: [
-        { type: 'temperature', value: 22.0, unit: '°C', status: 'online' },
-      ]},
+      {
+        id: 'l-reception', name: 'Υποδοχή', floor: 1, type: 'office', sensors: [
+          { type: 'temperature', value: 22.0, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'l-cafeteria', name: 'Κυλικείο', floor: 1, type: 'cafeteria', sensors: [
+          { type: 'temperature', value: 23.5, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'l-gym', name: 'Γυμναστήριο', floor: 1, type: 'gym', sensors: [
+          { type: 'temperature', value: 24.0, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'l-1a', name: 'Α\' Γυμνασίου', floor: 2, type: 'classroom', capacity: 30, sensors: [
+          { type: 'temperature', value: 22.5, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'l-2a', name: 'Β\' Γυμνασίου', floor: 2, type: 'classroom', capacity: 30, sensors: [
+          { type: 'temperature', value: 22.8, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'l-1b', name: 'Α\' Λυκείου', floor: 3, type: 'classroom', capacity: 30, sensors: [
+          { type: 'temperature', value: 22.6, unit: '°C', status: 'online' },
+        ]
+      },
+      {
+        id: 'l-library', name: 'Βιβλιοθήκη', floor: 3, type: 'library', sensors: [
+          { type: 'temperature', value: 22.0, unit: '°C', status: 'online' },
+        ]
+      },
     ],
-  },
-  // CHAPEL - West side
-  {
-    id: 'chapel',
-    name: 'Εκκλησάκι',
-    nameEn: 'Chapel',
-    type: 'chapel',
-    shape: 'chapel',
-    position: [-50, 0, 10],
-    rotation: 0,
-    dimensions: {
-      width: 8,
-      depth: 12,
-      height: 7,
-      floors: 1,
-    },
-    colors: {
-      walls: '#ffffff',
-      roof: '#b91c1c', // Red terracotta
-    },
-    rooms: [],
   },
 ];
 
-// Campus environmental elements
+// Clean campus environment - only ground plane
 const CampusEnvironment = () => {
   return (
     <>
-      {/* BASKETBALL COURT - Between Elementary and Kindergarten */}
-      <group position={[0, 0.05, -32]}>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-          <planeGeometry args={[18, 30]} />
-          <meshStandardMaterial color="#5c5c5c" roughness={0.85} />
-        </mesh>
-        {/* Court lines */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-          <ringGeometry args={[4, 4.2, 32]} />
-          <meshBasicMaterial color="#ffffff" />
-        </mesh>
-        {/* Hoops */}
-        {[-12, 12].map((z, i) => (
-          <group key={`hoop-${i}`} position={[0, 3, z]}>
-            <mesh castShadow>
-              <boxGeometry args={[0.15, 3, 0.15]} />
-              <meshStandardMaterial color="#6b7280" />
-            </mesh>
-            <mesh position={[0, 1.2, z > 0 ? -0.5 : 0.5]}>
-              <boxGeometry args={[1.2, 0.8, 0.05]} />
-              <meshStandardMaterial color="#ffffff" />
-            </mesh>
-          </group>
-        ))}
-      </group>
-
-      {/* SOLAR PANELS - East side */}
-      <group position={[55, 0, -20]}>
-        {Array.from({ length: 6 }).map((_, row) => (
-          <group key={`solar-row-${row}`} position={[0, 0, row * 8]}>
-            {Array.from({ length: 8 }).map((_, col) => (
-              <mesh
-                key={`solar-${row}-${col}`}
-                position={[col * 3, 1.5 + col * 0.1, 0]}
-                rotation={[-Math.PI / 4, 0, 0]}
-                castShadow
-              >
-                <boxGeometry args={[2.5, 0.1, 3.5]} />
-                <meshStandardMaterial color="#1e3a5f" metalness={0.8} roughness={0.2} />
-              </mesh>
-            ))}
-          </group>
-        ))}
-      </group>
-
-      {/* PARKING LOT - South of Lyceum */}
-      <group position={[0, 0.02, 95]}>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-          <planeGeometry args={[60, 30]} />
-          <meshStandardMaterial color="#4a4a4a" roughness={0.9} />
-        </mesh>
-        {/* Parking lines */}
-        {Array.from({ length: 12 }).map((_, i) => (
-          <mesh key={`line-${i}`} rotation={[-Math.PI / 2, 0, 0]} position={[-27.5 + i * 5, 0.01, 0]}>
-            <planeGeometry args={[0.15, 5]} />
-            <meshBasicMaterial color="#ffffff" />
-          </mesh>
-        ))}
-        {/* Parked cars */}
-        {[
-          [-20, 0], [-10, 0], [0, 0], [10, 0], [20, 0],
-          [-15, 8], [-5, 8], [5, 8], [15, 8],
-        ].map(([x, z], i) => (
-          <mesh key={`car-${i}`} position={[x, 0.7, z]} castShadow>
-            <boxGeometry args={[2.2, 1.4, 4.5]} />
-            <meshStandardMaterial color={['#1e40af', '#dc2626', '#16a34a', '#f59e0b', '#6b7280'][i % 5]} />
-          </mesh>
-        ))}
-      </group>
-
-      {/* SCHOOL BUSES - West side along Elementary */}
-      {Array.from({ length: 5 }).map((_, i) => (
-        <group key={`bus-${i}`} position={[-35, 0, -25 + i * 8]} rotation={[0, Math.PI / 2, 0]}>
-          <mesh position={[0, 1.2, 0]} castShadow>
-            <boxGeometry args={[8, 2.4, 2.5]} />
-            <meshStandardMaterial color="#fbbf24" />
-          </mesh>
-          {/* Windows */}
-          <mesh position={[0, 1.5, 1.26]}>
-            <boxGeometry args={[7, 1, 0.1]} />
-            <meshStandardMaterial color="#1e3a8a" transparent opacity={0.8} />
-          </mesh>
-          {/* Wheels */}
-          {[-2.5, 2.5].map((x, wi) => (
-            <mesh key={wi} position={[x, 0.4, 0]} rotation={[0, 0, Math.PI / 2]}>
-              <cylinderGeometry args={[0.5, 0.5, 2.6, 16]} />
-              <meshStandardMaterial color="#1f2937" />
-            </mesh>
-          ))}
-        </group>
-      ))}
-
-      {/* PLAYGROUND - Near Kindergarten */}
-      <group position={[-25, 0, -50]}>
-        {/* Slide */}
-        <mesh position={[0, 1.5, 0]} rotation={[Math.PI / 6, 0, 0]} castShadow>
-          <boxGeometry args={[1.5, 0.1, 4]} />
-          <meshStandardMaterial color="#ef4444" />
-        </mesh>
-        {/* Swing frame */}
-        <mesh position={[5, 2, 0]} castShadow>
-          <boxGeometry args={[4, 0.2, 0.2]} />
-          <meshStandardMaterial color="#f97316" />
-        </mesh>
-        {[3.5, 6.5].map((x, i) => (
-          <mesh key={i} position={[x, 1, 0]} castShadow>
-            <boxGeometry args={[0.2, 4, 0.2]} />
-            <meshStandardMaterial color="#f97316" />
-          </mesh>
-        ))}
-      </group>
-
-      {/* TREES - Scattered around perimeter */}
-      {[
-        // West perimeter
-        [-60, -60], [-65, -40], [-60, -20], [-65, 0], [-60, 20], [-65, 40], [-55, 60],
-        // East perimeter
-        [85, -50], [90, -30], [85, -10], [90, 10], [85, 30], [90, 50],
-        // North
-        [-40, -75], [-20, -80], [0, -78], [20, -80], [40, -75],
-        // South
-        [-30, 115], [0, 118], [30, 115],
-      ].map(([x, z], i) => (
-        <group key={`tree-${i}`} position={[x, 0, z]}>
-          {/* Trunk */}
-          <mesh position={[0, 2, 0]} castShadow>
-            <cylinderGeometry args={[0.4, 0.5, 4, 8]} />
-            <meshStandardMaterial color="#8b5a2b" roughness={0.9} />
-          </mesh>
-          {/* Foliage */}
-          <mesh position={[0, 5, 0]} castShadow>
-            <sphereGeometry args={[2.5, 8, 8]} />
-            <meshStandardMaterial color="#228b22" roughness={0.8} />
-          </mesh>
-        </group>
-      ))}
-
-      {/* GROUND */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 20]} receiveShadow>
+      {/* GROUND - Clean green grass */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
         <planeGeometry args={[250, 250]} />
         <meshStandardMaterial color="#4ade80" roughness={0.95} />
       </mesh>
 
-      {/* Asphalt paths */}
-      {/* Main north-south path (the arrow trajectory) */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]} receiveShadow>
-        <planeGeometry args={[6, 120]} />
-        <meshStandardMaterial color="#6b7280" roughness={0.9} />
-      </mesh>
-
       {/* Contact shadows for depth */}
       <ContactShadows
-        position={[0, 0, 20]}
+        position={[0, 0, 0]}
         opacity={0.4}
         scale={200}
         blur={2}
@@ -485,22 +356,39 @@ export const CampusScene = () => {
     setSelectedBuilding(buildingId === selectedBuilding ? null : buildingId);
   };
 
-  // Transform building data for info panel
-  const selectedBuildingData = campusBuildingsData.find(b => b.id === selectedBuilding);
-  const panelData = selectedBuildingData ? {
-    id: selectedBuildingData.id,
-    name: selectedBuildingData.name,
-    floors: selectedBuildingData.dimensions.floors,
-    rooms: selectedBuildingData.rooms.map(r => ({
-      name: r.name,
-      floor: r.floor,
-      sensors: {
-        temperature: r.sensors.find(s => s.type === 'temperature')?.value || 22,
-        humidity: r.sensors.find(s => s.type === 'humidity')?.value || 45,
-        occupancy: r.sensors.find(s => s.type === 'occupancy')?.value || 0,
-      }
-    }))
-  } : null;
+  // Transform campus building data to Building type for info panel
+  const getBuildingData = (campusBuilding: CampusBuilding): import('@/types/building').Building => {
+    return {
+      id: campusBuilding.id,
+      nameGr: campusBuilding.name,
+      nameEn: campusBuilding.nameEn,
+      sqMeters: Math.round((campusBuilding.dimensions.width * campusBuilding.dimensions.depth) * 0.7),
+      floors: campusBuilding.dimensions.floors,
+      totalRooms: campusBuilding.rooms.length,
+      roomsWithSensors: campusBuilding.rooms.filter(r => r.sensors?.length > 0).length,
+      currentConsumption: campusBuilding.dimensions.floors * 15 + Math.random() * 10,
+      avgTemperature: 22 + Math.random() * 2,
+      avgHumidity: 45 + Math.random() * 5,
+      occupancyPercent: 60 + Math.random() * 30,
+      rooms: campusBuilding.rooms.map(r => ({
+        id: r.id,
+        name: r.name,
+        floor: r.floor,
+        hasSensors: r.sensors?.length > 0 || false,
+        sensorStatus: r.sensors?.length > 0
+          ? (r.sensors.find(s => s.status === 'warning') ? 'warning' : 'online')
+          : 'offline',
+        temperature: r.sensors?.find(s => s.type === 'temperature')?.value,
+        humidity: r.sensors?.find(s => s.type === 'humidity')?.value,
+        occupancy: r.sensors?.find(s => s.type === 'occupancy')?.value,
+      })),
+    };
+  };
+
+  const selectedBuildingData = selectedBuilding
+    ? campusBuildingsData.find(b => b.id === selectedBuilding)
+    : null;
+  const panelData = selectedBuildingData ? getBuildingData(selectedBuildingData) : null;
 
   return (
     <div className="w-full h-[700px] rounded-xl overflow-hidden bg-gradient-to-b from-sky-300 to-sky-100 relative shadow-xl border border-border">
@@ -535,11 +423,11 @@ export const CampusScene = () => {
       />
 
       {/* 3D Canvas */}
-      <Canvas 
-        shadows 
-        camera={{ 
+      <Canvas
+        shadows
+        camera={{
           position: [70, 50, 80], // Southeast looking northwest
-          fov: 50 
+          fov: 50
         }}
       >
         <Suspense fallback={null}>

@@ -17,12 +17,12 @@ interface ChevronElementaryProps {
  * Shape: Chevron / Lambda (Λ) - two wings meeting at an angle pointing SOUTH
  * The point faces the Lyceum (target), tips point toward Kindergarten (bow)
  */
-export function ChevronElementary({ 
-  building, 
-  isSelected, 
-  isHovered, 
-  onHover, 
-  onClick 
+export function ChevronElementary({
+  building,
+  isSelected,
+  isHovered,
+  onHover,
+  onClick
 }: ChevronElementaryProps) {
   const groupRef = useRef<Group>(null);
   const [hoverScale, setHoverScale] = useState(1);
@@ -43,11 +43,11 @@ export function ChevronElementary({
   const buildingHeight = dimensions.height * 1.5; // 2 stories
   const roofHeight = 3;
 
-  // Chevron angle - wings meet at ~120 degrees (60 degrees from center each side)
-  const wingAngle = Math.PI / 5; // ~36 degrees from center line
+  // Chevron angle - wings meet at 140 degrees (70 degrees from center each side)
+  const wingAngle = (70 * Math.PI) / 180; // 70 degrees from center line
 
   return (
-    <group 
+    <group
       ref={groupRef}
       position={position}
       scale={[hoverScale, hoverScale, hoverScale]}
@@ -64,8 +64,8 @@ export function ChevronElementary({
           onClick={onClick}
         >
           <boxGeometry args={[wingLength, buildingHeight, wingWidth]} />
-          <meshStandardMaterial 
-            color={wallColor} 
+          <meshStandardMaterial
+            color={wallColor}
             roughness={0.7}
             emissive={isSelected ? '#3b82f6' : '#000000'}
             emissiveIntensity={isSelected ? 0.2 : 0}
@@ -102,14 +102,14 @@ export function ChevronElementary({
         {Array.from({ length: 6 }).map((_, i) => (
           <group key={`left-win-${i}`}>
             {/* Lower floor windows */}
-            <mesh 
+            <mesh
               position={[-wingLength * 0.9 + i * (wingLength / 6), buildingHeight * 0.35, wingWidth / 2 + 0.1]}
             >
               <boxGeometry args={[2.5, 2, 0.1]} />
               <meshStandardMaterial color="#bfdbfe" transparent opacity={0.8} />
             </mesh>
             {/* Upper floor windows */}
-            <mesh 
+            <mesh
               position={[-wingLength * 0.9 + i * (wingLength / 6), buildingHeight * 0.7, wingWidth / 2 + 0.1]}
             >
               <boxGeometry args={[2.5, 2, 0.1]} />
@@ -131,8 +131,8 @@ export function ChevronElementary({
           onClick={onClick}
         >
           <boxGeometry args={[wingLength, buildingHeight, wingWidth]} />
-          <meshStandardMaterial 
-            color={wallColor} 
+          <meshStandardMaterial
+            color={wallColor}
             roughness={0.7}
             emissive={isSelected ? '#3b82f6' : '#000000'}
             emissiveIntensity={isSelected ? 0.2 : 0}
@@ -168,14 +168,14 @@ export function ChevronElementary({
         {Array.from({ length: 6 }).map((_, i) => (
           <group key={`right-win-${i}`}>
             {/* Lower floor windows */}
-            <mesh 
+            <mesh
               position={[wingLength * 0.1 + i * (wingLength / 6), buildingHeight * 0.35, wingWidth / 2 + 0.1]}
             >
               <boxGeometry args={[2.5, 2, 0.1]} />
               <meshStandardMaterial color="#bfdbfe" transparent opacity={0.8} />
             </mesh>
             {/* Upper floor windows */}
-            <mesh 
+            <mesh
               position={[wingLength * 0.1 + i * (wingLength / 6), buildingHeight * 0.7, wingWidth / 2 + 0.1]}
             >
               <boxGeometry args={[2.5, 2, 0.1]} />
@@ -195,8 +195,8 @@ export function ChevronElementary({
         onClick={onClick}
       >
         <boxGeometry args={[wingWidth * 1.2, buildingHeight, wingWidth * 1.2]} />
-        <meshStandardMaterial 
-          color={wallColor} 
+        <meshStandardMaterial
+          color={wallColor}
           roughness={0.7}
           emissive={isSelected ? '#3b82f6' : '#000000'}
           emissiveIntensity={isSelected ? 0.2 : 0}
