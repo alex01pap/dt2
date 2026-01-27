@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import {
+import { 
   Activity, Wifi, Map, Eye, Plus, LayoutGrid, Building2,
   ChevronDown, ChevronUp, Box, Cpu, Globe, Users, Server, Shield,
   Settings as SettingsIcon
 } from "lucide-react";
 import { SchoolFloorPlan } from "@/components/floor-plan/SchoolFloorPlan";
 import { TwinsGridView } from "@/components/dashboard/TwinsGridView";
-import Campus3DScene from "@/components/campus/Campus3DScene";
+import { PlatonCampusViewer } from "@/components/campus/PlatonCampusViewer";
 import { useRealtimeSensors } from "@/hooks/useRealtimeSensors";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,7 +62,7 @@ export default function Dashboard() {
             {sensorsOnline} of {sensors.length} sensors online
           </p>
         </div>
-
+        
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" className="rounded-full" asChild>
             <Link to="/sensors">
@@ -92,7 +92,9 @@ export default function Dashboard() {
 
         {/* Campus 3D View */}
         <TabsContent value="campus" className="mt-6">
-          <Campus3DScene />
+          <PlatonCampusViewer 
+            onBuildingSelect={(building) => navigate(`/twin/${building.id}`)}
+          />
         </TabsContent>
 
         {/* Twins Grid View */}
@@ -110,7 +112,7 @@ export default function Dashboard() {
                   <div className="inline-block p-4 rounded-2xl bg-accent/50">
                     <Activity className="h-12 w-12 text-foreground" />
                   </div>
-
+                  
                   <div className="space-y-2">
                     <h2 className="text-2xl font-bold">Welcome to Your Digital Twin</h2>
                     <p className="text-muted-foreground">
