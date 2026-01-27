@@ -30,7 +30,7 @@ const campusBuildingsData: CampusBuilding[] = [
     nameEn: 'Kindergarten',
     type: 'kindergarten',
     shape: 'horseshoe',
-    position: [0, 0, -55], // North position
+    position: [0, 0, -40], // North position
     rotation: 180, // Opening faces SOUTH
     dimensions: {
       width: 32,
@@ -39,9 +39,9 @@ const campusBuildingsData: CampusBuilding[] = [
       floors: 1,
     },
     colors: {
-      walls: '#ffffff',
-      roof: '#64748b',
-      accent: '#7dd3fc',
+      walls: '#F5F5DC', // Cream
+      roof: '#708090', // Grey
+      accent: '#87CEEB', // Light blue inner building
     },
     rooms: [
       {
@@ -65,38 +65,6 @@ const campusBuildingsData: CampusBuilding[] = [
       },
     ],
   },
-  // KINDERGARTEN INNER BUILDING - Blue 2-story rectangle inside the bow
-  {
-    id: 'kindergarten-inner',
-    name: 'Κεντρικό Νηπιαγωγείο',
-    nameEn: 'Kindergarten Main',
-    type: 'kindergarten',
-    shape: 'rectangle',
-    position: [0, 0, -48], // Inside the C-curve, slightly south
-    rotation: 0,
-    dimensions: {
-      width: 14,
-      depth: 10,
-      height: 8,
-      floors: 2,
-    },
-    colors: {
-      walls: '#60a5fa', // Light blue
-      roof: '#475569',
-    },
-    rooms: [
-      {
-        id: 'ki-1', name: 'Αίθουσα Παιχνιδιού', floor: 1, type: 'other', sensors: [
-          { type: 'temperature', value: 23.0, unit: '°C', status: 'online' },
-        ]
-      },
-      {
-        id: 'ki-2', name: 'Διοίκηση', floor: 2, type: 'office', sensors: [
-          { type: 'temperature', value: 22.5, unit: '°C', status: 'online' },
-        ]
-      },
-    ],
-  },
   // ELEMENTARY - THE ARROW (Center, Chevron/Λ pointing SOUTH)
   {
     id: 'elementary',
@@ -104,7 +72,7 @@ const campusBuildingsData: CampusBuilding[] = [
     nameEn: 'Elementary School',
     type: 'elementary',
     shape: 'zigzag', // Will render as chevron
-    position: [0, 0, -10], // Center, between bow and target
+    position: [0, 0, 0], // CENTER - exact middle
     rotation: 0,
     dimensions: {
       width: 60, // Total span of both wings
@@ -113,9 +81,9 @@ const campusBuildingsData: CampusBuilding[] = [
       floors: 2,
     },
     colors: {
-      walls: '#fef3c7', // Cream/white
-      roof: '#4b5563', // Grey pitched
-      accent: '#7dd3fc', // Light blue stripe
+      walls: '#F5F5DC', // Cream
+      roof: '#708090', // Grey pitched
+      accent: '#87CEEB', // Light blue stripe
     },
     rooms: [
       {
@@ -168,9 +136,9 @@ const campusBuildingsData: CampusBuilding[] = [
       floors: 3,
     },
     colors: {
-      walls: '#fef3c7', // Ground: cream
-      roof: '#64748b',
-      accent: '#7dd3fc', // Upper: light blue
+      walls: '#F5F5DC', // Ground: cream
+      roof: '#708090', // Grey
+      accent: '#87CEEB', // Upper: light blue
     },
     rooms: [
       {
