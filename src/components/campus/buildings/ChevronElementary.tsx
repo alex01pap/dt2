@@ -15,7 +15,7 @@ interface ChevronElementaryProps {
 /**
  * Elementary School - THE ARROW (βέλος)
  * Shape: Chevron / Lambda (Λ) - two wings meeting at an angle pointing SOUTH
- * The point faces the Lyceum (target), tips point toward Kindergarten (bow)
+ * Based on reference photo: cream walls, blue base stripe, grey pitched roofs
  */
 export function ChevronElementary({
   building,
@@ -32,16 +32,18 @@ export function ChevronElementary({
     setHoverScale(prev => prev + (targetScale - prev) * delta * 8);
   });
 
-  const { dimensions, colors, position } = building;
-  const wallColor = colors.walls; // Cream/white
-  const roofColor = colors.roof; // Grey pitched
-  const accentColor = colors.accent || '#7dd3fc'; // Light blue stripe
+  const { dimensions, position } = building;
+
+  // Color palette from reference photo
+  const creamColor = '#F5F5DC'; // Cream/white walls
+  const lightBlueColor = '#87CEEB'; // Light blue base stripe
+  const greyRoofColor = '#708090'; // Slate grey pitched roof
 
   // Wing dimensions
   const wingLength = dimensions.width / 2; // Each wing ~30m
   const wingWidth = 8; // Building depth
-  const buildingHeight = dimensions.height * 1.5; // 2 stories
-  const roofHeight = 3;
+  const buildingHeight = dimensions.height; // 2 stories
+  const roofHeight = 3; // Pitched roof height
 
   // Chevron angle - wings meet at 140 degrees (70 degrees from center each side)
   const wingAngle = (70 * Math.PI) / 180; // 70 degrees from center line
@@ -54,7 +56,7 @@ export function ChevronElementary({
     >
       {/* LEFT WING - pointing northwest */}
       <group position={[0, 0, 0]} rotation={[0, wingAngle, 0]}>
-        {/* Main wall structure */}
+        {/* Main wall structure - CREAM */}
         <mesh
           position={[-wingLength / 2, buildingHeight / 2, 0]}
           castShadow
@@ -65,55 +67,62 @@ export function ChevronElementary({
         >
           <boxGeometry args={[wingLength, buildingHeight, wingWidth]} />
           <meshStandardMaterial
-            color={wallColor}
+            color={creamColor}
             roughness={0.7}
             emissive={isSelected ? '#3b82f6' : '#000000'}
             emissiveIntensity={isSelected ? 0.2 : 0}
           />
         </mesh>
 
-        {/* Blue accent stripe at ground level */}
-        <mesh position={[-wingLength / 2, buildingHeight * 0.15, 0]}>
-          <boxGeometry args={[wingLength + 0.2, buildingHeight * 0.2, wingWidth + 0.2]} />
-          <meshStandardMaterial color={accentColor} roughness={0.6} />
+        {/* LIGHT BLUE horizontal stripe at BASE */}
+        <mesh position={[-wingLength / 2, buildingHeight * 0.15, wingWidth / 2 + 0.05]}>
+          <boxGeometry args={[wingLength + 0.2, buildingHeight * 0.25, 0.1]} />
+          <meshStandardMaterial color={lightBlueColor} roughness={0.6} />
         </mesh>
 
-        {/* Pitched roof */}
-        <mesh
-          position={[-wingLength / 2, buildingHeight + roofHeight / 2, 0]}
-          rotation={[0, 0, 0]}
-          castShadow
-        >
-          <boxGeometry args={[wingLength + 1, 0.5, wingWidth + 2]} />
-          <meshStandardMaterial color={roofColor} roughness={0.5} />
-        </mesh>
-
-        {/* Roof ridge (triangular peak effect) */}
-        <mesh
-          position={[-wingLength / 2, buildingHeight + roofHeight * 0.8, 0]}
-          rotation={[Math.PI / 2, 0, 0]}
-          castShadow
-        >
-          <cylinderGeometry args={[0.5, wingLength * 0.08, wingWidth * 0.9, 4]} />
-          <meshStandardMaterial color={roofColor} roughness={0.5} />
-        </mesh>
+        {/* PITCHED ROOF - Grey with ridge line */}
+        <group position={[-wingLength / 2, buildingHeight, 0]}>
+          {/* Left slope */}
+          <mesh
+            position={[0, roofHeight / 2, -wingWidth / 4]}
+            rotation={[Math.PI / 6, 0, 0]}
+            castShadow
+          >
+            <boxGeometry args={[wingLength + 1, 0.4, wingWidth / 2 + 1]} />
+            <meshStandardMaterial color={greyRoofColor} roughness={0.4} />
+          </mesh>
+          {/* Right slope */}
+          <mesh
+            position={[0, roofHeight / 2, wingWidth / 4]}
+            rotation={[-Math.PI / 6, 0, 0]}
+            castShadow
+          >
+            <boxGeometry args={[wingLength + 1, 0.4, wingWidth / 2 + 1]} />
+            <meshStandardMaterial color={greyRoofColor} roughness={0.4} />
+          </mesh>
+          {/* Ridge line */}
+          <mesh position={[0, roofHeight, 0]} castShadow>
+            <boxGeometry args={[wingLength + 1, 0.3, 0.3]} />
+            <meshStandardMaterial color={greyRoofColor} roughness={0.4} />
+          </mesh>
+        </group>
 
         {/* Windows - two rows */}
         {Array.from({ length: 6 }).map((_, i) => (
           <group key={`left-win-${i}`}>
             {/* Lower floor windows */}
             <mesh
-              position={[-wingLength * 0.9 + i * (wingLength / 6), buildingHeight * 0.35, wingWidth / 2 + 0.1]}
+              position={[-wingLength * 0.9 + i * (wingLength / 6), buildingHeight * 0.35, wingWidth / 2 + 0.06]}
             >
               <boxGeometry args={[2.5, 2, 0.1]} />
-              <meshStandardMaterial color="#bfdbfe" transparent opacity={0.8} />
+              <meshStandardMaterial color="#FFFFFF" transparent opacity={0.6} />
             </mesh>
             {/* Upper floor windows */}
             <mesh
-              position={[-wingLength * 0.9 + i * (wingLength / 6), buildingHeight * 0.7, wingWidth / 2 + 0.1]}
+              position={[-wingLength * 0.9 + i * (wingLength / 6), buildingHeight * 0.7, wingWidth / 2 + 0.06]}
             >
               <boxGeometry args={[2.5, 2, 0.1]} />
-              <meshStandardMaterial color="#bfdbfe" transparent opacity={0.8} />
+              <meshStandardMaterial color="#FFFFFF" transparent opacity={0.6} />
             </mesh>
           </group>
         ))}
@@ -121,7 +130,7 @@ export function ChevronElementary({
 
       {/* RIGHT WING - pointing northeast */}
       <group position={[0, 0, 0]} rotation={[0, -wingAngle, 0]}>
-        {/* Main wall structure */}
+        {/* Main wall structure - CREAM */}
         <mesh
           position={[wingLength / 2, buildingHeight / 2, 0]}
           castShadow
@@ -132,54 +141,62 @@ export function ChevronElementary({
         >
           <boxGeometry args={[wingLength, buildingHeight, wingWidth]} />
           <meshStandardMaterial
-            color={wallColor}
+            color={creamColor}
             roughness={0.7}
             emissive={isSelected ? '#3b82f6' : '#000000'}
             emissiveIntensity={isSelected ? 0.2 : 0}
           />
         </mesh>
 
-        {/* Blue accent stripe at ground level */}
-        <mesh position={[wingLength / 2, buildingHeight * 0.15, 0]}>
-          <boxGeometry args={[wingLength + 0.2, buildingHeight * 0.2, wingWidth + 0.2]} />
-          <meshStandardMaterial color={accentColor} roughness={0.6} />
+        {/* LIGHT BLUE horizontal stripe at BASE */}
+        <mesh position={[wingLength / 2, buildingHeight * 0.15, wingWidth / 2 + 0.05]}>
+          <boxGeometry args={[wingLength + 0.2, buildingHeight * 0.25, 0.1]} />
+          <meshStandardMaterial color={lightBlueColor} roughness={0.6} />
         </mesh>
 
-        {/* Pitched roof */}
-        <mesh
-          position={[wingLength / 2, buildingHeight + roofHeight / 2, 0]}
-          castShadow
-        >
-          <boxGeometry args={[wingLength + 1, 0.5, wingWidth + 2]} />
-          <meshStandardMaterial color={roofColor} roughness={0.5} />
-        </mesh>
-
-        {/* Roof ridge */}
-        <mesh
-          position={[wingLength / 2, buildingHeight + roofHeight * 0.8, 0]}
-          rotation={[Math.PI / 2, 0, 0]}
-          castShadow
-        >
-          <cylinderGeometry args={[0.5, wingLength * 0.08, wingWidth * 0.9, 4]} />
-          <meshStandardMaterial color={roofColor} roughness={0.5} />
-        </mesh>
+        {/* PITCHED ROOF - Grey with ridge line */}
+        <group position={[wingLength / 2, buildingHeight, 0]}>
+          {/* Left slope */}
+          <mesh
+            position={[0, roofHeight / 2, -wingWidth / 4]}
+            rotation={[Math.PI / 6, 0, 0]}
+            castShadow
+          >
+            <boxGeometry args={[wingLength + 1, 0.4, wingWidth / 2 + 1]} />
+            <meshStandardMaterial color={greyRoofColor} roughness={0.4} />
+          </mesh>
+          {/* Right slope */}
+          <mesh
+            position={[0, roofHeight / 2, wingWidth / 4]}
+            rotation={[-Math.PI / 6, 0, 0]}
+            castShadow
+          >
+            <boxGeometry args={[wingLength + 1, 0.4, wingWidth / 2 + 1]} />
+            <meshStandardMaterial color={greyRoofColor} roughness={0.4} />
+          </mesh>
+          {/* Ridge line */}
+          <mesh position={[0, roofHeight, 0]} castShadow>
+            <boxGeometry args={[wingLength + 1, 0.3, 0.3]} />
+            <meshStandardMaterial color={greyRoofColor} roughness={0.4} />
+          </mesh>
+        </group>
 
         {/* Windows - two rows */}
         {Array.from({ length: 6 }).map((_, i) => (
           <group key={`right-win-${i}`}>
             {/* Lower floor windows */}
             <mesh
-              position={[wingLength * 0.1 + i * (wingLength / 6), buildingHeight * 0.35, wingWidth / 2 + 0.1]}
+              position={[wingLength * 0.1 + i * (wingLength / 6), buildingHeight * 0.35, wingWidth / 2 + 0.06]}
             >
               <boxGeometry args={[2.5, 2, 0.1]} />
-              <meshStandardMaterial color="#bfdbfe" transparent opacity={0.8} />
+              <meshStandardMaterial color="#FFFFFF" transparent opacity={0.6} />
             </mesh>
             {/* Upper floor windows */}
             <mesh
-              position={[wingLength * 0.1 + i * (wingLength / 6), buildingHeight * 0.7, wingWidth / 2 + 0.1]}
+              position={[wingLength * 0.1 + i * (wingLength / 6), buildingHeight * 0.7, wingWidth / 2 + 0.06]}
             >
               <boxGeometry args={[2.5, 2, 0.1]} />
-              <meshStandardMaterial color="#bfdbfe" transparent opacity={0.8} />
+              <meshStandardMaterial color="#FFFFFF" transparent opacity={0.6} />
             </mesh>
           </group>
         ))}
@@ -196,20 +213,20 @@ export function ChevronElementary({
       >
         <boxGeometry args={[wingWidth * 1.2, buildingHeight, wingWidth * 1.2]} />
         <meshStandardMaterial
-          color={wallColor}
+          color={creamColor}
           roughness={0.7}
           emissive={isSelected ? '#3b82f6' : '#000000'}
           emissiveIntensity={isSelected ? 0.2 : 0}
         />
       </mesh>
 
-      {/* Center roof peak */}
+      {/* Center roof peak - pyramidal grey roof */}
       <mesh
-        position={[0, buildingHeight + roofHeight * 0.6, wingWidth * 0.3]}
+        position={[0, buildingHeight + roofHeight * 0.7, wingWidth * 0.3]}
         castShadow
       >
-        <coneGeometry args={[wingWidth * 0.9, roofHeight, 4]} />
-        <meshStandardMaterial color={roofColor} roughness={0.5} />
+        <coneGeometry args={[wingWidth * 0.8, roofHeight * 1.2, 4]} />
+        <meshStandardMaterial color={greyRoofColor} roughness={0.4} />
       </mesh>
 
       {/* Selection ring */}
