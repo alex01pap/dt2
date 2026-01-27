@@ -11,7 +11,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
-import ImmersiveDashboard from "./pages/ImmersiveDashboard";
+import Dashboard from "./pages/Dashboard";
 import DigitalTwin from "./pages/DigitalTwin";
 import Profile from "./pages/Profile";
 import Architecture from "./pages/Architecture";
@@ -46,7 +46,9 @@ const App = () => (
                     path="/dashboard"
                     element={
                       <ProtectedRoute>
-                        <ImmersiveDashboard />
+                        <DashboardLayout>
+                          <Dashboard />
+                        </DashboardLayout>
                       </ProtectedRoute>
                     }
                   />
