@@ -1,2 +1,2 @@
-// Re-export the new detailed campus scene
-export { CampusScene as CampusVisualization3D } from '../campus/CampusScene';
+// Re-export the campus scene
+export { default as CampusVisualization3D } from '../campus/Campus3DScene';
