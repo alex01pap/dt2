@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Activity, Wifi, Map, Eye, Plus, LayoutGrid, Building2 } from "lucide-react";
+import { 
+  Activity, Wifi, Map, Eye, Plus, LayoutGrid, Building2,
+  ChevronDown, ChevronUp, Box, Cpu, Globe, Users, Server, Shield,
+  Settings as SettingsIcon
+} from "lucide-react";
 import { SchoolFloorPlan } from "@/components/floor-plan/SchoolFloorPlan";
 import { TwinsGridView } from "@/components/dashboard/TwinsGridView";
 import { PlatonCampusViewer } from "@/components/campus/PlatonCampusViewer";
@@ -9,11 +13,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Link, useNavigate } from "react-router-dom";
+import { DigitalTwinsManager } from "@/components/admin/DigitalTwinsManager";
+import { OpenHABIntegration } from "@/components/admin/OpenHABIntegration";
+import { UserManagement } from "@/components/admin/UserManagement";
+import { SystemConfiguration } from "@/components/admin/SystemConfiguration";
+import { SecurityCenter } from "@/components/admin/SecurityCenter";
+import { SensorAssignment } from "@/components/admin/SensorAssignment";
 
 export default function Dashboard() {
   const { sensors, isLoading } = useRealtimeSensors();
   const [activeTab, setActiveTab] = useState("campus");
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [activeSettingsTab, setActiveSettingsTab] = useState("twins");
   const navigate = useNavigate();
 
   const sensorsOnline = sensors.filter(s => s.status === 'online').length;
@@ -160,6 +174,84 @@ export default function Dashboard() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Settings & Configuration Section */}
+      <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <CollapsibleTrigger asChild>
+          <Button variant="outline" className="w-full justify-between">
+            <span className="flex items-center gap-2">
+              <SettingsIcon className="h-4 w-4" />
+              Settings & Configuration
+            </span>
+            {settingsOpen ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="mt-4">
+          <Card>
+            <CardContent className="p-6">
+              <Tabs value={activeSettingsTab} onValueChange={setActiveSettingsTab} className="space-y-6">
+                <ScrollArea className="w-full">
+                  <TabsList className="inline-flex h-auto p-1 w-max">
+                    <TabsTrigger value="twins" className="gap-2">
+                      <Box className="h-4 w-4" />
+                      Twins
+                    </TabsTrigger>
+                    <TabsTrigger value="sensors" className="gap-2">
+                      <Cpu className="h-4 w-4" />
+                      Sensors
+                    </TabsTrigger>
+                    <TabsTrigger value="openhab" className="gap-2">
+                      <Globe className="h-4 w-4" />
+                      OpenHAB
+                    </TabsTrigger>
+                    <TabsTrigger value="users" className="gap-2">
+                      <Users className="h-4 w-4" />
+                      Users
+                    </TabsTrigger>
+                    <TabsTrigger value="system" className="gap-2">
+                      <Server className="h-4 w-4" />
+                      System
+                    </TabsTrigger>
+                    <TabsTrigger value="security" className="gap-2">
+                      <Shield className="h-4 w-4" />
+                      Security
+                    </TabsTrigger>
+                  </TabsList>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+
+                <TabsContent value="twins" className="space-y-6">
+                  <DigitalTwinsManager />
+                </TabsContent>
+
+                <TabsContent value="sensors" className="space-y-6">
+                  <SensorAssignment />
+                </TabsContent>
+
+                <TabsContent value="openhab" className="space-y-6">
+                  <OpenHABIntegration />
+                </TabsContent>
+
+                <TabsContent value="users" className="space-y-6">
+                  <UserManagement />
+                </TabsContent>
+
+                <TabsContent value="system" className="space-y-6">
+                  <SystemConfiguration />
+                </TabsContent>
+
+                <TabsContent value="security" className="space-y-6">
+                  <SecurityCenter />
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </CollapsibleContent>
+      </Collapsible>
     </motion.div>
   );
 }
