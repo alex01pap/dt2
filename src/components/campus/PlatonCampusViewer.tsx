@@ -13,7 +13,7 @@ import {
   type CampusBuilding 
 } from '@/data/platonCampusLayout';
 import { KindergartenBuilding } from './buildings/KindergartenBuilding';
-import { ElementaryBuilding } from './buildings/ElementaryBuilding';
+import { ChevronElementary } from './buildings/ChevronElementary';
 import { LyceumBuilding } from './buildings/LyceumBuilding';
 import { ChapelBuilding } from './buildings/ChapelBuilding';
 import { RectangleBuilding } from './buildings/RectangleBuilding';
@@ -91,7 +91,8 @@ function BuildingRenderer({
     case 'horseshoe':
       return <KindergartenBuilding {...props} />;
     case 'zigzag':
-      return <ElementaryBuilding {...props} />;
+      // Use the new Chevron shape for Elementary (the ARROW)
+      return <ChevronElementary {...props} />;
     case 'ring':
       return <LyceumBuilding {...props} />;
     case 'chapel':
