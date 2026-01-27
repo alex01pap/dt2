@@ -49,25 +49,25 @@ export interface CampusElement {
 
 // Building definitions
 export const platonBuildings: CampusBuilding[] = [
-  // Kindergarten - Horseshoe/C-shaped building (north)
+  // Kindergarten - C-shaped building (north) - smaller curved building matching photos
   {
     id: 'kindergarten-main',
     name: 'Νηπιαγωγείο',
     nameEn: 'Kindergarten',
     type: 'kindergarten',
     shape: 'horseshoe',
-    position: [0, 0, -45],
+    position: [0, 0, -50],
     rotation: 0,
     dimensions: {
-      width: 35,
-      depth: 25,
-      height: 4,
-      floors: 1,
+      width: 28,
+      depth: 20,
+      height: 6,
+      floors: 2,
     },
     colors: {
       walls: '#ffffff',
-      roof: '#4a5568',
-      accent: '#3b82f6',
+      roof: '#64748b',
+      accent: '#7dd3fc',
     },
     rooms: [
       { id: 'k-1', name: 'Τάξη Α', floor: 1, type: 'classroom', capacity: 20, sensors: [
@@ -80,10 +80,13 @@ export const platonBuildings: CampusBuilding[] = [
         { type: 'humidity', value: 48, unit: '%', status: 'online' },
         { type: 'occupancy', value: 15, unit: 'άτομα', status: 'online' },
       ]},
-      { id: 'k-3', name: 'Τάξη Γ', floor: 1, type: 'classroom', capacity: 20, sensors: [
+      { id: 'k-3', name: 'Τάξη Γ', floor: 2, type: 'classroom', capacity: 20, sensors: [
         { type: 'temperature', value: 21.8, unit: '°C', status: 'warning' },
         { type: 'humidity', value: 52, unit: '%', status: 'online' },
         { type: 'occupancy', value: 19, unit: 'άτομα', status: 'online' },
+      ]},
+      { id: 'k-4', name: 'Τάξη Δ', floor: 2, type: 'classroom', capacity: 20, sensors: [
+        { type: 'temperature', value: 22.0, unit: '°C', status: 'online' },
       ]},
       { id: 'k-office', name: 'Γραφείο', floor: 1, type: 'office', sensors: [
         { type: 'temperature', value: 22.0, unit: '°C', status: 'online' },
@@ -179,7 +182,7 @@ export const platonBuildings: CampusBuilding[] = [
       ]},
     ],
   },
-  // Lyceum & Gymnasium - Circular ring building (south)
+  // Lyceum & Gymnasium - C-shaped building (south) - large curved building matching photos
   {
     id: 'lyceum',
     name: 'Γυμνάσιο - Λύκειο',
@@ -189,15 +192,15 @@ export const platonBuildings: CampusBuilding[] = [
     position: [0, 0, 50],
     rotation: 0,
     dimensions: {
-      width: 55,
-      depth: 55,
-      height: 10,
+      width: 50,
+      depth: 50,
+      height: 11,
       floors: 3,
     },
     colors: {
       walls: '#fef3c7',
-      roof: '#4a5568',
-      accent: '#93c5fd',
+      roof: '#64748b',
+      accent: '#7dd3fc',
     },
     rooms: [
       // Ground floor

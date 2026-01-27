@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { Group } from 'three';
+import { useRef, useState, useMemo } from 'react';
+import { Group, Shape, ExtrudeGeometry, Vector2 } from 'three';
 import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import type { CampusBuilding } from '@/data/platonCampusLayout';
@@ -10,6 +10,39 @@ interface LyceumBuildingProps {
   isHovered: boolean;
   onHover: (hovered: boolean) => void;
   onClick: () => void;
+}
+
+// Create a C-shape (horseshoe) matching the reference photos
+function createCShape(outerRadius: number, innerRadius: number, openingAngle: number = Math.PI * 0.4) {
+  const shape = new Shape();
+  const startAngle = openingAngle / 2;
+  const endAngle = Math.PI * 2 - openingAngle / 2;
+  const segments = 32;
+  
+  // Outer arc
+  for (let i = 0; i <= segments; i++) {
+    const angle = startAngle + (endAngle - startAngle) * (i / segments);
+    const x = Math.cos(angle) * outerRadius;
+    const y = Math.sin(angle) * outerRadius;
+    if (i === 0) shape.moveTo(x, y);
+    else shape.lineTo(x, y);
+  }
+  
+  // Connect to inner arc
+  const endX = Math.cos(endAngle) * innerRadius;
+  const endY = Math.sin(endAngle) * innerRadius;
+  shape.lineTo(endX, endY);
+  
+  // Inner arc (reverse direction)
+  for (let i = segments; i >= 0; i--) {
+    const angle = startAngle + (endAngle - startAngle) * (i / segments);
+    const x = Math.cos(angle) * innerRadius;
+    const y = Math.sin(angle) * innerRadius;
+    shape.lineTo(x, y);
+  }
+  
+  shape.closePath();
+  return shape;
 }
 
 export function LyceumBuilding({ 
@@ -28,30 +61,49 @@ export function LyceumBuilding({
   });
 
   const { dimensions, colors, position } = building;
-  const wallColor = colors.walls;
+  const wallColor = '#fef3c7'; // Cream/beige lower
+  const accentColor = '#7dd3fc'; // Light blue upper
   const roofColor = colors.roof;
-  const accentColor = colors.accent || '#93c5fd';
 
   const outerRadius = dimensions.width / 2;
-  const innerRadius = outerRadius * 0.6;
-  const segments = 32;
+  const innerRadius = outerRadius * 0.55;
+  const wallThickness = outerRadius - innerRadius;
+  
+  // Floor heights
+  const groundFloorHeight = dimensions.height * 0.35;
+  const upperFloorsHeight = dimensions.height * 0.65;
+
+  // Create the C-shape geometry - opening faces south
+  const cShape = useMemo(() => createCShape(outerRadius, innerRadius, Math.PI * 0.5), [outerRadius, innerRadius]);
+  
+  const groundFloorExtrudeSettings = {
+    depth: groundFloorHeight,
+    bevelEnabled: false,
+  };
+  
+  const upperFloorsExtrudeSettings = {
+    depth: upperFloorsHeight,
+    bevelEnabled: false,
+  };
 
   return (
     <group 
       ref={groupRef}
       position={position}
+      rotation={[0, Math.PI, 0]} // Rotate so opening faces south
       scale={[hoverScale, hoverScale, hoverScale]}
     >
       {/* Ground floor - cream/beige */}
       <mesh
-        position={[0, dimensions.height / 3 / 2, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, 0, 0]}
         castShadow
         receiveShadow
         onPointerOver={() => onHover(true)}
         onPointerOut={() => onHover(false)}
         onClick={onClick}
       >
-        <cylinderGeometry args={[outerRadius, outerRadius, dimensions.height / 3, segments]} />
+        <extrudeGeometry args={[cShape, groundFloorExtrudeSettings]} />
         <meshStandardMaterial 
           color={wallColor} 
           roughness={0.7}
@@ -60,22 +112,17 @@ export function LyceumBuilding({
         />
       </mesh>
 
-      {/* Inner courtyard cutout - ground floor */}
-      <mesh position={[0, dimensions.height / 3 / 2, 0]}>
-        <cylinderGeometry args={[innerRadius, innerRadius, dimensions.height / 3 + 0.1, segments]} />
-        <meshStandardMaterial color="#90a955" roughness={0.9} /> {/* Grass courtyard */}
-      </mesh>
-
-      {/* Upper floors - light blue accent */}
+      {/* Upper floors - light blue */}
       <mesh
-        position={[0, dimensions.height / 3 + dimensions.height / 3, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, groundFloorHeight, 0]}
         castShadow
         receiveShadow
         onPointerOver={() => onHover(true)}
         onPointerOut={() => onHover(false)}
         onClick={onClick}
       >
-        <cylinderGeometry args={[outerRadius, outerRadius, dimensions.height * 2 / 3, segments]} />
+        <extrudeGeometry args={[cShape, upperFloorsExtrudeSettings]} />
         <meshStandardMaterial 
           color={accentColor} 
           roughness={0.6}
@@ -84,55 +131,73 @@ export function LyceumBuilding({
         />
       </mesh>
 
-      {/* Inner courtyard cutout - upper floors */}
-      <mesh position={[0, dimensions.height / 3 + dimensions.height / 3, 0]}>
-        <cylinderGeometry args={[innerRadius, innerRadius, dimensions.height * 2 / 3 + 0.1, segments]} />
-        <meshStandardMaterial color="#90a955" roughness={0.9} />
-      </mesh>
-
-      {/* Roof ring */}
+      {/* Roof - sloped gray */}
       <mesh
-        position={[0, dimensions.height + 0.3, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, dimensions.height, 0]}
         castShadow
       >
-        <cylinderGeometry args={[outerRadius + 0.5, outerRadius + 0.5, 0.6, segments]} />
+        <extrudeGeometry args={[cShape, { depth: 0.8, bevelEnabled: false }]} />
         <meshStandardMaterial color={roofColor} roughness={0.5} />
       </mesh>
 
-      {/* Inner roof edge */}
-      <mesh position={[0, dimensions.height + 0.3, 0]}>
-        <cylinderGeometry args={[innerRadius - 0.5, innerRadius - 0.5, 0.6, segments]} />
-        <meshStandardMaterial color={roofColor} roughness={0.5} />
-      </mesh>
-
-      {/* Windows around the perimeter */}
-      {Array.from({ length: 16 }).map((_, i) => {
-        const angle = (i / 16) * Math.PI * 2;
-        const x = Math.cos(angle) * (outerRadius + 0.1);
-        const z = Math.sin(angle) * (outerRadius + 0.1);
+      {/* Windows around the outer perimeter */}
+      {Array.from({ length: 12 }).map((_, i) => {
+        const openingAngle = Math.PI * 0.5;
+        const startAngle = openingAngle / 2;
+        const endAngle = Math.PI * 2 - openingAngle / 2;
+        const angle = startAngle + ((endAngle - startAngle) / 11) * i;
+        const x = Math.cos(angle) * (outerRadius + 0.15);
+        const z = Math.sin(angle) * (outerRadius + 0.15);
+        
         return (
-          <mesh 
-            key={i} 
-            position={[x, dimensions.height * 0.5, z]}
-            rotation={[0, -angle + Math.PI / 2, 0]}
-          >
-            <boxGeometry args={[3, 2, 0.1]} />
-            <meshStandardMaterial color="#bfdbfe" transparent opacity={0.7} />
-          </mesh>
+          <group key={i}>
+            {/* Lower floor windows */}
+            <mesh 
+              position={[x, groundFloorHeight * 0.6, z]}
+              rotation={[0, -angle + Math.PI / 2, 0]}
+            >
+              <boxGeometry args={[2.5, 1.5, 0.15]} />
+              <meshStandardMaterial color="#bfdbfe" transparent opacity={0.75} />
+            </mesh>
+            {/* Upper floor windows */}
+            <mesh 
+              position={[x, groundFloorHeight + upperFloorsHeight * 0.35, z]}
+              rotation={[0, -angle + Math.PI / 2, 0]}
+            >
+              <boxGeometry args={[2.5, 1.8, 0.15]} />
+              <meshStandardMaterial color="#bfdbfe" transparent opacity={0.75} />
+            </mesh>
+            <mesh 
+              position={[x, groundFloorHeight + upperFloorsHeight * 0.7, z]}
+              rotation={[0, -angle + Math.PI / 2, 0]}
+            >
+              <boxGeometry args={[2.5, 1.8, 0.15]} />
+              <meshStandardMaterial color="#bfdbfe" transparent opacity={0.75} />
+            </mesh>
+          </group>
         );
       })}
 
-      {/* Entrance - south facing */}
-      <mesh position={[0, 2, outerRadius + 1]}>
-        <boxGeometry args={[6, 4, 2]} />
-        <meshStandardMaterial color="#fef3c7" roughness={0.7} />
+      {/* Main entrance - south facing (at the opening) */}
+      <mesh position={[0, 2.5, outerRadius - wallThickness / 2]}>
+        <boxGeometry args={[8, 5, wallThickness + 2]} />
+        <meshStandardMaterial color={wallColor} roughness={0.7} />
       </mesh>
-
-      {/* Entrance roof */}
-      <mesh position={[0, 4.2, outerRadius + 1]}>
-        <boxGeometry args={[8, 0.4, 4]} />
+      
+      {/* Entrance canopy */}
+      <mesh position={[0, 5.2, outerRadius + 2]}>
+        <boxGeometry args={[10, 0.4, 5]} />
         <meshStandardMaterial color={roofColor} roughness={0.5} />
       </mesh>
+
+      {/* Entrance columns */}
+      {[-3, 3].map((x, i) => (
+        <mesh key={i} position={[x, 2.5, outerRadius + 1.5]}>
+          <cylinderGeometry args={[0.3, 0.4, 5, 8]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.6} />
+        </mesh>
+      ))}
 
       {/* Selection ring */}
       {isSelected && (
