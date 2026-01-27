@@ -81,11 +81,14 @@ export function KindergartenBuilding({
   const lowerHeight = isTwoStory ? dimensions.height * 0.45 : dimensions.height;
   const upperHeight = isTwoStory ? dimensions.height * 0.55 : 0;
 
+  // Opening direction based on rotation (180 = opening faces south for the BOW)
+  const openingRotation = (building.rotation || 0) * Math.PI / 180;
+
   return (
     <group 
       ref={groupRef}
       position={position}
-      rotation={[0, Math.PI, 0]} // Opening faces south
+      rotation={[0, openingRotation, 0]} // Opening faces south (for the BOW)
       scale={[hoverScale, hoverScale, hoverScale]}
     >
       {/* Lower floor - white/cream */}
@@ -128,7 +131,7 @@ export function KindergartenBuilding({
         </mesh>
       )}
 
-      {/* Curved roof */}
+      {/* Curved roof - grey flat */}
       <mesh
         rotation={[-Math.PI / 2, 0, 0]}
         position={[0, dimensions.height, 0]}
@@ -150,7 +153,7 @@ export function KindergartenBuilding({
         return (
           <group key={i}>
             <mesh 
-              position={[x, dimensions.height * 0.4, z]}
+              position={[x, dimensions.height * 0.5, z]}
               rotation={[0, -angle + Math.PI / 2, 0]}
             >
               <boxGeometry args={[1.8, 1.2, 0.1]} />
