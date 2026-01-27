@@ -28,13 +28,14 @@ export function ElementaryBuilding({
   });
 
   const { dimensions, colors, position, rotation } = building;
-  const wallColor = colors.walls;
+  const wallColor = '#fef3c7'; // Cream/beige walls
   const roofColor = colors.roof;
-  const accentColor = colors.accent || '#3b82f6';
+  const accentColor = colors.accent || '#7dd3fc'; // Light blue accents
 
-  // Zigzag/W shape - 4 connected segments at angles
-  const segmentWidth = dimensions.width / 4;
-  const segmentDepth = dimensions.depth;
+  // Zigzag/chevron shape - matching reference with pitched roofs
+  const segmentWidth = dimensions.width / 3.5;
+  const segmentDepth = dimensions.depth * 0.8;
+  const buildingHeight = dimensions.height;
 
   return (
     <group 
@@ -43,24 +44,24 @@ export function ElementaryBuilding({
       rotation={[0, (rotation * Math.PI) / 180, 0]}
       scale={[hoverScale, hoverScale, hoverScale]}
     >
-      {/* Zigzag segments */}
-      {[0, 1, 2, 3].map((i) => {
-        const xOffset = (i - 1.5) * segmentWidth;
-        const zOffset = i % 2 === 0 ? -3 : 3;
-        const segRotation = i % 2 === 0 ? 0.15 : -0.15;
+      {/* Main zigzag segments - matching the chevron pattern from photos */}
+      {[0, 1, 2].map((i) => {
+        const xOffset = (i - 1) * segmentWidth * 1.1;
+        const zOffset = i === 1 ? -5 : 3; // Center segment pushed back
+        const segRotation = i === 1 ? 0 : (i === 0 ? 0.2 : -0.2);
         
         return (
           <group key={i} position={[xOffset, 0, zOffset]} rotation={[0, segRotation, 0]}>
-            {/* Wall */}
+            {/* Main wall structure - cream/beige */}
             <mesh
-              position={[0, dimensions.height / 2, 0]}
+              position={[0, buildingHeight / 2, 0]}
               castShadow
               receiveShadow
               onPointerOver={() => onHover(true)}
               onPointerOut={() => onHover(false)}
               onClick={onClick}
             >
-              <boxGeometry args={[segmentWidth * 1.1, dimensions.height, segmentDepth]} />
+              <boxGeometry args={[segmentWidth, buildingHeight, segmentDepth]} />
               <meshStandardMaterial 
                 color={wallColor} 
                 roughness={0.7}
@@ -69,45 +70,71 @@ export function ElementaryBuilding({
               />
             </mesh>
 
-            {/* Pitched roof */}
-            <mesh
-              position={[0, dimensions.height + 1.5, 0]}
-              rotation={[0, 0, 0]}
-              castShadow
-            >
-              <boxGeometry args={[segmentWidth * 1.2, 0.4, segmentDepth + 1]} />
-              <meshStandardMaterial color={roofColor} roughness={0.5} />
-            </mesh>
-
-            {/* Roof peak */}
-            <mesh
-              position={[0, dimensions.height + 2.2, 0]}
-              rotation={[Math.PI / 2, 0, 0]}
-              castShadow
-            >
-              <cylinderGeometry args={[0.3, segmentWidth * 0.6, segmentDepth + 0.5, 3]} />
-              <meshStandardMaterial color={roofColor} roughness={0.5} />
-            </mesh>
-
-            {/* Blue mural accent on south-facing side */}
-            <mesh position={[0, dimensions.height * 0.4, segmentDepth / 2 + 0.05]}>
-              <boxGeometry args={[segmentWidth * 0.8, dimensions.height * 0.5, 0.1]} />
+            {/* Light blue accent strip at top */}
+            <mesh position={[0, buildingHeight * 0.85, 0]}>
+              <boxGeometry args={[segmentWidth + 0.1, buildingHeight * 0.2, segmentDepth + 0.1]} />
               <meshStandardMaterial color={accentColor} roughness={0.6} />
             </mesh>
 
-            {/* Windows */}
-            <mesh position={[0, dimensions.height * 0.6, segmentDepth / 2 + 0.1]}>
-              <boxGeometry args={[segmentWidth * 0.5, 1.2, 0.1]} />
-              <meshStandardMaterial color="#bfdbfe" transparent opacity={0.7} />
+            {/* Pitched roof - dark grey */}
+            <mesh
+              position={[0, buildingHeight + 2, 0]}
+              rotation={[0, 0, 0]}
+              castShadow
+            >
+              <boxGeometry args={[segmentWidth + 2, 0.4, segmentDepth + 2]} />
+              <meshStandardMaterial color={roofColor} roughness={0.5} />
             </mesh>
+
+            {/* Roof peak - triangular prism effect */}
+            <mesh
+              position={[0, buildingHeight + 2.8, 0]}
+              rotation={[Math.PI / 2, 0, Math.PI / 4]}
+              castShadow
+            >
+              <cylinderGeometry args={[0.2, segmentWidth * 0.5, segmentDepth, 4]} />
+              <meshStandardMaterial color={roofColor} roughness={0.5} />
+            </mesh>
+
+            {/* Windows - multiple rows */}
+            {[-1, 0, 1].map((wx, wi) => (
+              <mesh 
+                key={wi}
+                position={[wx * (segmentWidth * 0.28), buildingHeight * 0.5, segmentDepth / 2 + 0.1]}
+              >
+                <boxGeometry args={[segmentWidth * 0.2, buildingHeight * 0.4, 0.1]} />
+                <meshStandardMaterial color="#bfdbfe" transparent opacity={0.75} />
+              </mesh>
+            ))}
+
+            {/* Back windows */}
+            {[-1, 0, 1].map((wx, wi) => (
+              <mesh 
+                key={wi}
+                position={[wx * (segmentWidth * 0.28), buildingHeight * 0.5, -segmentDepth / 2 - 0.1]}
+              >
+                <boxGeometry args={[segmentWidth * 0.2, buildingHeight * 0.4, 0.1]} />
+                <meshStandardMaterial color="#bfdbfe" transparent opacity={0.75} />
+              </mesh>
+            ))}
           </group>
         );
       })}
 
+      {/* Connecting corridors between segments */}
+      <mesh position={[-segmentWidth * 0.55, buildingHeight * 0.4, -1]} castShadow>
+        <boxGeometry args={[segmentWidth * 0.3, buildingHeight * 0.7, 6]} />
+        <meshStandardMaterial color={wallColor} roughness={0.7} />
+      </mesh>
+      <mesh position={[segmentWidth * 0.55, buildingHeight * 0.4, -1]} castShadow>
+        <boxGeometry args={[segmentWidth * 0.3, buildingHeight * 0.7, 6]} />
+        <meshStandardMaterial color={wallColor} roughness={0.7} />
+      </mesh>
+
       {/* Selection ring */}
       {isSelected && (
         <mesh position={[0, 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[dimensions.width * 0.55, dimensions.width * 0.6, 32]} />
+          <ringGeometry args={[dimensions.width * 0.45, dimensions.width * 0.5, 32]} />
           <meshBasicMaterial color="#3b82f6" transparent opacity={0.5} />
         </mesh>
       )}
@@ -115,7 +142,7 @@ export function ElementaryBuilding({
       {/* Label */}
       {(isHovered || isSelected) && (
         <Html
-          position={[0, dimensions.height + 5, 0]}
+          position={[0, buildingHeight + 6, 0]}
           center
           distanceFactor={100}
         >

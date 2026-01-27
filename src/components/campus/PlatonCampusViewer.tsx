@@ -5,6 +5,7 @@ import { Vector3 } from 'three';
 import { motion } from 'framer-motion';
 import { ZoomIn, ZoomOut, RotateCcw, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import { 
   platonBuildings, 
   campusElements, 
@@ -207,6 +208,7 @@ export function PlatonCampusViewer({ onBuildingSelect }: PlatonCampusViewerProps
   const [selectedBuilding, setSelectedBuilding] = useState<CampusBuilding | null>(null);
   const [hoveredBuilding, setHoveredBuilding] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const navigate = useNavigate();
 
   const handleBuildingClick = useCallback((building: CampusBuilding) => {
     setSelectedBuilding(prev => prev?.id === building.id ? null : building);
@@ -216,6 +218,10 @@ export function PlatonCampusViewer({ onBuildingSelect }: PlatonCampusViewerProps
   const handleCloseSidebar = useCallback(() => {
     setSelectedBuilding(null);
   }, []);
+
+  const handleEnterBuilding = useCallback((buildingId: string) => {
+    navigate(`/twin/${buildingId}`);
+  }, [navigate]);
 
   const handleResetView = useCallback(() => {
     setSelectedBuilding(null);
@@ -274,6 +280,7 @@ export function PlatonCampusViewer({ onBuildingSelect }: PlatonCampusViewerProps
       <CampusBuildingSidebar 
         building={selectedBuilding}
         onClose={handleCloseSidebar}
+        onEnterBuilding={handleEnterBuilding}
       />
 
       {/* Instructions */}

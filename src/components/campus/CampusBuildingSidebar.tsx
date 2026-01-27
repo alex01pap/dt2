@@ -1,15 +1,17 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Thermometer, Droplets, Users, Wind, Lightbulb, Building2, DoorOpen, ChevronRight } from 'lucide-react';
+import { X, Thermometer, Droplets, Users, Wind, Lightbulb, Building2, DoorOpen, ChevronRight, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { useNavigate } from 'react-router-dom';
 import type { CampusBuilding, CampusRoom, RoomSensor } from '@/data/platonCampusLayout';
 
 interface CampusBuildingSidebarProps {
   building: CampusBuilding | null;
   onClose: () => void;
   onRoomClick?: (room: CampusRoom) => void;
+  onEnterBuilding?: (buildingId: string) => void;
 }
 
 const sensorIcons: Record<RoomSensor['type'], React.ComponentType<{ className?: string }>> = {
@@ -87,7 +89,9 @@ function RoomCard({ room, onClick }: { room: CampusRoom; onClick?: () => void })
   );
 }
 
-export function CampusBuildingSidebar({ building, onClose, onRoomClick }: CampusBuildingSidebarProps) {
+export function CampusBuildingSidebar({ building, onClose, onRoomClick, onEnterBuilding }: CampusBuildingSidebarProps) {
+  const navigate = useNavigate();
+  
   if (!building) return null;
 
   const roomsByFloor = building.rooms.reduce((acc, room) => {
@@ -107,6 +111,18 @@ export function CampusBuildingSidebar({ building, onClose, onRoomClick }: Campus
     (acc, room) => acc + room.sensors.filter(s => s.status === 'warning').length, 
     0
   );
+
+  const handleEnterBuilding = () => {
+    if (onEnterBuilding) {
+      onEnterBuilding(building.id);
+    } else {
+      navigate(`/twin/${building.id}`);
+    }
+  };
+
+  const handleConfigureBuilding = () => {
+    navigate(`/admin?configure=${building.id}`);
+  };
 
   return (
     <AnimatePresence>
@@ -188,10 +204,14 @@ export function CampusBuildingSidebar({ building, onClose, onRoomClick }: Campus
         </ScrollArea>
 
         {/* Footer */}
-        <div className="p-4 border-t border-border">
-          <Button className="w-full" size="sm">
+        <div className="p-4 border-t border-border space-y-2">
+          <Button className="w-full" size="sm" onClick={handleEnterBuilding}>
             <DoorOpen className="h-4 w-4 mr-2" />
             Είσοδος στο κτίριο
+          </Button>
+          <Button variant="outline" className="w-full" size="sm" onClick={handleConfigureBuilding}>
+            <Settings className="h-4 w-4 mr-2" />
+            Ρυθμίσεις κτιρίου
           </Button>
         </div>
       </motion.div>
