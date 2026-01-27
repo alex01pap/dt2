@@ -92,9 +92,7 @@ export default function Dashboard() {
 
         {/* Campus 3D View */}
         <TabsContent value="campus" className="mt-6">
-          <PlatonCampusViewer
-            onBuildingSelect={(building) => navigate(`/twin/${building.id}`)}
-          />
+          <Campus3DScene />
         </TabsContent>
 
         {/* Twins Grid View */}
